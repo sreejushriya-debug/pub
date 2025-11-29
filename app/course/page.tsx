@@ -3,75 +3,78 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
-  GraduationCap, BookOpen, Gamepad2, Award, CheckCircle2, 
-  ArrowRight, Play, Clock, Users, Star, ChevronDown, ChevronUp
+  GraduationCap, BookOpen, Gamepad2, CheckCircle2, 
+  ArrowRight, Clock, Users, Star, ChevronDown, ChevronUp,
+  FileText, Video, Trophy
 } from 'lucide-react'
-import FadeIn from '@/components/FadeIn'
+import FloatingParticles from '@/components/FloatingParticles'
 
 const courseModules = [
   {
     id: 1,
-    title: 'Introduction to Money',
-    description: 'Learn about different types of currency and the history of money.',
-    duration: '20 min',
-    lessons: 3
+    title: 'Financial Basics',
+    description: 'Learn about different types of currency, important financial terms, and how to make change.',
+    duration: '30 min',
+    lessons: 4
   },
   {
     id: 2,
-    title: 'Needs vs Wants',
-    description: 'Understand the difference between things we need and things we want.',
-    duration: '25 min',
-    lessons: 4
+    title: 'Saving and Spending',
+    description: 'Understand healthy saving and spending habits, and learn how to create and follow a budget.',
+    duration: '35 min',
+    lessons: 5
   },
   {
     id: 3,
-    title: 'Saving Basics',
-    description: 'Discover why saving money is important and how to start a savings habit.',
-    duration: '30 min',
-    lessons: 5
+    title: 'All Things Banking',
+    description: 'Explore credit vs debit, investing basics, stock trends, and how to write a check.',
+    duration: '40 min',
+    lessons: 6
   },
   {
     id: 4,
-    title: 'Budgeting for Kids',
-    description: 'Learn how to plan your spending and create a simple budget.',
+    title: 'Business',
+    description: 'Learn about revenue, expenses, profit, and the basics of starting your own business.',
     duration: '35 min',
-    lessons: 4
+    lessons: 7
   },
   {
     id: 5,
-    title: 'Earning Money',
-    description: 'Explore different ways to earn money through jobs, chores, and entrepreneurship.',
+    title: 'Taxes',
+    description: 'Understand what taxes are and learn how to calculate them.',
     duration: '25 min',
-    lessons: 4
+    lessons: 3
   },
   {
     id: 6,
-    title: 'Smart Spending',
-    description: 'Make better decisions about how and when to spend your money.',
-    duration: '30 min',
-    lessons: 5
-  },
-  {
-    id: 7,
-    title: 'Introduction to Investing',
-    description: 'Learn the basics of how money can grow over time.',
-    duration: '25 min',
-    lessons: 3
-  },
-  {
-    id: 8,
-    title: 'Financial Goals',
-    description: 'Set and work towards your own financial goals.',
+    title: 'Summary & Review',
+    description: 'Review everything you\'ve learned and apply your new financial literacy skills.',
     duration: '20 min',
-    lessons: 3
+    lessons: 2
   }
 ]
 
 const features = [
-  { icon: Play, title: 'Interactive Lessons', description: 'Engaging video content designed for young learners' },
-  { icon: Gamepad2, title: 'Fun Games', description: 'Reinforce learning through play with educational games' },
-  { icon: BookOpen, title: 'Worksheets', description: 'Downloadable activities to practice new skills' },
-  { icon: Award, title: 'Certificates', description: 'Earn certificates upon completing each module' }
+  { 
+    icon: Video, 
+    title: 'Engaging Videos', 
+    description: 'Watch fun, educational videos that explain financial concepts in easy-to-understand ways' 
+  },
+  { 
+    icon: FileText, 
+    title: 'Interactive Worksheets', 
+    description: 'Practice what you learn with hands-on worksheets and activities' 
+  },
+  { 
+    icon: Gamepad2, 
+    title: 'Fun Quizzes', 
+    description: 'Test your knowledge with interactive quizzes after each module' 
+  },
+  { 
+    icon: Trophy, 
+    title: 'Track Progress', 
+    description: 'See how much you\'ve learned with KWL charts that track your journey' 
+  }
 ]
 
 export default function CoursePage() {
@@ -95,56 +98,62 @@ export default function CoursePage() {
   return (
     <div className="pt-24">
       {/* Hero Section */}
-      <section className="section-padding bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-hero-pattern opacity-30" />
+      <section className="py-24 bg-gradient-hero relative overflow-hidden">
+        <FloatingParticles count={20} />
         
         <div className="container-custom relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <FadeIn direction="left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-100 
-                              text-forest-700 text-sm font-medium mb-6">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm
+                              text-white text-sm font-medium mb-6 border border-white/30">
                 <GraduationCap className="w-4 h-4" />
                 <span>100% Free Course</span>
               </div>
               
-              <h1 className="heading-xl text-forest-900 mb-6">
-                Financial{' '}
-                <span className="text-gradient">Foundations</span>
-                <br />Course
+              <h1 className="heading-xl text-white mb-6">
+                Financial Foundations Course
               </h1>
               
-              <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                Get your students on the path to financial literacy with our free virtual 
-                course! Designed for elementary and middle schoolers, this interactive and 
-                engaging program teaches key financial concepts in a fun and accessible way.
+              <p className="text-xl text-white/90 leading-relaxed mb-8">
+                Get your students on the path to financial literacy with our free virtual course! 
+                Designed for elementary and middle schoolers, this interactive and engaging program 
+                teaches key financial concepts in a fun and accessible way.
               </p>
 
               <div className="flex flex-wrap items-center gap-6 mb-8">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-forest-600" />
-                  <span className="text-gray-600">Self-paced</span>
+                <div className="flex items-center gap-2 text-white/90">
+                  <Clock className="w-5 h-5" />
+                  <span>Self-paced</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-forest-600" />
-                  <span className="text-gray-600">8 Modules</span>
+                <div className="flex items-center gap-2 text-white/90">
+                  <BookOpen className="w-5 h-5" />
+                  <span>6 Modules</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-forest-600" />
-                  <span className="text-gray-600">Ages 6-12</span>
+                <div className="flex items-center gap-2 text-white/90">
+                  <Users className="w-5 h-5" />
+                  <span>Ages 6-14</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-warm-500 fill-current" />
+                  <Star key={i} className="w-5 h-5 text-accent-300 fill-current" />
                 ))}
-                <span className="text-gray-600 ml-2">Loved by 29,000+ students</span>
+                <span className="text-white/90 ml-2">Loved by 29,000+ students</span>
               </div>
-            </FadeIn>
+            </motion.div>
 
-            <FadeIn direction="right" delay={0.2}>
-              <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-                <h3 className="text-2xl font-display font-bold text-forest-800 mb-2">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="bg-white rounded-3xl shadow-2xl p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Start Learning Today
                 </h3>
                 <p className="text-gray-600 mb-6">
@@ -212,123 +221,152 @@ export default function CoursePage() {
                   </motion.button>
                 </form>
               </div>
-            </FadeIn>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="section-padding bg-white">
+      <section className="py-20 bg-white">
         <div className="container-custom">
-          <FadeIn className="text-center mb-16">
-            <h2 className="heading-lg text-forest-900 mb-4">
-              What's <span className="text-gradient">Included</span>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              What's <span className="text-forest-600">Included</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Everything you need for an engaging financial literacy education experience.
             </p>
-          </FadeIn>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, idx) => (
-              <FadeIn key={feature.title} delay={idx * 0.1}>
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
                 <motion.div
                   whileHover={{ y: -8 }}
                   className="card text-center h-full"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-600 to-forest-500 
-                                  flex items-center justify-center mx-auto mb-6 shadow-lg shadow-forest-200">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
+                                  flex items-center justify-center mx-auto mb-5 shadow-lg shadow-forest-200">
                     <feature.icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-lg font-display font-bold text-forest-800 mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
                     {feature.title}
                   </h3>
                   <p className="text-gray-600 text-sm">
                     {feature.description}
                   </p>
                 </motion.div>
-              </FadeIn>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Curriculum Section */}
-      <section className="section-padding bg-cream">
+      <section className="py-20 bg-gradient-section">
         <div className="container-custom">
-          <FadeIn className="text-center mb-16">
-            <h2 className="heading-lg text-forest-900 mb-4">
-              Course <span className="text-gradient-warm">Curriculum</span>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              Course <span className="text-accent-500">Curriculum</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               A comprehensive journey through the fundamentals of personal finance.
             </p>
-          </FadeIn>
+          </motion.div>
 
           <div className="max-w-3xl mx-auto space-y-4">
             {courseModules.map((module, idx) => (
-              <FadeIn key={module.id} delay={idx * 0.05}>
-                <motion.div
-                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+              <motion.div
+                key={module.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm"
+              >
+                <button
+                  onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
+                  className="w-full flex items-center justify-between p-6 text-left 
+                             hover:bg-gray-50 transition-colors"
                 >
-                  <button
-                    onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
-                    className="w-full flex items-center justify-between p-6 text-left 
-                               hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-forest-100 flex items-center 
-                                      justify-center text-forest-700 font-bold">
-                        {module.id}
-                      </div>
-                      <div>
-                        <h3 className="font-display font-bold text-forest-800">
-                          {module.title}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {module.duration}
-                          </span>
-                          <span>{module.lessons} lessons</span>
-                        </div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-forest-100 flex items-center 
+                                    justify-center text-forest-700 font-bold">
+                      {module.id}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">
+                        {module.title}
+                      </h3>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {module.duration}
+                        </span>
+                        <span>{module.lessons} lessons</span>
                       </div>
                     </div>
-                    {expandedModule === module.id ? (
-                      <ChevronUp className="w-5 h-5 text-gray-400" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    )}
-                  </button>
-                  
-                  {expandedModule === module.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6"
-                    >
-                      <p className="text-gray-600 ml-16">
-                        {module.description}
-                      </p>
-                    </motion.div>
+                  </div>
+                  {expandedModule === module.id ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
                   )}
-                </motion.div>
-              </FadeIn>
+                </button>
+                
+                {expandedModule === module.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="px-6 pb-6"
+                  >
+                    <p className="text-gray-600 ml-16">
+                      {module.description}
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-forest-800 to-forest-900">
-        <div className="container-custom">
-          <FadeIn className="max-w-3xl mx-auto text-center">
-            <GraduationCap className="w-16 h-16 text-sage-400 mx-auto mb-6" />
+      <section className="py-20 bg-gradient-to-br from-forest-600 to-forest-800 relative overflow-hidden">
+        <FloatingParticles count={15} />
+        
+        <div className="container-custom relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <GraduationCap className="w-16 h-16 text-accent-300 mx-auto mb-6" />
             <h2 className="heading-lg text-white mb-6">
               Ready to Start Your Financial Journey?
             </h2>
-            <p className="text-xl text-forest-200 mb-8">
+            <p className="text-xl text-white/80 mb-8">
               Join thousands of students who are building their financial literacy 
               skills with our free course.
             </p>
@@ -336,15 +374,14 @@ export default function CoursePage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="btn-primary bg-white text-forest-800 hover:bg-gray-100 gap-2"
+              className="btn-primary bg-white text-forest-700 hover:bg-gray-100 gap-2"
             >
               <span>Enroll Now - It's Free!</span>
               <ArrowRight className="w-4 h-4" />
             </motion.button>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
     </div>
   )
 }
-

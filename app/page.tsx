@@ -2,7 +2,7 @@ import Hero from '@/components/Hero'
 import Stats from '@/components/Stats'
 import Offerings from '@/components/Offerings'
 import CourseSignup from '@/components/CourseSignup'
-import Testimonials from '@/components/Testimonials'
+import NumbersDontLie from '@/components/NumbersDontLie'
 
 export default function Home() {
   return (
@@ -10,9 +10,8 @@ export default function Home() {
       <Hero />
       <Stats />
       <Offerings />
-      <Testimonials />
       <CourseSignup />
+      <NumbersDontLie />
     </>
   )
 }
-

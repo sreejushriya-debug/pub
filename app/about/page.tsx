@@ -1,225 +1,327 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Heart, Target, Users, Lightbulb, Globe, BookOpen, ArrowRight } from 'lucide-react'
+import { Heart, Target, Users, Lightbulb, ArrowRight, CheckCircle, BookOpen, Globe } from 'lucide-react'
 import Link from 'next/link'
-import FadeIn from '@/components/FadeIn'
+import FloatingParticles from '@/components/FloatingParticles'
+
+const founders = [
+  {
+    name: 'Shriya Sreeju',
+    role: 'Co-Founder',
+    initial: 'S',
+    color: 'from-forest-500 to-forest-600'
+  },
+  {
+    name: 'Hansika Kantheti',
+    role: 'Co-Founder',
+    initial: 'H',
+    color: 'from-accent-500 to-accent-600'
+  },
+  {
+    name: 'Tanisha Makam',
+    role: 'Co-Founder',
+    initial: 'T',
+    color: 'from-forest-400 to-forest-500'
+  }
+]
 
 const values = [
   {
     icon: Heart,
     title: 'Accessibility',
-    description: 'We believe financial education should be free and accessible to all students, regardless of their background or circumstances.'
+    description: 'We believe financial education should be free and accessible to all students, regardless of their background or circumstances.',
+    color: 'bg-red-50 text-red-600'
   },
   {
     icon: Target,
     title: 'Empowerment',
-    description: 'Our goal is to empower young minds with the knowledge and tools they need to make informed financial decisions.'
+    description: 'Our goal is to empower young minds with the knowledge and tools they need to make informed financial decisions.',
+    color: 'bg-forest-50 text-forest-600'
   },
   {
     icon: Users,
     title: 'Community',
-    description: 'We work closely with teachers, parents, and communities to ensure our resources meet real-world needs.'
+    description: 'We work closely with teachers, parents, and communities to ensure our resources meet real-world needs.',
+    color: 'bg-blue-50 text-blue-600'
   },
   {
     icon: Lightbulb,
     title: 'Innovation',
-    description: 'We continuously develop new and engaging ways to teach financial concepts to young learners.'
+    description: 'We continuously develop new and engaging ways to teach financial concepts to young learners.',
+    color: 'bg-accent-50 text-accent-600'
   }
 ]
 
-const milestones = [
-  { year: '2020', event: 'Project Bright Beginnings founded with a mission to make financial literacy accessible' },
-  { year: '2021', event: 'Launched our first Financial Foundations curriculum for elementary students' },
-  { year: '2022', event: 'Expanded to reach 10,000+ students across multiple states' },
-  { year: '2023', event: 'Introduced our comprehensive Resource Library for teachers' },
-  { year: '2024', event: 'Reached 29,000+ students in 4 countries worldwide' },
+const problem = [
+  'There are no textbooks targeted for elementary schoolers.',
+  'Teachers don\'t have access to the resources in one place and have to scour the internet for hours.',
+  'Resources that are free are especially rare which makes it hard for teachers and parents alike to want to teach their students.'
+]
+
+const solution = [
+  'Fun and engaging videos and targeted worksheets for elementary schoolers',
+  'Frequent educational seminars and a self-paced course for students.',
+  'User-friendly and accessible resource library that is consistently updating.'
 ]
 
 export default function AboutPage() {
   return (
     <div className="pt-24">
       {/* Hero Section */}
-      <section className="section-padding bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-hero-pattern opacity-30" />
+      <section className="py-24 bg-gradient-hero relative overflow-hidden">
+        <FloatingParticles count={20} />
         
         <div className="container-custom relative">
-          <FadeIn className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-100 
-                          text-forest-700 text-sm font-medium mb-6"
-            >
-              <Heart className="w-4 h-4" />
-              <span>About Us</span>
-            </motion.div>
-            
-            <h1 className="heading-xl text-forest-900 mb-6">
-              Making Financial Education{' '}
-              <span className="text-gradient">Accessible to All</span>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <h1 className="heading-xl text-white mb-6">
+              We're so glad you're here!
             </h1>
             
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Project Bright Beginnings was founded with a simple yet powerful mission: to ensure 
-              that every child has access to the financial education they need to build a secure 
-              and prosperous future.
+            <p className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
+              Our names are <span className="font-semibold text-accent-300">Shriya, Hansika, and Tanisha</span>, co-founders of 
+              Project Bright Beginnings. We have a passion for all things finance which led us to discover 
+              that there was an immense problem with financial education in America. That's how PBB started 
+              and the rest is history.
             </p>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section className="section-padding bg-white">
+      {/* Founders Section */}
+      <section className="py-20 bg-white">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeIn direction="left">
-              <div className="relative">
-                <div className="aspect-square rounded-3xl bg-gradient-to-br from-forest-100 to-sage-100 
-                                overflow-hidden relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                      className="w-[80%] h-[80%] rounded-full border-2 border-dashed border-forest-200"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Globe className="w-32 h-32 text-forest-600" />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              Meet the <span className="text-forest-600">Founders</span>
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Our team contains three diligent workers who use their different strengths to work together.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {founders.map((founder, idx) => (
+              <motion.div
+                key={founder.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
+                <motion.div
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+                >
+                  {/* Placeholder for photo - gradient background with initial */}
+                  <div className={`h-48 bg-gradient-to-br ${founder.color} flex items-center justify-center`}>
+                    <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center
+                                    text-white text-4xl font-bold border-4 border-white/30">
+                      {founder.initial}
                     </div>
                   </div>
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-xl p-6"
-                >
-                  <div className="text-4xl font-display font-bold text-forest-700">4</div>
-                  <div className="text-sm text-gray-500">Countries Reached</div>
-                </motion.div>
-              </div>
-            </FadeIn>
-            
-            <FadeIn direction="right" delay={0.2}>
-              <h2 className="heading-lg text-forest-900 mb-6">
-                Our <span className="text-gradient-warm">Mission</span>
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                Our mission is to provide foundational tools that educate students on the 
-                importance of financial education and make financial literacy accessible to all.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                We believe that financial literacy is not just a skill—it's a fundamental 
-                right that every child deserves. By starting early, we can help shape a 
-                generation of financially confident individuals who are equipped to navigate 
-                the complexities of the modern economy.
-              </p>
-              <Link href="/impact" className="btn-primary gap-2 group">
-                <span>See Our Impact</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="section-padding bg-cream">
-        <div className="container-custom">
-          <FadeIn className="text-center mb-16">
-            <h2 className="heading-lg text-forest-900 mb-4">
-              Our <span className="text-gradient">Core Values</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              These principles guide everything we do at Project Bright Beginnings.
-            </p>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, idx) => (
-              <FadeIn key={value.title} delay={idx * 0.1}>
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  className="card h-full text-center"
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-forest-600 to-forest-500 
-                                  flex items-center justify-center mx-auto mb-6 shadow-lg shadow-forest-200">
-                    <value.icon className="w-8 h-8 text-white" />
+                  <div className="p-6 text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {founder.name}
+                    </h3>
+                    <p className="text-accent-600 font-medium">
+                      {founder.role}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-display font-bold text-forest-800 mb-3">
-                    {value.title}
-                  </h3>
-                  <p className="text-gray-600">
-                    {value.description}
-                  </p>
                 </motion.div>
-              </FadeIn>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="section-padding bg-white">
-        <div className="container-custom">
-          <FadeIn className="text-center mb-16">
-            <h2 className="heading-lg text-forest-900 mb-4">
-              Our <span className="text-gradient-warm">Journey</span>
+      {/* Mission Section - Highlighted */}
+      <section className="py-20 bg-gradient-to-br from-forest-600 to-forest-700 relative overflow-hidden">
+        <FloatingParticles count={15} />
+        
+        <div className="container-custom relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <Globe className="w-16 h-16 text-accent-300 mx-auto mb-6" />
+            <h2 className="heading-lg text-white mb-6">
+              Our Mission
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              From a simple idea to a global movement for financial literacy.
+            <p className="text-2xl text-white/90 leading-relaxed font-medium">
+              Our mission is to provide foundational tools that educate students on the 
+              importance of financial education and make financial literacy accessible to all.
             </p>
-          </FadeIn>
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="max-w-3xl mx-auto">
-            {milestones.map((milestone, idx) => (
-              <FadeIn key={milestone.year} delay={idx * 0.1}>
-                <div className="flex gap-6 mb-8 last:mb-0">
-                  <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-forest-600 to-forest-500 
-                                    flex items-center justify-center text-white font-display font-bold
-                                    shadow-lg shadow-forest-200">
-                      {milestone.year}
-                    </div>
-                    {idx !== milestones.length - 1 && (
-                      <div className="w-0.5 h-full bg-forest-200 mt-4" />
-                    )}
+      {/* Problem & Solution Section */}
+      <section className="py-20 bg-white">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* The Problem */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-8 md:p-10 h-full">
+                <span className="text-red-500 font-semibold text-sm uppercase tracking-wider">The Problem</span>
+                <h2 className="heading-md text-gray-900 mt-2 mb-6">
+                  Lack of Resources
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  Many students wish that schools in America would teach them about financial topics, 
+                  but one of the main reasons that's stopping districts is the lack of resources!
+                </p>
+                <ul className="space-y-4">
+                  {problem.map((item, idx) => (
+                    <motion.li
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: idx * 0.1 }}
+                      className="flex items-start gap-3"
+                    >
+                      <span className="w-6 h-6 rounded-full bg-red-100 text-red-500 flex items-center justify-center flex-shrink-0 text-sm mt-0.5">✕</span>
+                      <span className="text-gray-700">{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* The Solution */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-8 md:p-10 h-full">
+                <span className="text-forest-600 font-semibold text-sm uppercase tracking-wider">The Solution</span>
+                <h2 className="heading-md text-gray-900 mt-2 mb-6">
+                  What We Provide
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  We work with the goal of you getting the resources you need to teach students 
+                  the importance of financial education. You'll start seeing results right away!
+                </p>
+                <ul className="space-y-4">
+                  {solution.map((item, idx) => (
+                    <motion.li
+                      key={idx}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: idx * 0.1 }}
+                      className="flex items-start gap-3"
+                    >
+                      <CheckCircle className="w-6 h-6 text-forest-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="py-20 bg-gradient-section">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              Our Core <span className="text-accent-500">Values</span>
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              These principles guide everything we do at Project Bright Beginnings.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((value, idx) => (
+              <motion.div
+                key={value.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  className="card h-full text-center"
+                >
+                  <div className={`w-14 h-14 rounded-2xl ${value.color} 
+                                  flex items-center justify-center mx-auto mb-5`}>
+                    <value.icon className="w-7 h-7" />
                   </div>
-                  <div className="pt-4 pb-8">
-                    <p className="text-lg text-gray-700">{milestone.event}</p>
-                  </div>
-                </div>
-              </FadeIn>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    {value.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {value.description}
+                  </p>
+                </motion.div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-forest-800 to-forest-900">
+      <section className="py-20 bg-white">
         <div className="container-custom">
-          <FadeIn className="max-w-3xl mx-auto text-center">
-            <BookOpen className="w-16 h-16 text-sage-400 mx-auto mb-6" />
-            <h2 className="heading-lg text-white mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <BookOpen className="w-14 h-14 text-forest-600 mx-auto mb-6" />
+            <h2 className="heading-lg text-gray-900 mb-6">
               Ready to Make a Difference?
             </h2>
-            <p className="text-xl text-forest-200 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Join us in our mission to provide financial literacy education to students worldwide.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/resources" className="btn-primary bg-white text-forest-800 hover:bg-gray-100">
-                Explore Resources
+              <Link href="/resources" className="btn-primary gap-2 group">
+                <span>Explore Resources</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <Link href="/contact" className="btn-secondary border-white/30 text-white hover:bg-white/10">
+              <Link href="/contact" className="btn-secondary">
                 Get In Touch
               </Link>
             </div>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
     </div>
   )
 }
-

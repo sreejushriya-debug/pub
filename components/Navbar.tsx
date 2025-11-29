@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown, Heart, Sparkles } from 'lucide-react'
+import { Menu, X, ChevronDown, Heart } from 'lucide-react'
+
+const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -15,7 +18,7 @@ const navLinks = [
     href: '#',
     submenu: [
       { name: 'Financial Foundations Course', href: '/course' },
-      { name: 'Finance BootCamp', href: '/bootcamp' },
+      { name: 'Virtual Finance BootCamp', href: '/bootcamp' },
     ]
   },
   { name: 'Contact', href: '/contact' },
@@ -25,6 +28,10 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null)
+  const pathname = usePathname()
+  
+  // Check if we're on the home page
+  const isHomePage = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +41,9 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Determine if navbar should have white text (only on home page when not scrolled)
+  const useWhiteText = isHomePage && !isScrolled
+
   return (
     <>
       <motion.header
@@ -41,8 +51,8 @@ export default function Navbar() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled 
-            ? 'bg-white/90 backdrop-blur-xl shadow-lg shadow-forest-900/5' 
+          isScrolled || !isHomePage
+            ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-forest-900/5' 
             : 'bg-transparent'
         }`}
       >
@@ -53,24 +63,11 @@ export default function Navbar() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3"
+                className="flex items-center gap-2"
               >
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-forest-600 to-forest-700 
-                                  flex items-center justify-center shadow-lg shadow-forest-700/30
-                                  group-hover:shadow-xl group-hover:shadow-forest-700/40 transition-shadow">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <motion.div
-                    className="absolute -inset-1 rounded-2xl bg-forest-400/20 blur-md -z-10"
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  />
-                </div>
-                <div className="hidden sm:block">
-                  <span className="font-display text-xl font-bold text-forest-800">Project</span>
-                  <span className="font-display text-xl font-bold text-gradient-warm ml-1">Bright Beginnings</span>
-                </div>
+                <span className={`text-xl md:text-2xl font-bold transition-colors ${useWhiteText ? 'text-white' : 'text-forest-700'}`}>
+                  bright beginnings
+                </span>
               </motion.div>
             </Link>
 
@@ -84,9 +81,11 @@ export default function Navbar() {
                   onMouseLeave={() => setActiveSubmenu(null)}
                 >
                   {link.submenu ? (
-                    <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 
-                                       hover:text-forest-700 transition-colors rounded-full
-                                       hover:bg-forest-50">
+                    <button className={`flex items-center gap-1 px-4 py-2 text-sm font-medium 
+                                       transition-colors rounded-full
+                                       ${useWhiteText 
+                                         ? 'text-white/90 hover:text-white hover:bg-white/10' 
+                                         : 'text-gray-700 hover:text-forest-700 hover:bg-forest-50'}`}>
                       {link.name}
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 
                         ${activeSubmenu === link.name ? 'rotate-180' : ''}`} />
@@ -94,9 +93,10 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 
-                                 hover:text-forest-700 transition-colors rounded-full
-                                 hover:bg-forest-50"
+                      className={`px-4 py-2 text-sm font-medium transition-colors rounded-full
+                                 ${useWhiteText 
+                                   ? 'text-white/90 hover:text-white hover:bg-white/10' 
+                                   : 'text-gray-700 hover:text-forest-700 hover:bg-forest-50'}`}
                     >
                       {link.name}
                     </Link>
@@ -133,21 +133,22 @@ export default function Navbar() {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <Link 
-                href="https://www.paypal.com/donate/?hosted_button_id=YOURDONATIONLINK" 
+              <a 
+                href={DONATE_LINK}
                 target="_blank"
-                className="btn-warm gap-2 text-sm"
+                rel="noopener noreferrer"
+                className="btn-donate gap-2 text-sm py-3 px-6"
               >
                 <Heart className="w-4 h-4" />
                 Donate
-              </Link>
+              </a>
             </div>
 
             {/* Mobile Menu Button */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:text-forest-700 transition-colors"
+              className={`lg:hidden p-2 transition-colors ${useWhiteText ? 'text-white' : 'text-gray-700'}`}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </motion.button>
@@ -235,14 +236,15 @@ export default function Navbar() {
                   ))}
                 </nav>
                 <div className="pt-6 border-t border-gray-100">
-                  <Link 
-                    href="https://www.paypal.com/donate/?hosted_button_id=YOURDONATIONLINK"
+                  <a 
+                    href={DONATE_LINK}
                     target="_blank"
-                    className="btn-warm w-full justify-center gap-2"
+                    rel="noopener noreferrer"
+                    className="btn-donate w-full justify-center gap-2"
                   >
                     <Heart className="w-4 h-4" />
                     Donate Now
-                  </Link>
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -252,4 +254,3 @@ export default function Navbar() {
     </>
   )
 }
-

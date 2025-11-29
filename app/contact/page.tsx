@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Mail, Phone, MapPin, Send, CheckCircle2, 
-  MessageSquare, Clock, Users, Heart
+  MessageSquare, Clock, Heart
 } from 'lucide-react'
-import FadeIn from '@/components/FadeIn'
+import FloatingParticles from '@/components/FloatingParticles'
+
+const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
 
 const contactInfo = [
   {
@@ -47,7 +49,7 @@ const faqs = [
   },
   {
     question: 'How can I donate to support your mission?',
-    answer: 'We accept donations through our website. Click the "Donate" button in the navigation bar to make a secure contribution. Every dollar helps us reach more students!'
+    answer: 'We accept donations through Hack Club Bank. Click the "Donate" button on our website to make a secure contribution. Every dollar helps us reach more students!'
   }
 ]
 
@@ -81,71 +83,83 @@ export default function ContactPage() {
   return (
     <div className="pt-24">
       {/* Hero Section */}
-      <section className="section-padding bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-hero-pattern opacity-30" />
+      <section className="py-24 bg-gradient-hero relative overflow-hidden">
+        <FloatingParticles count={20} />
         
         <div className="container-custom relative">
-          <FadeIn className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-100 
-                            text-forest-700 text-sm font-medium mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm
+                            text-white text-sm font-medium mb-6 border border-white/30">
               <MessageSquare className="w-4 h-4" />
               <span>Get In Touch</span>
             </div>
             
-            <h1 className="heading-xl text-forest-900 mb-6">
-              We'd Love to{' '}
-              <span className="text-gradient">Hear From You</span>
+            <h1 className="heading-xl text-white mb-6">
+              We'd Love to Hear From You
             </h1>
             
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-white/90 leading-relaxed">
               Have questions about our programs? Want to partner with us? 
               Or just want to say hello? We're here to help!
             </p>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
 
       {/* Contact Info Cards */}
-      <section className="py-12 bg-white relative -mt-8">
+      <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactInfo.map((info, idx) => (
-              <FadeIn key={info.title} delay={idx * 0.1}>
-                <motion.a
-                  href={info.href}
-                  target={info.icon === MapPin ? '_blank' : undefined}
-                  rel={info.icon === MapPin ? 'noopener noreferrer' : undefined}
-                  whileHover={{ y: -6 }}
-                  className="card text-center block group"
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-600 to-forest-500 
-                                  flex items-center justify-center mx-auto mb-4 shadow-lg shadow-forest-200
-                                  group-hover:scale-110 transition-transform">
-                    <info.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-display font-bold text-forest-800 mb-2">
-                    {info.title}
-                  </h3>
-                  <p className="text-forest-600 font-medium mb-1">
-                    {info.content}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    {info.description}
-                  </p>
-                </motion.a>
-              </FadeIn>
+              <motion.a
+                key={info.title}
+                href={info.href}
+                target={info.icon === MapPin ? '_blank' : undefined}
+                rel={info.icon === MapPin ? 'noopener noreferrer' : undefined}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                whileHover={{ y: -6 }}
+                className="card text-center block group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
+                                flex items-center justify-center mx-auto mb-4 shadow-lg shadow-forest-200
+                                group-hover:scale-110 transition-transform">
+                  <info.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">
+                  {info.title}
+                </h3>
+                <p className="text-forest-600 font-medium mb-1">
+                  {info.content}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {info.description}
+                </p>
+              </motion.a>
             ))}
           </div>
         </div>
       </section>
 
       {/* Contact Form Section */}
-      <section className="section-padding bg-cream">
+      <section className="py-20 bg-gradient-section">
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Form */}
-            <FadeIn direction="left">
-              <h2 className="heading-md text-forest-900 mb-6">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="heading-md text-gray-900 mb-6">
                 Send Us a Message
               </h2>
               
@@ -200,6 +214,7 @@ export default function ContactPage() {
                     <option value="general">General Inquiry</option>
                     <option value="partnership">Partnership Opportunity</option>
                     <option value="school">Bring Program to My School</option>
+                    <option value="webinar">Request a Webinar</option>
                     <option value="volunteer">Volunteer</option>
                     <option value="media">Media/Press</option>
                     <option value="other">Other</option>
@@ -259,11 +274,16 @@ export default function ContactPage() {
                   )}
                 </motion.button>
               </form>
-            </FadeIn>
+            </motion.div>
 
             {/* FAQs */}
-            <FadeIn direction="right" delay={0.2}>
-              <h2 className="heading-md text-forest-900 mb-6">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h2 className="heading-md text-gray-900 mb-6">
                 Frequently Asked Questions
               </h2>
               
@@ -277,7 +297,7 @@ export default function ContactPage() {
                     transition={{ delay: idx * 0.1 }}
                     className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
                   >
-                    <h3 className="font-display font-bold text-forest-800 mb-2">
+                    <h3 className="font-bold text-gray-900 mb-2">
                       {faq.question}
                     </h3>
                     <p className="text-gray-600 text-sm">
@@ -293,7 +313,7 @@ export default function ContactPage() {
                     <Clock className="w-6 h-6 text-forest-600" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-forest-800 mb-1">
+                    <h3 className="font-bold text-gray-900 mb-1">
                       Response Time
                     </h3>
                     <p className="text-gray-600 text-sm">
@@ -303,17 +323,23 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-            </FadeIn>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-white">
+      <section className="py-20 bg-white">
         <div className="container-custom">
-          <FadeIn className="max-w-3xl mx-auto text-center">
-            <Heart className="w-12 h-12 text-warm-600 mx-auto mb-6" />
-            <h2 className="heading-lg text-forest-900 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <Heart className="w-12 h-12 text-accent-500 mx-auto mb-6" />
+            <h2 className="heading-lg text-gray-900 mb-6">
               Want to Support Our Mission?
             </h2>
             <p className="text-xl text-gray-600 mb-8">
@@ -321,18 +347,17 @@ export default function ContactPage() {
               students who need it most.
             </p>
             <a 
-              href="https://www.paypal.com/donate/?hosted_button_id=YOURDONATIONLINK"
+              href={DONATE_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-warm gap-2"
+              className="btn-primary gap-2"
             >
               <Heart className="w-4 h-4" />
               Make a Donation
             </a>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
     </div>
   )
 }
-

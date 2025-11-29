@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Heart, Sparkles, ArrowUpRight, Instagram, Facebook, Twitter, Youtube } from 'lucide-react'
+import { Mail, Phone, MapPin, Heart, ArrowUpRight } from 'lucide-react'
+
+const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
 
 const footerLinks = {
   navigation: [
@@ -13,14 +15,8 @@ const footerLinks = {
   ],
   programs: [
     { name: 'Financial Foundations', href: '/course' },
-    { name: 'Finance BootCamp', href: '/bootcamp' },
+    { name: 'Virtual BootCamp', href: '/bootcamp' },
     { name: 'Resource Library', href: '/resources' },
-  ],
-  social: [
-    { name: 'Instagram', icon: Instagram, href: '#' },
-    { name: 'Facebook', icon: Facebook, href: '#' },
-    { name: 'Twitter', icon: Twitter, href: '#' },
-    { name: 'YouTube', icon: Youtube, href: '#' },
   ],
 }
 
@@ -38,7 +34,7 @@ export default function Footer() {
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-forest-800/50 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-warm-800/20 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-accent-600/10 blur-3xl" />
       </div>
 
       <div className="relative container-custom">
@@ -51,7 +47,7 @@ export default function Footer() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="heading-md text-white mb-4">
+              <h3 className="text-2xl font-bold text-white mb-4">
                 Stay Connected
               </h3>
               <p className="text-forest-200 mb-8">
@@ -62,15 +58,15 @@ export default function Footer() {
                   type="email"
                   placeholder="Enter your email"
                   className="flex-1 px-5 py-3.5 rounded-full bg-forest-800/50 border border-forest-700 
-                             text-white placeholder-forest-400 focus:outline-none focus:border-sage-400
+                             text-white placeholder-forest-400 focus:outline-none focus:border-accent-400
                              transition-colors"
                 />
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="px-8 py-3.5 bg-gradient-to-r from-warm-700 to-warm-600 rounded-full 
-                             font-semibold text-white shadow-lg shadow-warm-800/30 hover:shadow-xl
+                  className="px-8 py-3.5 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full 
+                             font-semibold text-white shadow-lg shadow-accent-500/30 hover:shadow-xl
                              transition-shadow whitespace-nowrap"
                 >
                   Subscribe
@@ -90,35 +86,24 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-1"
           >
-            <Link href="/" className="inline-flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sage-400 to-sage-500 
-                              flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <span className="font-display text-lg font-bold text-white">Project</span>
-                <span className="font-display text-lg font-bold text-warm-400 ml-1">Bright Beginnings</span>
-              </div>
+            <Link href="/" className="inline-block mb-6">
+              <span className="text-xl font-bold text-white">project </span>
+              <span className="text-xl font-bold text-accent-400">bright beginnings</span>
             </Link>
             <p className="text-forest-200 text-sm leading-relaxed mb-6">
               Our mission is to provide foundational tools that educate students on the importance of 
               financial education and make financial literacy accessible to all.
             </p>
-            <div className="flex gap-3">
-              {footerLinks.social.map((social) => (
-                <motion.a
-                  key={social.name}
-                  href={social.href}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-full bg-forest-800 hover:bg-forest-700 
-                             flex items-center justify-center transition-colors"
-                  aria-label={social.name}
-                >
-                  <social.icon className="w-4 h-4" />
-                </motion.a>
-              ))}
-            </div>
+            <a
+              href={DONATE_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-500 hover:bg-accent-600 
+                         rounded-full font-semibold text-white transition-colors"
+            >
+              <Heart className="w-4 h-4" />
+              Donate
+            </a>
           </motion.div>
 
           {/* Navigation */}
@@ -186,7 +171,7 @@ export default function Footer() {
                     href={item.href}
                     className="flex items-start gap-3 text-forest-200 hover:text-white transition-colors group"
                   >
-                    <item.icon className="w-5 h-5 mt-0.5 text-sage-400 group-hover:text-sage-300 transition-colors" />
+                    <item.icon className="w-5 h-5 mt-0.5 text-accent-400 group-hover:text-accent-300 transition-colors" />
                     <span className="text-sm">{item.text}</span>
                   </a>
                 </li>
@@ -207,4 +192,3 @@ export default function Footer() {
     </footer>
   )
 }
-

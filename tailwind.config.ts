@@ -9,57 +9,61 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary brand colors
+        // Primary brand colors - Green
         'forest': {
-          50: '#f0f7ef',
-          100: '#dcebda',
-          200: '#bcd8b8',
-          300: '#93be8d',
-          400: '#6ba063',
-          500: '#4d8344',
-          600: '#3b6835',
-          700: '#2d5a27',
-          800: '#274622',
-          900: '#213b1d',
-          950: '#0f200e',
+          50: '#f0f9f0',
+          100: '#dcf0dc',
+          200: '#bbe2bb',
+          300: '#8ecd8e',
+          400: '#5fb35f',
+          500: '#3d9a3d',
+          600: '#2d7a2d',
+          700: '#266326',
+          800: '#224f22',
+          900: '#1d421d',
+          950: '#0d230d',
         },
-        'sage': {
-          50: '#f4f9f4',
-          100: '#e6f2e6',
-          200: '#cee5ce',
-          300: '#a7d0a7',
-          400: '#8fbc8f',
-          500: '#5a9a5a',
-          600: '#467c46',
-          700: '#3a633a',
-          800: '#325032',
-          900: '#2a422a',
-          950: '#142314',
+        // Orange accent
+        'accent': {
+          50: '#fff8ed',
+          100: '#ffefd4',
+          200: '#ffdba8',
+          300: '#ffc170',
+          400: '#ff9c37',
+          500: '#ff8110',
+          600: '#f06506',
+          700: '#c74b07',
+          800: '#9e3b0e',
+          900: '#7f330f',
+          950: '#451705',
         },
-        'warm': {
-          50: '#fdfbf7',
-          100: '#faf6ed',
-          200: '#f5edd9',
-          300: '#ecdbba',
-          400: '#e0c494',
-          500: '#d4a86a',
-          600: '#c48d4a',
-          700: '#a3713d',
-          800: '#8b6914',
-          900: '#6b4f12',
-          950: '#3a2a09',
+        // Warm brown for hover states
+        'brown': {
+          50: '#fdf8f6',
+          100: '#f2e8e5',
+          200: '#e8d6cf',
+          300: '#d9bfb2',
+          400: '#c69f8c',
+          500: '#b5846b',
+          600: '#a46e56',
+          700: '#8b5a45',
+          800: '#72493a',
+          900: '#5d3d31',
+          950: '#321e18',
         },
-        'cream': '#FAF8F5',
-        'ivory': '#FFFEF9',
+        'cream': '#fefdfb',
       },
       fontFamily: {
-        'display': ['var(--font-playfair)', 'Georgia', 'serif'],
-        'sans': ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+        'display': ['var(--font-poppins)', 'system-ui', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
         'float-slow': 'float 8s ease-in-out infinite',
         'float-slower': 'float 10s ease-in-out infinite',
+        'float-up': 'float-up 8s ease-in-out infinite',
+        'float-up-slow': 'float-up 12s ease-in-out infinite',
+        'float-up-slower': 'float-up 16s ease-in-out infinite',
         'pulse-soft': 'pulse-soft 4s ease-in-out infinite',
         'gradient': 'gradient 8s ease infinite',
         'slide-up': 'slide-up 0.5s ease-out',
@@ -67,11 +71,18 @@ const config: Config = {
         'fade-in': 'fade-in 0.5s ease-out',
         'scale-in': 'scale-in 0.3s ease-out',
         'shimmer': 'shimmer 2s linear infinite',
+        'particle': 'particle 10s linear infinite',
       },
       keyframes: {
         'float': {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-20px)' },
+        },
+        'float-up': {
+          '0%': { transform: 'translateY(100vh)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { transform: 'translateY(-100vh)', opacity: '0' },
         },
         'pulse-soft': {
           '0%, 100%': { opacity: '1' },
@@ -101,10 +112,12 @@ const config: Config = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-pattern': 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%232d5a27\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+        'particle': {
+          '0%': { transform: 'translateY(0) translateX(0)', opacity: '0' },
+          '10%': { opacity: '0.8' },
+          '90%': { opacity: '0.8' },
+          '100%': { transform: 'translateY(-100vh) translateX(20px)', opacity: '0' },
+        },
       },
     },
   },
@@ -112,4 +125,3 @@ const config: Config = {
 }
 
 export default config
-

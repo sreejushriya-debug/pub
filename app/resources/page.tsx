@@ -1,265 +1,900 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Library, Search, Filter, Download, FileText, Sparkles } from 'lucide-react'
-import FadeIn from '@/components/FadeIn'
-import ResourceCard from '@/components/ResourceCard'
+import { 
+  Library, Download, BookOpen, FileText, Play, ChevronDown, ChevronUp,
+  ExternalLink, Search, Video, ArrowRight, GraduationCap
+} from 'lucide-react'
+import Link from 'next/link'
+import FloatingParticles from '@/components/FloatingParticles'
 
-const categories = [
-  'All Resources',
-  'Worksheets',
-  'Lesson Plans',
-  'Activities',
-  'Picture Books',
-  'Assessments'
+// Video URLs - replace VIDEO_ID with actual YouTube video IDs
+const VIDEO_URLS = {
+  walkthrough: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Replace with actual walkthrough
+  '1.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Replace with actual video
+  '1.3': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '2.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '3.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '3.4': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '3.5': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '4.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  '5.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+}
+
+// All searchable resources
+const allResources = [
+  // Module 1
+  { id: 'm1-kwl', name: 'Module 1 KWL', type: 'worksheet', module: 1 },
+  { id: 'm1-1.1', name: 'Video 1.1: Important Financial Terms', type: 'video', module: 1 },
+  { id: 'm1-w1.1', name: 'Worksheet 1.1: Matching Terms', type: 'worksheet', module: 1 },
+  { id: 'm1-w1.2', name: 'Worksheet 1.2: Fill in the Blanks', type: 'worksheet', module: 1 },
+  { id: 'm1-1.3', name: 'Video 1.3: Making Change', type: 'video', module: 1 },
+  { id: 'm1-w1.3', name: 'Worksheet 1.3: Identifying Coins + Making Change', type: 'worksheet', module: 1 },
+  { id: 'm1-quiz', name: 'Module 1 Quiz', type: 'quiz', module: 1 },
+  // Module 2
+  { id: 'm2-kwl', name: 'Module 2 KWL', type: 'worksheet', module: 2 },
+  { id: 'm2-2.1', name: 'Video 2.1: Healthy Saving and Spending Habits', type: 'video', module: 2 },
+  { id: 'm2-w2.1', name: 'Worksheet 2.1: Matching Terms', type: 'worksheet', module: 2 },
+  { id: 'm2-w2.2', name: 'Worksheet 2.2: Spending Simulation', type: 'worksheet', module: 2 },
+  { id: 'm2-w2.3', name: 'Worksheet 2.3: Creating a Budget', type: 'worksheet', module: 2 },
+  { id: 'm2-w2.4', name: 'Worksheet 2.4: Budgeting Simulation', type: 'worksheet', module: 2 },
+  // Module 3
+  { id: 'm3-kwl', name: 'Module 3 KWL', type: 'worksheet', module: 3 },
+  { id: 'm3-3.1', name: 'Video 3.1: Credit and Debit', type: 'video', module: 3 },
+  { id: 'm3-w3.1', name: 'Worksheet 3.1: Word Scramble', type: 'worksheet', module: 3 },
+  { id: 'm3-w3.2', name: 'Worksheet 3.2: Word Search', type: 'worksheet', module: 3 },
+  { id: 'm3-w3.3', name: 'Worksheet 3.3: Credit Pros and Cons', type: 'worksheet', module: 3 },
+  { id: 'm3-3.4', name: 'Video 3.4: Investing', type: 'video', module: 3 },
+  { id: 'm3-w3.4', name: 'Worksheet 3.4: Identifying Stock Trends', type: 'worksheet', module: 3 },
+  { id: 'm3-3.5', name: 'Video 3.5: Deposits', type: 'video', module: 3 },
+  { id: 'm3-w3.5', name: 'Worksheet 3.5: Writing a Check', type: 'worksheet', module: 3 },
+  // Module 4
+  { id: 'm4-kwl', name: 'Module 4 KWL', type: 'worksheet', module: 4 },
+  { id: 'm4-4.1', name: 'Video 4.1: Creating Your Own Business', type: 'video', module: 4 },
+  { id: 'm4-w4.1', name: 'Worksheet 4.1: Juice Stand', type: 'worksheet', module: 4 },
+  { id: 'm4-w4.2', name: 'Worksheet 4.2: Business Scenarios', type: 'worksheet', module: 4 },
+  { id: 'm4-w4.3', name: 'Worksheet 4.3: Scarcity + Costs', type: 'worksheet', module: 4 },
+  { id: 'm4-w4.4', name: 'Worksheet 4.4: Business Word Search', type: 'worksheet', module: 4 },
+  { id: 'm4-w4.5', name: 'Worksheet 4.5: Revenue, Expenses, and Profit Word Problems', type: 'worksheet', module: 4 },
+  { id: 'm4-w4.6', name: 'Worksheet 4.6: Types of Expenses', type: 'worksheet', module: 4 },
+  // Module 5
+  { id: 'm5-kwl', name: 'Module 5 KWL', type: 'worksheet', module: 5 },
+  { id: 'm5-5.1', name: 'Video 5.1: Taxes', type: 'video', module: 5 },
+  { id: 'm5-w5.2', name: 'Worksheet 5.2: What are Taxes?', type: 'worksheet', module: 5 },
+  { id: 'm5-w5.3', name: 'Worksheet 5.3: Calculating Taxes', type: 'worksheet', module: 5 },
+  // Module 6
+  { id: 'm6-w6.1', name: 'Worksheet 6.1: Review Packet', type: 'worksheet', module: 6 },
+  // Extras
+  { id: 'workbook', name: 'Finance Workbook', type: 'worksheet', module: 0 },
+  { id: 'sofia', name: 'Sofia\'s Smart Savings Picture Book', type: 'worksheet', module: 0 },
+  { id: 'brian', name: 'Panadería de Brian Picture Book', type: 'worksheet', module: 0 },
 ]
 
-const resources = [
+const modules = [
   {
     id: 1,
-    title: 'KWL Worksheet - What I Know, Want to Know, Learned',
-    description: 'A foundational worksheet to help students track their learning progress about finance.',
-    category: 'Worksheets',
-    downloadUrl: '/resources/kwl-worksheet.pdf',
-    fileType: 'PDF'
+    title: 'Financial Basics',
+    learningTarget: 'I can define basic finance terms and apply them to scenarios and make change.',
+    overview: [
+      'Video 1.1: Important Financial Terms',
+      'Worksheet 1.1: Matching Terms',
+      'Worksheet 1.2: Fill in the Blanks',
+      'Video 1.3: Making Change',
+      'Worksheet 1.3: Identifying Coins + Making Change'
+    ]
   },
   {
     id: 2,
-    title: 'Budgeting Basics Lesson Plan',
-    description: 'A comprehensive lesson plan introducing students to the fundamentals of budgeting.',
-    category: 'Lesson Plans',
-    downloadUrl: '/resources/budgeting-lesson.pdf',
-    fileType: 'PDF'
+    title: 'Saving and Spending',
+    learningTarget: 'I can identify and make healthy saving and spending decisions as well as utilize a budget to achieve my financial goals.',
+    overview: [
+      'Video 2.1: Healthy Saving and Spending Habits',
+      'Worksheet 2.1: Matching Terms',
+      'Worksheet 2.2: Spending Simulation',
+      'Worksheet 2.3: Creating a Budget',
+      'Worksheet 2.4: Budgeting Simulation'
+    ]
   },
   {
     id: 3,
-    title: 'Savings Goal Tracker',
-    description: 'Help students set and track their savings goals with this interactive worksheet.',
-    category: 'Worksheets',
-    downloadUrl: '/resources/savings-tracker.pdf',
-    fileType: 'PDF'
+    title: 'All Things Banking',
+    learningTarget: 'I can identify the correct stock trends and I understand investments, credit versus debt, as well as deposits.',
+    overview: [
+      'Video 3.1: Credit and Debit',
+      'Worksheet 3.1: Word Scramble',
+      'Worksheet 3.2: Word Search',
+      'Worksheet 3.3: Credit Pros and Cons',
+      'Video 3.4: Investing',
+      'Worksheet 3.4: Identifying Stock Trends',
+      'Video 3.5: Deposits',
+      'Worksheet 3.5: Writing a Check'
+    ]
   },
   {
     id: 4,
-    title: 'Money Math Activities',
-    description: 'Fun math activities that incorporate real-world money concepts and calculations.',
-    category: 'Activities',
-    downloadUrl: '/resources/money-math.pdf',
-    fileType: 'PDF'
+    title: 'Business',
+    learningTarget: 'I can define terms like revenue, expenses, and profit and I understand how to start a business.',
+    overview: [
+      'Video 4.1: Creating Your Own Business',
+      'Worksheet 4.1: Juice Stand',
+      'Worksheet 4.2: Business Scenarios',
+      'Worksheet 4.3: Scarcity + Costs',
+      'Worksheet 4.4: Business Word Search',
+      'Worksheet 4.5: Profit, Expenses, and Revenue Word Problems',
+      'Worksheet 4.6: Types of Expenses'
+    ]
   },
   {
     id: 5,
-    title: 'The Penny Saves the Day - Picture Book',
-    description: 'An engaging picture book that teaches children about the value of saving money.',
-    category: 'Picture Books',
-    downloadUrl: '/resources/penny-saves.pdf',
-    fileType: 'PDF'
+    title: 'Taxes',
+    learningTarget: 'I can calculate taxes and discounts.',
+    overview: [
+      'Video 5.1: Taxes',
+      'Worksheet 5.2: What are Taxes?',
+      'Worksheet 5.3: Calculating Taxes'
+    ]
   },
   {
     id: 6,
-    title: 'Spending vs Saving Activity',
-    description: 'Interactive activity helping students understand the difference between needs and wants.',
-    category: 'Activities',
-    downloadUrl: '/resources/spending-saving.pdf',
-    fileType: 'PDF'
+    title: 'Summary',
+    learningTarget: 'I can confidently apply the skills learned in previous modules.',
+    overview: [
+      'Worksheet 6.1: Review Packet'
+    ]
   },
-  {
-    id: 7,
-    title: 'Financial Vocabulary Flashcards',
-    description: 'Printable flashcards covering essential financial terms for young learners.',
-    category: 'Worksheets',
-    downloadUrl: '/resources/vocab-flashcards.pdf',
-    fileType: 'PDF'
-  },
-  {
-    id: 8,
-    title: 'Pre/Post Assessment Quiz',
-    description: 'Measure student progress with this before-and-after financial literacy assessment.',
-    category: 'Assessments',
-    downloadUrl: '/resources/assessment-quiz.pdf',
-    fileType: 'PDF'
-  },
-  {
-    id: 9,
-    title: 'Investment Introduction Lesson',
-    description: 'Age-appropriate lesson introducing the concept of investing and growing money.',
-    category: 'Lesson Plans',
-    downloadUrl: '/resources/investment-lesson.pdf',
-    fileType: 'PDF'
-  },
-  {
-    id: 10,
-    title: 'Earning Money Worksheet',
-    description: 'Explore different ways to earn money through jobs, chores, and entrepreneurship.',
-    category: 'Worksheets',
-    downloadUrl: '/resources/earning-money.pdf',
-    fileType: 'PDF'
-  },
-  {
-    id: 11,
-    title: 'Banking Basics Picture Book',
-    description: 'Colorful picture book explaining how banks work and why they\'re important.',
-    category: 'Picture Books',
-    downloadUrl: '/resources/banking-basics.pdf',
-    fileType: 'PDF'
-  },
-  {
-    id: 12,
-    title: 'Classroom Economy Setup Guide',
-    description: 'Complete guide to setting up a classroom economy to teach financial concepts.',
-    category: 'Lesson Plans',
-    downloadUrl: '/resources/classroom-economy.pdf',
-    fileType: 'PDF'
-  }
 ]
 
-export default function ResourcesPage() {
-  const [selectedCategory, setSelectedCategory] = useState('All Resources')
-  const [searchQuery, setSearchQuery] = useState('')
+function ResourceSearch({ searchQuery, setSearchQuery }: { searchQuery: string; setSearchQuery: (q: string) => void }) {
+  const filteredResources = useMemo(() => {
+    if (!searchQuery.trim()) return []
+    return allResources.filter(r => 
+      r.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [searchQuery])
 
-  const filteredResources = resources.filter(resource => {
-    const matchesCategory = selectedCategory === 'All Resources' || resource.category === selectedCategory
-    const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          resource.description.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
+  return (
+    <div className="relative">
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search for worksheets, videos, or quizzes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 bg-white
+                     focus:outline-none focus:border-forest-400 focus:ring-2 
+                     focus:ring-forest-100 transition-all text-lg"
+        />
+      </div>
+      
+      <AnimatePresence>
+        {filteredResources.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl 
+                       border border-gray-100 max-h-80 overflow-y-auto z-50"
+          >
+            {filteredResources.map((resource) => (
+              <div
+                key={resource.id}
+                className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-50 last:border-0"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center
+                    ${resource.type === 'video' ? 'bg-accent-100 text-accent-600' : 
+                      resource.type === 'quiz' ? 'bg-purple-100 text-purple-600' : 
+                      'bg-forest-100 text-forest-600'}`}>
+                    {resource.type === 'video' ? <Play className="w-5 h-5" /> : 
+                     resource.type === 'quiz' ? <ExternalLink className="w-5 h-5" /> : 
+                     <FileText className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">{resource.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {resource.module === 0 ? 'Extra Resource' : `Module ${resource.module}`} • {resource.type}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function ModuleSection({ module }: { module: typeof modules[0] }) {
+  return (
+    <div id={`module-${module.id}`} className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
+      {/* Module Header */}
+      <div className="bg-gradient-to-r from-forest-600 to-forest-500 p-6 md:p-8">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
+            {module.id}
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white">Module {module.id}: {module.title}</h3>
+            <p className="text-white/80 mt-1">Learning Target</p>
+          </div>
+        </div>
+        <div className="mt-4 bg-white/10 rounded-xl p-4">
+          <p className="text-white">{module.learningTarget}</p>
+        </div>
+      </div>
+
+      {/* KWL Section */}
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-forest-100 flex items-center justify-center flex-shrink-0">
+            <FileText className="w-6 h-6 text-forest-600" />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-gray-900">Module {module.id} KWL</h4>
+            <a href={`/resources/module${module.id}-kwl.pdf`} download 
+               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-forest-50 text-forest-700 
+                          rounded-lg hover:bg-forest-100 transition-colors text-sm font-medium">
+              <Download className="w-4 h-4" /> Download Worksheet
+            </a>
+            <div className="mt-4 bg-gray-50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">How do I use it?</p>
+              <p className="text-sm text-gray-600">
+                Students fill out the "Know" and "Want to Know" portions of the chart before starting 
+                the module, and then complete the "Learned" portion after finishing the module.
+              </p>
+              <p className="text-sm font-semibold text-gray-700 mt-4 mb-2">What's the reasoning behind it?</p>
+              <p className="text-sm text-gray-600">
+                KWLs help students visualize the learning process and organize the information they're learning. 
+                In addition, these charts help students develop effective notetaking methods at a young age. 
+                KWLs also allow teachers to identify student needs and give them the opportunity to deliver 
+                lessons specifically catered to learning gaps.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Module Content based on ID */}
+      {module.id === 1 && <Module1Content />}
+      {module.id === 2 && <Module2Content />}
+      {module.id === 3 && <Module3Content />}
+      {module.id === 4 && <Module4Content />}
+      {module.id === 5 && <Module5Content />}
+      {module.id === 6 && <Module6Content />}
+    </div>
+  )
+}
+
+function VideoSection({ id, title, activities }: { id: string; title: string; activities?: string[] }) {
+  return (
+    <div className="p-6 md:p-8 border-b border-gray-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 rounded-xl bg-accent-100 flex items-center justify-center">
+          <Play className="w-6 h-6 text-accent-600" />
+        </div>
+        <h4 className="text-lg font-bold text-gray-900">Video {id}: {title}</h4>
+      </div>
+      <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4">
+        <iframe 
+          src={VIDEO_URLS[id as keyof typeof VIDEO_URLS] || VIDEO_URLS['1.1']}
+          className="w-full h-full"
+          allowFullScreen
+          title={title}
+        />
+      </div>
+      {activities && activities.length > 0 && (
+        <div className="bg-accent-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-accent-800 mb-2">Class Activities:</p>
+          <ul className="space-y-2">
+            {activities.map((activity, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-500 mt-2 flex-shrink-0" />
+                {activity}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function WorksheetSection({ id, title, howToUse }: { id: string; title: string; howToUse: string }) {
+  return (
+    <div className="p-6 md:p-8 border-b border-gray-100 last:border-0">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-xl bg-forest-100 flex items-center justify-center flex-shrink-0">
+          <FileText className="w-6 h-6 text-forest-600" />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-lg font-bold text-gray-900">{id} {title}</h4>
+          <a href={`/resources/worksheet-${id.replace('.', '-')}.pdf`} download 
+             className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-forest-50 text-forest-700 
+                        rounded-lg hover:bg-forest-100 transition-colors text-sm font-medium">
+            <Download className="w-4 h-4" /> Download Worksheet
+          </a>
+          <div className="mt-4 bg-gray-50 rounded-xl p-4">
+            <p className="text-sm font-semibold text-gray-700 mb-2">How do I use it?</p>
+            <p className="text-sm text-gray-600">{howToUse}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Module Content Components
+function Module1Content() {
+  return (
+    <>
+      <VideoSection 
+        id="1.1" 
+        title="Important Financial Terms"
+        activities={[
+          'Write down vocabulary words covered in Worksheet 1.1 and have a class discussion about the definitions before and after watching the video.'
+        ]}
+      />
+      <WorksheetSection 
+        id="1.1" 
+        title="Matching Terms"
+        howToUse="Have students write the letter of the definition in the blank space next to the matching term."
+      />
+      <WorksheetSection 
+        id="1.2" 
+        title="Fill in the Blank"
+        howToUse="Have students write the correct vocabulary word that matches the sentence in the blank space."
+      />
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <a href="#" target="_blank" rel="noopener noreferrer"
+           className="inline-flex items-center gap-2 px-6 py-3 bg-purple-100 text-purple-700 
+                      rounded-xl hover:bg-purple-200 transition-colors font-medium">
+          <ExternalLink className="w-5 h-5" /> Open Quiz
+        </a>
+      </div>
+      <VideoSection 
+        id="1.3" 
+        title="Making Change"
+        activities={[
+          'Lay out a variety of different coins and ask students to sort them into groups.',
+          'Teach students the coin song and have a class sing-along.',
+          'Give students values and ask them to provide coins that total the given value.'
+        ]}
+      />
+      <WorksheetSection 
+        id="1.3" 
+        title="Identifying Coins + Making Change"
+        howToUse="Have students write the name of the coin next to the image. Then have them add up the values of the coins shown. Fake coins/tokens are helpful, but not necessary for this worksheet."
+      />
+    </>
+  )
+}
+
+function Module2Content() {
+  return (
+    <>
+      <VideoSection 
+        id="2.1" 
+        title="Healthy Saving and Spending Habits"
+        activities={[
+          'Write down the vocabulary from Worksheet 2.2 and have a class discussion about the definitions before and after watching the video.',
+          'Ask students what items they would want to save up for.'
+        ]}
+      />
+      <WorksheetSection 
+        id="2.1" 
+        title="Matching Terms"
+        howToUse="Have students write the letter of the definition in the blank space next to the matching term."
+      />
+      <WorksheetSection 
+        id="2.2" 
+        title="Spending Simulations"
+        howToUse="Have students read the scenario, evaluate if the character has enough savings to spend on the item they want, and respond to the given question. Guide students through a class discussion of listing items they want to save for and the prices in order to make a 'class budget'."
+      />
+      <WorksheetSection 
+        id="2.3" 
+        title="Creating a Budget"
+        howToUse="Have students list out items they want. Then help them use the internet to find approximate prices. Encourage students to discuss ways to make money to save up for the items they've listed."
+      />
+      <WorksheetSection 
+        id="2.4" 
+        title="Budget Simulations"
+        howToUse="Have students choose a lifestyle plan. Then guide them through an appropriate budget that accounts for both their incomes and expenses. Encourage students to explain why they were unable to choose certain items due to budget restrictions."
+      />
+    </>
+  )
+}
+
+function Module3Content() {
+  return (
+    <>
+      <VideoSection 
+        id="3.1" 
+        title="Credit and Debit"
+        activities={[
+          'Write down vocabulary from Worksheet 3.1 and have a class discussion about the definitions before and after watching the video.',
+          'Encourage students to explore reasons why someone would choose credit instead of debit and vice versa.'
+        ]}
+      />
+      <WorksheetSection 
+        id="3.1" 
+        title="Word Scramble"
+        howToUse="Have students unscramble the words and write the correct spelling in the blank space."
+      />
+      <WorksheetSection 
+        id="3.2" 
+        title="Word Search"
+        howToUse="Have students find the words from the bank in the word search."
+      />
+      <WorksheetSection 
+        id="3.3" 
+        title="Credit Pros and Cons"
+        howToUse="Have students define the words given based on Video 3.1. Encourage an in-class discussion about the benefits and negatives of using credit to pay for purchases and ask students to list down the main points in their chart."
+      />
+      <VideoSection 
+        id="3.4" 
+        title="Investing"
+        activities={[
+          'List the different kinds of investing on a board and ask students to help come up with characteristics.'
+        ]}
+      />
+      <WorksheetSection 
+        id="3.4" 
+        title="Identifying Stock Trends"
+        howToUse="Have students analyze the graph shown in the worksheet and identify the trend. For students newer to this concept, draw sample graphs on the board and lead a discussion about understanding trends on graphs."
+      />
+      <VideoSection id="3.5" title="Deposits" />
+      <WorksheetSection 
+        id="3.5" 
+        title="Writing a Check"
+        howToUse="Draw a model of a check. Have students follow along with their diagrams as you explain the 'anatomy'. Then have them follow the directions to write their own checks."
+      />
+    </>
+  )
+}
+
+function Module4Content() {
+  return (
+    <>
+      <VideoSection 
+        id="4.1" 
+        title="Creating Your Own Business"
+        activities={[
+          'Help students brainstorm ideas for potential businesses. Go over terms like revenue and expenses.'
+        ]}
+      />
+      <WorksheetSection 
+        id="4.1" 
+        title="Juice Stand"
+        howToUse="Have students decorate their Juice Stand, then make important decisions about their product as well as the type of equipment they use. Make sure the math adds up when grading."
+      />
+      <WorksheetSection 
+        id="4.2" 
+        title="Business Scenarios"
+        howToUse="Brainstorm business ideas with students, have them pick their favorite one, and elaborate on it with this worksheet. Encourage 3-4 sentence answers."
+      />
+      <WorksheetSection 
+        id="4.3" 
+        title="Scarcity + Costs"
+        howToUse="Define the terms scarce and available to students and explain what it does to the cost of the product. Have students read the given scenarios and figure out how the availability of a material affects various other factors."
+      />
+      <WorksheetSection 
+        id="4.4" 
+        title="Business Word Search"
+        howToUse="Have students find the words from the bank in the word search."
+      />
+      <WorksheetSection 
+        id="4.5" 
+        title="Revenue, Expenses, and Profit Word Problems"
+        howToUse='Have students read the given scenarios and use the "revenue-expenses=profit" equation in order to find the profit.'
+      />
+      <WorksheetSection 
+        id="4.6" 
+        title="Types of Expenses"
+        howToUse="Ask students through an in-class discussion to list characteristics of the four types of expenses. Then have students decide which type the provided scenarios are."
+      />
+    </>
+  )
+}
+
+function Module5Content() {
+  return (
+    <>
+      <VideoSection 
+        id="5.1" 
+        title="Taxes"
+        activities={[
+          'Answer the multiple choice questions from Worksheet 5.2 and check your answers with a partner.',
+          'The second worksheet is calculating taxes, have your teacher explain the process to you.'
+        ]}
+      />
+      <WorksheetSection 
+        id="5.2" 
+        title="What are Taxes?"
+        howToUse="Have students circle the best answer choice."
+      />
+      <WorksheetSection 
+        id="5.3" 
+        title="Calculating Taxes"
+        howToUse="Have students do the math by hand or use a calculator to figure out the tax of each item."
+      />
+    </>
+  )
+}
+
+function Module6Content() {
+  return (
+    <div className="p-6 md:p-8">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-xl bg-forest-100 flex items-center justify-center flex-shrink-0">
+          <FileText className="w-6 h-6 text-forest-600" />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-lg font-bold text-gray-900">6.1 Review Packet</h4>
+          <a href="/resources/review-packet.pdf" download 
+             className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-forest-50 text-forest-700 
+                        rounded-lg hover:bg-forest-100 transition-colors text-sm font-medium">
+            <Download className="w-4 h-4" /> Download Worksheet
+          </a>
+          <div className="mt-4 bg-gray-50 rounded-xl p-4">
+            <p className="text-sm font-semibold text-gray-700 mb-2">How do I use it?</p>
+            <p className="text-sm text-gray-600">
+              Have students follow the instructions and complete the activities of each module accordingly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function ResourcesPage() {
+  const [expandedModule, setExpandedModule] = useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   return (
     <div className="pt-24">
       {/* Hero Section */}
-      <section className="section-padding bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-hero-pattern opacity-30" />
+      <section className="py-24 bg-gradient-hero relative overflow-hidden">
+        <FloatingParticles count={20} />
         
         <div className="container-custom relative">
-          <FadeIn className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-100 
-                            text-forest-700 text-sm font-medium mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm
+                            text-white text-sm font-medium mb-6 border border-white/30">
               <Library className="w-4 h-4" />
               <span>Resource Library</span>
             </div>
             
-            <h1 className="heading-xl text-forest-900 mb-6">
-              Free Resources for{' '}
-              <span className="text-gradient">Educators</span>
+            <h1 className="heading-xl text-white mb-6">
+              Resource Library
             </h1>
             
-            <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              Explore our comprehensive library of free worksheets, lesson plans, activities, 
-              and more. All designed to make teaching financial literacy easy and engaging.
+            <p className="text-xl text-white/90 leading-relaxed">
+              We've curated everything you'll need to seamlessly integrate financial literacy into your curriculum.
             </p>
-
-            {/* Stats */}
-            <div className="flex items-center justify-center gap-8 flex-wrap">
-              <div className="text-center">
-                <div className="text-3xl font-display font-bold text-forest-700">140+</div>
-                <div className="text-sm text-gray-500">Free Resources</div>
-              </div>
-              <div className="w-px h-12 bg-gray-200" />
-              <div className="text-center">
-                <div className="text-3xl font-display font-bold text-forest-700">95%</div>
-                <div className="text-sm text-gray-500">Teacher Satisfaction</div>
-              </div>
-              <div className="w-px h-12 bg-gray-200" />
-              <div className="text-center">
-                <div className="text-3xl font-display font-bold text-warm-700">100%</div>
-                <div className="text-sm text-gray-500">Free Forever</div>
-              </div>
-            </div>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
 
-      {/* Resources Section */}
-      <section className="section-padding bg-white">
+      {/* Welcome & Video Walkthrough */}
+      <section className="py-16 bg-white">
         <div className="container-custom">
-          {/* Search and Filter */}
-          <FadeIn className="mb-12">
-            <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
-              {/* Search */}
-              <div className="relative w-full lg:w-96">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search resources..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
-                             focus:outline-none focus:border-forest-400 focus:ring-2 
-                             focus:ring-forest-100 transition-all"
-                />
-              </div>
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="heading-md text-gray-900 mb-4">Welcome</h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Financial literacy is one of the hardest subjects to teach - and it's because of the lack of 
+                resources available to educators. Content is hard to find and often pricey. We at Project 
+                Bright Beginnings strive to fix this.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                Here we give you the best online videos, worksheets, and quizzes, organized in an incredibly 
+                user-friendly curriculum, complete with modules and learning targets.
+              </p>
 
-              {/* Category filters */}
-              <div className="flex flex-wrap gap-2 justify-center">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all
-                      ${selectedCategory === category 
-                        ? 'bg-forest-600 text-white shadow-lg shadow-forest-200' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                  >
-                    {category}
-                  </button>
-                ))}
+              {/* Video Walkthrough */}
+              <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Video className="w-8 h-8 text-forest-600" />
+                  <h3 className="text-xl font-bold text-gray-900">Website Walkthrough</h3>
+                </div>
+                <p className="text-gray-600 mb-6">
+                  New to our Resource Library? Watch this quick video to learn how to navigate and make the most of our resources.
+                </p>
+                <div className="aspect-video bg-gray-200 rounded-2xl overflow-hidden">
+                  <iframe 
+                    src={VIDEO_URLS.walkthrough}
+                    className="w-full h-full"
+                    allowFullScreen
+                    title="Website Walkthrough"
+                  />
+                </div>
               </div>
-            </div>
-          </FadeIn>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-          {/* Resource Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <AnimatePresence mode="popLayout">
-              {filteredResources.map((resource, idx) => (
-                <motion.div
-                  key={resource.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  layout
-                >
-                  <ResourceCard {...resource} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+      {/* Workbook & Picture Books */}
+      <section className="py-16 bg-gradient-section">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="card"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
+                              flex items-center justify-center mb-5 shadow-lg">
+                <BookOpen className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Finance Workbook</h3>
+              <p className="text-gray-600 mb-6">
+                Our finance workbook is a comprehensive resource designed for elementary school students. 
+                Filled with age-appropriate activities, colorful illustrations, and interactive exercises.
+              </p>
+              <a href="/resources/finance-workbook.pdf" download className="btn-primary gap-2">
+                <Download className="w-4 h-4" />
+                Download Workbook
+              </a>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="card"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 
+                              flex items-center justify-center mb-5 shadow-lg">
+                <BookOpen className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Financial Picture Books</h3>
+              <p className="text-gray-600 mb-6">
+                Educational picture books that introduce financial topics in engaging stories for younger audiences.
+              </p>
+              <div className="flex flex-col gap-3">
+                <a href="/resources/sofias-smart-savings.pdf" download className="btn-secondary gap-2 text-sm py-3">
+                  <Download className="w-4 h-4" />
+                  Download Sofia's Smart Savings
+                </a>
+                <a href="/resources/panaderia-de-brian.pdf" download className="btn-secondary gap-2 text-sm py-3">
+                  <Download className="w-4 h-4" />
+                  Descarga Panadería de Brian
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Curriculum at a Glance */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              Curriculum at a <span className="text-forest-600">Glance</span>
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Here are our units, all in one place! Click on each module to see a quick overview.
+            </p>
+          </motion.div>
+
+          {/* Module Quick Links */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
+            {modules.map((module) => (
+              <motion.button
+                key={module.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
+                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
+                  ${expandedModule === module.id 
+                    ? 'bg-forest-600 text-white shadow-lg' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              >
+                Module {module.id}: {module.title}
+              </motion.button>
+            ))}
           </div>
 
-          {/* No results */}
-          {filteredResources.length === 0 && (
-            <FadeIn className="text-center py-16">
-              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-display font-bold text-gray-600 mb-2">
-                No resources found
-              </h3>
-              <p className="text-gray-500">
-                Try adjusting your search or filter criteria.
-              </p>
-            </FadeIn>
-          )}
+          {/* Expanded Module Overview */}
+          <AnimatePresence>
+            {expandedModule && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="max-w-2xl mx-auto mb-8"
+              >
+                <div className="bg-forest-50 rounded-2xl p-6 border border-forest-100">
+                  <h4 className="font-bold text-forest-800 mb-2">
+                    Module {expandedModule}: {modules.find(m => m.id === expandedModule)?.title}
+                  </h4>
+                  <p className="text-sm text-forest-700 mb-4">
+                    <strong>Learning Target:</strong> {modules.find(m => m.id === expandedModule)?.learningTarget}
+                  </p>
+                  <p className="text-sm font-semibold text-forest-800 mb-2">Overview:</p>
+                  <ul className="text-sm text-forest-700 space-y-1">
+                    {modules.find(m => m.id === expandedModule)?.overview.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-forest-500" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <a href={`#module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-accent-600 font-semibold text-sm hover:underline">
+                    Jump to full module <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-padding bg-cream">
+      {/* Full Curriculum - All Modules Expanded */}
+      <section className="py-16 bg-gradient-section">
         <div className="container-custom">
-          <FadeIn className="max-w-3xl mx-auto text-center">
-            <Sparkles className="w-12 h-12 text-warm-600 mx-auto mb-6" />
-            <h2 className="heading-lg text-forest-900 mb-6">
-              Can't Find What You're Looking For?
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-lg text-gray-900 mb-4">
+              Full <span className="text-accent-500">Curriculum</span>
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              We're always adding new resources. Let us know what you need and we'll 
-              work on creating it for you.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Explore all modules with complete resources, videos, worksheets, and teaching guides.
             </p>
-            <a href="mailto:projectbrightbeginnings@gmail.com" className="btn-primary">
-              Request a Resource
-            </a>
-          </FadeIn>
+          </motion.div>
+
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {modules.map((module) => (
+              <motion.div
+                key={module.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                <ModuleSection module={module} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Resource Search */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto text-center mb-8"
+          >
+            <h2 className="heading-md text-gray-900 mb-4">
+              Search <span className="text-forest-600">Resources</span>
+            </h2>
+            <p className="text-gray-600">
+              Looking for a specific worksheet, video, or quiz? Search our entire library.
+            </p>
+          </motion.div>
+
+          <div className="max-w-2xl mx-auto">
+            <ResourceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          </div>
+        </div>
+      </section>
+
+      {/* Teachers Love Us */}
+      <section className="py-16 bg-gradient-section">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto"
+          >
+            <div className="card text-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Teachers love us!</h3>
+              <blockquote className="text-lg text-gray-600 italic mb-6">
+                "Not only is the website aesthetically pleasing and easy to navigate, but the plethora of 
+                resources available also makes this such a valuable tool for teachers, especially first 
+                year educators who aren't sure where to start finding resources."
+              </blockquote>
+              <div>
+                <p className="font-semibold text-gray-900">Nikki Minich</p>
+                <p className="text-sm text-gray-500">9th grade teacher, Marcus High School</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Financial Foundations CTA */}
+      <section className="py-20 bg-gradient-to-br from-forest-600 to-forest-800 relative overflow-hidden">
+        <FloatingParticles count={15} />
+        
+        <div className="container-custom relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <GraduationCap className="w-14 h-14 text-accent-300 mb-4" />
+                <h2 className="heading-lg text-white mb-4">
+                  Want an interactive course for students?
+                </h2>
+                <p className="text-white/80 leading-relaxed mb-6">
+                  Introducing <strong className="text-accent-300">Financial Foundations</strong> - the FREE online course 
+                  for elementary and middle schoolers that will teach your kids valuable money management skills!
+                </p>
+                <p className="text-white/80 leading-relaxed mb-8">
+                  This interactive course is jam-packed with engaging resources like videos, quizzes, and worksheets 
+                  to keep your children engaged and excited to learn about finances.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link href="/course" className="btn-primary bg-white text-forest-700 hover:bg-gray-100 gap-2">
+                    Learn More <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link href="/course" className="btn-outline-white">
+                    Sign up now!
+                  </Link>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                <h3 className="text-xl font-bold text-white mb-4">Course Highlights:</h3>
+                <ul className="space-y-3">
+                  {[
+                    'Self-paced learning',
+                    'Interactive videos & quizzes',
+                    'Fun worksheets & activities',
+                    'Covers budgeting to investing',
+                    '100% Free - Forever!'
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-white/90">
+                      <span className="w-6 h-6 rounded-full bg-accent-400 flex items-center justify-center text-white text-sm">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
   )
 }
-
