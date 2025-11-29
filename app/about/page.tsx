@@ -3,26 +3,24 @@
 import { motion } from 'framer-motion'
 import { Heart, Target, Users, Lightbulb, ArrowRight, CheckCircle, BookOpen, Globe } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import FloatingParticles from '@/components/FloatingParticles'
 
 const founders = [
   {
     name: 'Shriya Sreeju',
     role: 'Co-Founder',
-    initial: 'S',
-    color: 'from-forest-500 to-forest-600'
+    image: '/founders/shriya.png'
   },
   {
     name: 'Hansika Kantheti',
     role: 'Co-Founder',
-    initial: 'H',
-    color: 'from-accent-500 to-accent-600'
+    image: '/founders/hansika.png'
   },
   {
     name: 'Tanisha Makam',
     role: 'Co-Founder',
-    initial: 'T',
-    color: 'from-forest-400 to-forest-500'
+    image: '/founders/tanisha.png'
   }
 ]
 
@@ -122,23 +120,31 @@ export default function AboutPage() {
               >
                 <motion.div
                   whileHover={{ y: -10, scale: 1.02 }}
-                  className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+                  className="text-center"
                 >
-                  {/* Placeholder for photo - gradient background with initial */}
-                  <div className={`h-48 bg-gradient-to-br ${founder.color} flex items-center justify-center`}>
-                    <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center
-                                    text-white text-4xl font-bold border-4 border-white/30">
-                      {founder.initial}
+                  {/* Founder Photo with matching background */}
+                  <div className="relative mx-auto mb-6 w-56 h-56 md:w-64 md:h-64">
+                    {/* Background circle to match image backgrounds */}
+                    <div className="absolute inset-0 rounded-full bg-[#d4e4d4]" />
+                    {/* Green border */}
+                    <div className="absolute inset-0 rounded-full border-[6px] border-forest-600" />
+                    {/* Image container */}
+                    <div className="relative w-full h-full rounded-full overflow-hidden">
+                      <Image
+                        src={founder.image}
+                        alt={founder.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 224px, 256px"
+                      />
                     </div>
                   </div>
-                  <div className="p-6 text-center">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      {founder.name}
-                    </h3>
-                    <p className="text-accent-600 font-medium">
-                      {founder.role}
-                    </p>
-                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    {founder.name}
+                  </h3>
+                  <p className="text-accent-600 font-medium">
+                    {founder.role}
+                  </p>
                 </motion.div>
               </motion.div>
             ))}

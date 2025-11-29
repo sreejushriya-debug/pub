@@ -7,6 +7,7 @@ interface Particle {
   left: string
   delay: number
   duration: number
+  initialBottom: string
 }
 
 export default function FloatingParticles({ count = 20 }: { count?: number }) {
@@ -14,11 +15,14 @@ export default function FloatingParticles({ count = 20 }: { count?: number }) {
 
   useEffect(() => {
     // Generate particles only on client side
+    // Spread particles throughout the section initially for continuity
     const newParticles = Array.from({ length: count }, (_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
-      delay: Math.random() * 10,
-      duration: 10 + Math.random() * 10,
+      delay: 0, // No delay - start immediately
+      duration: 6 + Math.random() * 6,
+      // Start particles at different heights (0-100% of the container)
+      initialBottom: `${Math.random() * 100}%`,
     }))
     setParticles(newParticles)
   }, [count])
@@ -31,7 +35,8 @@ export default function FloatingParticles({ count = 20 }: { count?: number }) {
           className="particle"
           style={{
             left: particle.left,
-            animationDelay: `${particle.delay}s`,
+            bottom: particle.initialBottom,
+            animationDelay: `-${Math.random() * particle.duration}s`, // Negative delay = already in progress
             animationDuration: `${particle.duration}s`,
           }}
         />

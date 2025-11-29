@@ -183,17 +183,11 @@
 @keyframes floatUp {
   0% {
     transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-  5% {
-    opacity: 0.6;
-  }
-  95% {
     opacity: 0.6;
   }
   100% {
-    transform: translateY(-100vh) translateX(20px);
-    opacity: 0;
+    transform: translateY(-120vh) translateX(20px);
+    opacity: 0.6;
   }
 }
 
@@ -203,7 +197,7 @@
   height: 6px;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 50%;
-  bottom: 0;
   animation: floatUp linear infinite;
   pointer-events: none;
+  will-change: transform;
 }

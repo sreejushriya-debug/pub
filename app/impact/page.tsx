@@ -4,8 +4,32 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, Users, Globe, BookOpen, Heart, ArrowRight, Mail, Award, Calendar, Video, School } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import AnimatedCounter from '@/components/AnimatedCounter'
 import FloatingParticles from '@/components/FloatingParticles'
+import ImageCarousel from '@/components/ImageCarousel'
+
+// Workshop images
+const workshopImages = [
+  '/impact/workshop1.png',
+  '/impact/workshop2.png',
+  '/impact/workshop3.png',
+  '/impact/workshop4.png',
+  '/impact/workshop5.png',
+  '/impact/workshop6.png',
+  '/impact/workshop7.png',
+  '/impact/workshop8.png',
+]
+
+// Surya event images
+const suryaImages = [
+  '/impact/surya1.png',
+  '/impact/surya2.png',
+  '/impact/surya3.png',
+  '/impact/surya4.png',
+  '/impact/surya5.png',
+  '/impact/surya6.png',
+]
 
 const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
 
@@ -54,7 +78,7 @@ function Countdown({ targetDate }: { targetDate: Date }) {
 }
 
 export default function ImpactPage() {
-  const nextShipmentDate = new Date('2025-03-01T00:00:00')
+  const nextShipmentDate = new Date('2026-02-19T00:00:00')
 
   return (
     <div className="pt-24">
@@ -96,7 +120,7 @@ export default function ImpactPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <div className="text-center mb-12">
               <Globe className="w-14 h-14 text-forest-600 mx-auto mb-4" />
@@ -105,32 +129,52 @@ export default function ImpactPage() {
               </h2>
             </div>
             
-            <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-8 md:p-12">
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                Our resources have been reviewed by the Departments of Education of all <strong>50 states</strong> and 
-                are approved by <strong>Jump$tart Clearinghouse</strong> to fit the <strong>National Standards of Personal Finance</strong>.
-              </p>
-              <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                Through partnership with local and global nonprofits, we facilitated the distribution of 
-                <strong className="text-forest-600"> 925 copies of our workbook</strong> to Title-1 schools in America 
-                and English-medium schools in <strong>Tanzania, Botswana, and India</strong>.
-              </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Image */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="rounded-3xl overflow-hidden shadow-2xl"
+              >
+                <Image
+                  src="/impact/bookdistribution.png"
+                  alt="Students with financial literacy workbooks"
+                  width={600}
+                  height={800}
+                  className="w-full h-auto object-contain"
+                />
+              </motion.div>
 
-              {/* Countdown */}
-              <div className="bg-white rounded-2xl p-8 text-center">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Our next shipment is in:</h3>
-                <div className="my-6">
-                  <Countdown targetDate={nextShipmentDate} />
+              {/* Content */}
+              <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-8">
+                <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                  Our resources have been reviewed by the Departments of Education of all <strong>50 states</strong> and 
+                  are approved by <strong>Jump$tart Clearinghouse</strong> to fit the <strong>National Standards of Personal Finance</strong>.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                  Through partnership with local and global nonprofits, we facilitated the distribution of 
+                  <strong className="text-forest-600"> 925 copies of our workbook</strong> to Title-1 schools in America 
+                  and English-medium schools in <strong>Tanzania, Botswana, and India</strong>.
+                </p>
+
+                {/* Countdown */}
+                <div className="bg-white rounded-2xl p-6 text-center">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Our next shipment is in:</h3>
+                  <div className="my-4">
+                    <Countdown targetDate={nextShipmentDate} />
+                  </div>
+                  <a 
+                    href={DONATE_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary gap-2"
+                  >
+                    <Heart className="w-4 h-4" />
+                    Donate Now!
+                  </a>
                 </div>
-                <a 
-                  href={DONATE_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary gap-2"
-                >
-                  <Heart className="w-4 h-4" />
-                  Donate Now!
-                </a>
               </div>
             </div>
           </motion.div>
@@ -145,7 +189,7 @@ export default function ImpactPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
@@ -159,6 +203,16 @@ export default function ImpactPage() {
                   hosted on Zoom, we utilized a variety of digital games like Blooket as well as the breakout 
                   room feature to test the students' understanding of the content in a fun and engaging way.
                 </p>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-white">
+                    <div className="text-4xl font-bold text-forest-600 mb-2">7</div>
+                    <p className="text-gray-600 text-sm">Webinars Hosted</p>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-white">
+                    <div className="text-4xl font-bold text-accent-500 mb-2">250+</div>
+                    <p className="text-gray-600 text-sm">Total Participants</p>
+                  </motion.div>
+                </div>
                 <div className="bg-accent-50 rounded-xl p-6 border border-accent-100">
                   <p className="text-gray-700">
                     <strong>Want a webinar for your classroom?</strong>
@@ -171,16 +225,21 @@ export default function ImpactPage() {
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-white">
-                  <div className="text-4xl font-bold text-forest-600 mb-2">7</div>
-                  <p className="text-gray-600 text-sm">Webinars Hosted</p>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-white">
-                  <div className="text-4xl font-bold text-accent-500 mb-2">250+</div>
-                  <p className="text-gray-600 text-sm">Total Participants</p>
-                </motion.div>
-              </div>
+              {/* Webinar Image */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="relative h-[350px] rounded-3xl overflow-hidden shadow-2xl"
+              >
+                <Image
+                  src="/impact/webinar.png"
+                  alt="Virtual webinar session"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -194,19 +253,34 @@ export default function ImpactPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1 grid grid-cols-2 gap-4">
-                <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-forest-50">
-                  <div className="text-4xl font-bold text-forest-600 mb-2">300+</div>
-                  <p className="text-gray-600 text-sm">Students Reached</p>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-forest-50">
-                  <div className="text-4xl font-bold text-forest-600 mb-2">10</div>
-                  <p className="text-gray-600 text-sm">Elementary Schools</p>
-                </motion.div>
-              </div>
+              {/* Workshop Carousel */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="order-2 lg:order-1"
+              >
+                <ImageCarousel 
+                  images={workshopImages} 
+                  interval={3500}
+                  className="h-[350px] shadow-2xl"
+                />
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-forest-50">
+                    <div className="text-4xl font-bold text-forest-600 mb-2">300+</div>
+                    <p className="text-gray-600 text-sm">Students Reached</p>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} className="card text-center bg-forest-50">
+                    <div className="text-4xl font-bold text-forest-600 mb-2">10</div>
+                    <p className="text-gray-600 text-sm">Elementary Schools</p>
+                  </motion.div>
+                </div>
+              </motion.div>
+              
               <div className="order-1 lg:order-2">
                 <School className="w-14 h-14 text-forest-600 mb-4" />
                 <h2 className="heading-lg text-gray-900 mb-4">
@@ -240,7 +314,7 @@ export default function ImpactPage() {
             <h2 className="heading-lg text-white mb-4">Fundraising</h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
             {/* Events */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -296,6 +370,22 @@ export default function ImpactPage() {
               </ul>
             </motion.div>
           </div>
+
+          {/* Surya Event Carousel */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="max-w-4xl mx-auto"
+          >
+            <h3 className="text-xl font-bold text-white text-center mb-6">Surya Cultural Showcase Highlights</h3>
+            <ImageCarousel 
+              images={suryaImages} 
+              interval={4000}
+              className="h-[400px] shadow-2xl"
+            />
+          </motion.div>
         </div>
       </section>
 
@@ -315,12 +405,13 @@ export default function ImpactPage() {
             <div className="w-16 h-1 bg-accent-500 mx-auto rounded-full" />
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               { value: 925, label: 'Workbooks Distributed', suffix: '+' },
               { value: 300, label: 'Students in Workshops', suffix: '+' },
               { value: 250, label: 'Webinar Participants', suffix: '+' },
               { value: 6159, label: 'Raised at Events', prefix: '$' },
+              { value: 16000, label: 'Resource Downloads', suffix: '+' },
             ].map((stat, idx) => (
               <motion.div
                 key={stat.label}
