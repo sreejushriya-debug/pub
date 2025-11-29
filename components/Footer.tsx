@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Heart, ArrowUpRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Heart, ArrowUpRight, Loader2, CheckCircle2 } from 'lucide-react'
 
 const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
 const footerLinks = {
   navigation: [
@@ -28,6 +30,46 @@ const contactInfo = [
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const [email, setEmail] = useState('')
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'Newsletter Signup',
+        }),
+      })
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        setTimeout(() => {
+          setIsSubmitted(false)
+          setEmail('')
+        }, 3000)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <footer className="relative bg-forest-900 text-white overflow-hidden">
@@ -53,10 +95,13 @@ export default function Footer() {
               <p className="text-forest-200 mb-8">
                 Subscribe to our newsletter for the latest resources, tips, and updates on financial literacy education.
               </p>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
+                  required
                   className="flex-1 px-5 py-3.5 rounded-full bg-forest-800/50 border border-forest-700 
                              text-white placeholder-forest-400 focus:outline-none focus:border-accent-400
                              transition-colors"
@@ -65,13 +110,30 @@ export default function Footer() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
+                  disabled={!email || isLoading}
                   className="px-8 py-3.5 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full 
                              font-semibold text-white shadow-lg shadow-accent-500/30 hover:shadow-xl
-                             transition-shadow whitespace-nowrap"
+                             transition-shadow whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed
+                             flex items-center justify-center gap-2"
                 >
-                  Subscribe
+                  {isSubmitted ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Subscribed!</span>
+                    </>
+                  ) : isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Subscribing...</span>
+                    </>
+                  ) : (
+                    'Subscribe'
+                  )}
                 </motion.button>
               </form>
+              {error && (
+                <p className="text-red-400 text-sm mt-3">{error}</p>
+              )}
             </motion.div>
           </div>
         </div>
