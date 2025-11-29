@@ -770,6 +770,30 @@ export default function ResourcesPage() {
         </div>
       </section>
 
+      {/* Resource Search */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto text-center mb-8"
+          >
+            <h2 className="heading-md text-gray-900 mb-4">
+              Search <span className="text-forest-600">Resources</span>
+            </h2>
+            <p className="text-gray-600">
+              Looking for a specific worksheet, video, or quiz? Search our entire library.
+            </p>
+          </motion.div>
+
+          <div className="max-w-2xl mx-auto">
+            <ResourceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          </div>
+        </div>
+      </section>
+
       {/* Curriculum at a Glance */}
       <section className="py-16 bg-white">
         <div className="container-custom">
@@ -871,30 +895,6 @@ export default function ResourcesPage() {
                 <ModuleSection module={module} />
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Resource Search */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-2xl mx-auto text-center mb-8"
-          >
-            <h2 className="heading-md text-gray-900 mb-4">
-              Search <span className="text-forest-600">Resources</span>
-            </h2>
-            <p className="text-gray-600">
-              Looking for a specific worksheet, video, or quiz? Search our entire library.
-            </p>
-          </motion.div>
-
-          <div className="max-w-2xl mx-auto">
-            <ResourceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           </div>
         </div>
       </section>
