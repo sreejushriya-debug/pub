@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, ArrowRight, BookOpen, Gamepad2, Award, Loader2 } from 'lucide-react'
 
 // FORMSPREE: Replace with your Formspree form ID after creating an account at https://formspree.io
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
 const features = [
   { icon: BookOpen, text: 'Interactive lessons on budgeting, saving, and investing' },
@@ -31,6 +31,7 @@ export default function CourseSignup() {
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
