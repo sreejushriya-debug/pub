@@ -247,7 +247,7 @@ export default function Footer() {
                         justify-between gap-4 text-sm text-forest-300">
           <p>© {currentYear} Project Bright Beginnings. All rights reserved.</p>
           <p className="flex items-center gap-1">
-            Made with <Heart className="w-4 h-4 text-red-400 fill-current" /> for financial literacy
+            Made by Shriya Sreeju with <Heart className="w-4 h-4 text-red-400 fill-current" /> for financial literacy
           </p>
         </div>
       </div>
