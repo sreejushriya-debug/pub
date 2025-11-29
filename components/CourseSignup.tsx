@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, ArrowRight, BookOpen, Gamepad2, Award } from 'lucide-react'
+import { CheckCircle2, ArrowRight, BookOpen, Gamepad2, Award, Loader2 } from 'lucide-react'
+
+// FORMSPREE: Replace with your Formspree form ID after creating an account at https://formspree.io
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
 
 const features = [
   { icon: BookOpen, text: 'Interactive lessons on budgeting, saving, and investing' },
@@ -13,17 +16,44 @@ const features = [
 export default function CourseSignup() {
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [agreeToEmails, setAgreeToEmails] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && agreeToEmails) {
-      setIsSubmitted(true)
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setEmail('')
-        setAgreeToEmails(false)
-      }, 3000)
+    if (!email || !agreeToEmails) return
+
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'Financial Course Signup',
+          agreedToEmails: agreeToEmails,
+        }),
+      })
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        setTimeout(() => {
+          setIsSubmitted(false)
+          setEmail('')
+          setAgreeToEmails(false)
+        }, 3000)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -156,11 +186,15 @@ export default function CourseSignup() {
                     </span>
                   </label>
 
+                  {error && (
+                    <p className="text-red-300 text-sm">{error}</p>
+                  )}
+
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={!agreeToEmails || !email}
+                    disabled={!agreeToEmails || !email || isLoading}
                     className="w-full py-4 px-8 rounded-xl font-semibold text-forest-900 
                                bg-gradient-to-r from-accent-300 to-accent-400 
                                hover:from-accent-200 hover:to-accent-300
@@ -172,6 +206,11 @@ export default function CourseSignup() {
                       <>
                         <CheckCircle2 className="w-5 h-5" />
                         <span>You're signed up!</span>
+                      </>
+                    ) : isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Signing up...</span>
                       </>
                     ) : (
                       <>

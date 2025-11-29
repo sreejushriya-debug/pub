@@ -11,15 +11,110 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'Project Bright Beginnings | Financial Literacy for All',
-  description: 'Our mission is to provide foundational tools that educate students on the importance of financial education and make financial literacy accessible to all.',
-  keywords: ['financial literacy', 'education', 'students', 'finance', 'budgeting', 'saving', 'investing'],
-  authors: [{ name: 'Project Bright Beginnings' }],
-  openGraph: {
-    title: 'Project Bright Beginnings',
-    description: 'Making financial education accessible to all',
-    type: 'website',
+  metadataBase: new URL('https://www.projectbrightbeginnings.org'),
+  title: {
+    default: 'Project Bright Beginnings | Free Financial Literacy Education for Kids',
+    template: '%s | Project Bright Beginnings',
   },
+  description: 'Free financial literacy curriculum, worksheets, and resources for elementary and middle school students. Teaching kids about budgeting, saving, investing, and money management.',
+  keywords: [
+    'financial literacy for kids',
+    'free finance curriculum',
+    'financial education elementary school',
+    'money management for kids',
+    'financial literacy worksheets',
+    'free financial literacy resources',
+    'teaching kids about money',
+    'elementary school finance',
+    'kids budgeting',
+    'children financial education',
+    'project bright beginnings',
+    'financial foundations course',
+    'free finance course for kids',
+    'financial literacy nonprofit',
+    'money skills for children',
+    'youth financial literacy',
+    'K-12 financial education',
+    'personal finance for students',
+    'saving and investing for kids',
+    'financial literacy Texas',
+  ],
+  authors: [{ name: 'Project Bright Beginnings' }],
+  creator: 'Project Bright Beginnings',
+  publisher: 'Project Bright Beginnings',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.projectbrightbeginnings.org',
+    siteName: 'Project Bright Beginnings',
+    title: 'Project Bright Beginnings | Free Financial Literacy Education for Kids',
+    description: 'Free financial literacy curriculum, worksheets, and resources for elementary and middle school students. Teaching kids about budgeting, saving, and investing.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Project Bright Beginnings - Financial Literacy for All',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Project Bright Beginnings | Free Financial Literacy for Kids',
+    description: 'Free financial literacy curriculum and resources for elementary and middle school students.',
+    images: ['/og-image.png'],
+    creator: '@paborightbegin',
+  },
+  verification: {
+    google: 'YOUR_GOOGLE_VERIFICATION_CODE', // Add your Google Search Console verification code
+  },
+  alternates: {
+    canonical: 'https://www.projectbrightbeginnings.org',
+  },
+  category: 'Education',
+}
+
+// JSON-LD Structured Data
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'Project Bright Beginnings',
+  description: 'Free financial literacy education and resources for elementary and middle school students.',
+  url: 'https://www.projectbrightbeginnings.org',
+  logo: 'https://www.projectbrightbeginnings.org/logo.png',
+  email: 'projectbrightbeginnings@gmail.com',
+  telephone: '945-216-0206',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '5707 Moriss Road',
+    addressLocality: 'Flower Mound',
+    addressRegion: 'TX',
+    postalCode: '75028',
+    addressCountry: 'US',
+  },
+  sameAs: [
+    'https://www.instagram.com/projectbrightbeginnings',
+    'https://www.tiktok.com/@projectbrightbeginnings',
+  ],
+  foundingDate: '2022',
+  founders: [
+    { '@type': 'Person', name: 'Shriya Sreeju' },
+    { '@type': 'Person', name: 'Hansika Kantheti' },
+    { '@type': 'Person', name: 'Tanisha Makam' },
+  ],
+  areaServed: 'Worldwide',
+  serviceType: 'Financial Literacy Education',
 }
 
 export default function RootLayout({
@@ -29,6 +124,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={poppins.variable}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="font-sans">
         <Navbar />
         <main className="min-h-screen">
