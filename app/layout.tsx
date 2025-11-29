@@ -83,6 +83,13 @@ export const metadata: Metadata = {
     canonical: 'https://www.projectbrightbeginnings.org',
   },
   category: 'Education',
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-192.png', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
 }
 
 // JSON-LD Structured Data
