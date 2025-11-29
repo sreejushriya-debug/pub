@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Rocket, Calendar, Users, CheckCircle2, ArrowRight, 
-  Lightbulb, Target, PiggyBank, Monitor, Wifi, Star
+  Lightbulb, Target, PiggyBank, Monitor, Wifi, Star, Loader2
 } from 'lucide-react'
 import FloatingParticles from '@/components/FloatingParticles'
+
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
 const bootcampHighlights = [
   {
@@ -49,21 +51,52 @@ export default function BootcampPage() {
     agreeToEmails: false
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.email && formData.parentName && formData.agreeToEmails) {
-      setIsSubmitted(true)
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setFormData({
-          parentName: '',
-          email: '',
-          childName: '',
-          childAge: '',
-          agreeToEmails: false
-        })
-      }, 3000)
+    if (!formData.email || !formData.parentName || !formData.agreeToEmails) return
+
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          parentName: formData.parentName,
+          email: formData.email,
+          childName: formData.childName,
+          childAge: formData.childAge,
+          source: 'Virtual Finance BootCamp Signup',
+          agreedToEmails: formData.agreeToEmails,
+        }),
+      })
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        setTimeout(() => {
+          setIsSubmitted(false)
+          setFormData({
+            parentName: '',
+            email: '',
+            childName: '',
+            childAge: '',
+            agreeToEmails: false
+          })
+        }, 3000)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -247,17 +280,26 @@ export default function BootcampPage() {
                     </span>
                   </label>
 
+                  {error && (
+                    <p className="text-red-500 text-sm">{error}</p>
+                  )}
+
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={!formData.agreeToEmails || !formData.email || !formData.parentName}
+                    disabled={!formData.agreeToEmails || !formData.email || !formData.parentName || isLoading}
                     className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitted ? (
                       <>
                         <CheckCircle2 className="w-5 h-5" />
                         <span>Registration Complete!</span>
+                      </>
+                    ) : isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Registering...</span>
                       </>
                     ) : (
                       <>

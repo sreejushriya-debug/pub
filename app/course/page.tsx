@@ -5,9 +5,11 @@ import { motion } from 'framer-motion'
 import { 
   GraduationCap, BookOpen, Gamepad2, CheckCircle2, 
   ArrowRight, Clock, Users, Star, ChevronDown, ChevronUp,
-  FileText, Video, Trophy
+  FileText, Video, Trophy, Loader2
 } from 'lucide-react'
 import FloatingParticles from '@/components/FloatingParticles'
+
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
 const courseModules = [
   {
@@ -81,17 +83,45 @@ export default function CoursePage() {
   const [email, setEmail] = useState('')
   const [agreeToEmails, setAgreeToEmails] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const [expandedModule, setExpandedModule] = useState<number | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && agreeToEmails) {
-      setIsSubmitted(true)
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setEmail('')
-        setAgreeToEmails(false)
-      }, 3000)
+    if (!email || !agreeToEmails) return
+
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'Financial Foundations Course Signup',
+          agreedToEmails: agreeToEmails,
+        }),
+      })
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        setTimeout(() => {
+          setIsSubmitted(false)
+          setEmail('')
+          setAgreeToEmails(false)
+        }, 3000)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -200,17 +230,26 @@ export default function CoursePage() {
                     </span>
                   </label>
 
+                  {error && (
+                    <p className="text-red-500 text-sm">{error}</p>
+                  )}
+
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={!agreeToEmails || !email}
+                    disabled={!agreeToEmails || !email || isLoading}
                     className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitted ? (
                       <>
                         <CheckCircle2 className="w-5 h-5" />
                         <span>You're signed up!</span>
+                      </>
+                    ) : isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Signing up...</span>
                       </>
                     ) : (
                       <>

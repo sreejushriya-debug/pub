@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Mail, Phone, MapPin, Send, CheckCircle2, 
-  MessageSquare, Clock, Heart
+  MessageSquare, Clock, Heart, Loader2
 } from 'lucide-react'
 import FloatingParticles from '@/components/FloatingParticles'
 
 const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
 const contactInfo = [
   {
@@ -62,21 +63,52 @@ export default function ContactPage() {
     type: 'general'
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.name && formData.email && formData.message) {
-      setIsSubmitted(true)
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: '',
-          type: 'general'
-        })
-      }, 3000)
+    if (!formData.name || !formData.email || !formData.message) return
+
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          inquiryType: formData.type,
+          source: 'Contact Us Page',
+        }),
+      })
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        setTimeout(() => {
+          setIsSubmitted(false)
+          setFormData({
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+            type: 'general'
+          })
+        }, 3000)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -254,17 +286,26 @@ export default function ContactPage() {
                   />
                 </div>
 
+                {error && (
+                  <p className="text-red-500 text-sm">{error}</p>
+                )}
+
                 <motion.button
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  disabled={!formData.name || !formData.email || !formData.message}
+                  disabled={!formData.name || !formData.email || !formData.message || isLoading}
                   className="btn-primary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitted ? (
                     <>
                       <CheckCircle2 className="w-5 h-5" />
                       <span>Message Sent!</span>
+                    </>
+                  ) : isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Sending...</span>
                     </>
                   ) : (
                     <>
