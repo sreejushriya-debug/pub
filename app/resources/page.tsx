@@ -9,17 +9,62 @@ import {
 import Link from 'next/link'
 import FloatingParticles from '@/components/FloatingParticles'
 
-// Video URLs - replace VIDEO_ID with actual YouTube video IDs
+// Video URLs
 const VIDEO_URLS = {
-  walkthrough: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Replace with actual walkthrough
-  '1.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Replace with actual video
-  '1.3': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '2.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '3.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '3.4': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '3.5': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '4.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  '5.1': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  walkthrough: 'https://www.youtube.com/embed/i1qZ7nmBEOo',
+  '1.1': 'https://www.youtube.com/embed/h2g8iOKdtnc',
+  '1.3': 'https://www.youtube.com/embed/8pEPhilfwLU',
+  '2.1': 'https://www.youtube.com/embed/hSc_nJ4DF50',
+  '3.1': 'https://www.youtube.com/embed/PxH38Ma6vBQ',
+  '3.4': 'https://www.youtube.com/embed/UGCDt28mSWM',
+  '3.5': 'https://www.youtube.com/embed/TAjNGLzHsh8',
+  '4.1': 'https://www.youtube.com/embed/_msOo6m5Vl4',
+  '5.1': 'https://www.youtube.com/embed/I_0yZqnvmyQ',
+}
+
+// Quiz URLs
+const QUIZ_URLS = {
+  module1: 'https://wayground.com/admin/quiz/680dd81992bc16fe102c51d1/financial-literacy-quiz',
+}
+
+// Worksheet URLs (all in public/resources/)
+const WORKSHEET_URLS = {
+  // Workbooks & Picture Books
+  workbook: '/resources/finance_workbook.pdf',
+  sofia: '/resources/sofia_smart_savings.pdf',
+  brian: '/resources/panaderia_de_brian.pdf',
+  // Module 1
+  'm1-kwl': '/resources/module1kwl.pdf',
+  '1.1': '/resources/1_1.pdf',
+  '1.2': '/resources/1_2.pdf',
+  '1.3': '/resources/1_3.pdf',
+  // Module 2
+  'm2-kwl': '/resources/unit2_kwl.pdf',
+  '2.1': '/resources/2_1.pdf',
+  '2.2': '/resources/2_2.pdf',
+  '2.3': '/resources/2_3.pdf',
+  '2.4': '/resources/2_4.pdf',
+  // Module 3
+  'm3-kwl': '/resources/unit3_kwl.pdf',
+  '3.1': '/resources/3_1.pdf',
+  '3.2': '/resources/3_2.pdf',
+  '3.3': '/resources/3_3.pdf',
+  '3.4': '/resources/3_4.pdf',
+  '3.5': '/resources/3_5.pdf',
+  // Module 4
+  'm4-kwl': '/resources/unit4kwl.pdf',
+  '4.1': '/resources/4_1.pdf',
+  '4.2': '/resources/4_2.pdf',
+  '4.3': '/resources/4_3.pdf',
+  '4.4': '/resources/4_4.pdf',
+  '4.5': '/resources/4_5.pdf',
+  '4.6': '/resources/4_6.pdf',
+  // Module 5
+  'm5-kwl': '/resources/unit5kwl.pdf',
+  '5.1': '/resources/5_1.pdf',
+  '5.2': '/resources/5_2.pdf',
+  // Module 6
+  '6.1': '/resources/6_1.pdf',
 }
 
 // All searchable resources
@@ -177,29 +222,63 @@ function ResourceSearch({ searchQuery, setSearchQuery }: { searchQuery: string; 
             className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl 
                        border border-gray-100 max-h-80 overflow-y-auto z-50"
           >
-            {filteredResources.map((resource) => (
-              <div
-                key={resource.id}
-                className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-50 last:border-0"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center
-                    ${resource.type === 'video' ? 'bg-accent-100 text-accent-600' : 
-                      resource.type === 'quiz' ? 'bg-purple-100 text-purple-600' : 
-                      'bg-forest-100 text-forest-600'}`}>
-                    {resource.type === 'video' ? <Play className="w-5 h-5" /> : 
-                     resource.type === 'quiz' ? <ExternalLink className="w-5 h-5" /> : 
-                     <FileText className="w-5 h-5" />}
+            {filteredResources.map((resource) => {
+              // Get the appropriate URL based on resource type and ID
+              const getResourceUrl = () => {
+                if (resource.type === 'video') {
+                  const videoId = resource.id.replace(/^m\d+-/, '').replace(/^w/, '')
+                  return VIDEO_URLS[videoId as keyof typeof VIDEO_URLS]
+                }
+                if (resource.type === 'quiz') {
+                  return QUIZ_URLS.module1
+                }
+                // Worksheet
+                const wsId = resource.id.replace(/^m\d+-/, '').replace(/^w/, '').replace('kwl', `-kwl`)
+                if (resource.id === 'workbook') return WORKSHEET_URLS.workbook
+                if (resource.id === 'sofia') return WORKSHEET_URLS.sofia
+                if (resource.id === 'brian') return WORKSHEET_URLS.brian
+                return WORKSHEET_URLS[wsId as keyof typeof WORKSHEET_URLS] || `/resources/${wsId.replace('.', '_')}.pdf`
+              }
+              const url = getResourceUrl()
+              
+              return (
+                <div
+                  key={resource.id}
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center
+                      ${resource.type === 'video' ? 'bg-accent-100 text-accent-600' : 
+                        resource.type === 'quiz' ? 'bg-purple-100 text-purple-600' : 
+                        'bg-forest-100 text-forest-600'}`}>
+                      {resource.type === 'video' ? <Play className="w-5 h-5" /> : 
+                       resource.type === 'quiz' ? <ExternalLink className="w-5 h-5" /> : 
+                       <FileText className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800">{resource.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {resource.module === 0 ? 'Extra Resource' : `Module ${resource.module}`} • {resource.type}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">{resource.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {resource.module === 0 ? 'Extra Resource' : `Module ${resource.module}`} • {resource.type}
-                    </p>
-                  </div>
+                  {url && (
+                    <a 
+                      href={url}
+                      target={resource.type === 'quiz' ? '_blank' : undefined}
+                      rel={resource.type === 'quiz' ? 'noopener noreferrer' : undefined}
+                      download={resource.type === 'worksheet'}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${resource.type === 'video' ? 'bg-accent-100 text-accent-700 hover:bg-accent-200' : 
+                          resource.type === 'quiz' ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' : 
+                          'bg-forest-100 text-forest-700 hover:bg-forest-200'}`}
+                    >
+                      {resource.type === 'worksheet' ? 'Download' : resource.type === 'video' ? 'Watch' : 'Open'}
+                    </a>
+                  )}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -234,7 +313,7 @@ function ModuleSection({ module }: { module: typeof modules[0] }) {
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-bold text-gray-900">Module {module.id} KWL</h4>
-            <a href={`/resources/module${module.id}-kwl.pdf`} download 
+            <a href={WORKSHEET_URLS[`m${module.id}-kwl` as keyof typeof WORKSHEET_URLS]} download 
                className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-forest-50 text-forest-700 
                           rounded-lg hover:bg-forest-100 transition-colors text-sm font-medium">
               <Download className="w-4 h-4" /> Download Worksheet
@@ -303,6 +382,7 @@ function VideoSection({ id, title, activities }: { id: string; title: string; ac
 }
 
 function WorksheetSection({ id, title, howToUse }: { id: string; title: string; howToUse: string }) {
+  const worksheetId = id.replace('Worksheet ', '')
   return (
     <div className="p-6 md:p-8 border-b border-gray-100 last:border-0">
       <div className="flex items-start gap-4">
@@ -311,7 +391,7 @@ function WorksheetSection({ id, title, howToUse }: { id: string; title: string; 
         </div>
         <div className="flex-1">
           <h4 className="text-lg font-bold text-gray-900">{id} {title}</h4>
-          <a href={`/resources/worksheet-${id.replace('.', '-')}.pdf`} download 
+          <a href={WORKSHEET_URLS[worksheetId as keyof typeof WORKSHEET_URLS] || `/resources/${worksheetId.replace('.', '_')}.pdf`} download 
              className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-forest-50 text-forest-700 
                         rounded-lg hover:bg-forest-100 transition-colors text-sm font-medium">
             <Download className="w-4 h-4" /> Download Worksheet
@@ -348,10 +428,16 @@ function Module1Content() {
         howToUse="Have students write the correct vocabulary word that matches the sentence in the blank space."
       />
       <div className="p-6 md:p-8 border-b border-gray-100">
-        <a href="#" target="_blank" rel="noopener noreferrer"
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+            <ExternalLink className="w-6 h-6 text-purple-600" />
+          </div>
+          <h4 className="text-lg font-bold text-gray-900">Module 1 Quiz</h4>
+        </div>
+        <a href={QUIZ_URLS.module1} target="_blank" rel="noopener noreferrer"
            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-100 text-purple-700 
                       rounded-xl hover:bg-purple-200 transition-colors font-medium">
-          <ExternalLink className="w-5 h-5" /> Open Quiz
+          <ExternalLink className="w-5 h-5" /> Take Quiz on Wayground
         </a>
       </div>
       <VideoSection 
@@ -648,7 +734,7 @@ export default function ResourcesPage() {
                 Our finance workbook is a comprehensive resource designed for elementary school students. 
                 Filled with age-appropriate activities, colorful illustrations, and interactive exercises.
               </p>
-              <a href="/resources/finance-workbook.pdf" download className="btn-primary gap-2">
+              <a href={WORKSHEET_URLS.workbook} download className="btn-primary gap-2">
                 <Download className="w-4 h-4" />
                 Download Workbook
               </a>
@@ -670,11 +756,11 @@ export default function ResourcesPage() {
                 Educational picture books that introduce financial topics in engaging stories for younger audiences.
               </p>
               <div className="flex flex-col gap-3">
-                <a href="/resources/sofias-smart-savings.pdf" download className="btn-secondary gap-2 text-sm py-3">
+                <a href={WORKSHEET_URLS.sofia} download className="btn-secondary gap-2 text-sm py-3">
                   <Download className="w-4 h-4" />
                   Download Sofia's Smart Savings
                 </a>
-                <a href="/resources/panaderia-de-brian.pdf" download className="btn-secondary gap-2 text-sm py-3">
+                <a href={WORKSHEET_URLS.brian} download className="btn-secondary gap-2 text-sm py-3">
                   <Download className="w-4 h-4" />
                   Descarga Panadería de Brian
                 </a>
