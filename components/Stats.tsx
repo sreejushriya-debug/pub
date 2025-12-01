@@ -19,8 +19,8 @@ const stats = [
     icon: Users,
   },
   {
-    value: 4,
-    label: 'Countries reached with our paper workbooks and picture books',
+    value: 5,
+    label: 'Countries reached: India, Tanzania, Uganda, Botswana, and the US',
     icon: Globe,
   },
   {
