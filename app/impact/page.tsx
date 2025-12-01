@@ -156,7 +156,7 @@ export default function ImpactPage() {
                 <p className="text-lg text-gray-700 leading-relaxed mb-8">
                   Through partnership with local and global nonprofits, we facilitated the distribution of 
                   <strong className="text-forest-600"> 925 copies of our workbook</strong> to Title-1 schools in America 
-                  and English-medium schools in <strong>Tanzania, Botswana, and India</strong>.
+                  and English-medium schools in <strong>India, Tanzania, Uganda, Botswana, and the US</strong>.
                 </p>
 
                 {/* Countdown */}

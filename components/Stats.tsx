@@ -20,7 +20,7 @@ const stats = [
   },
   {
     value: 5,
-    label: 'Countries reached: India, Tanzania, Uganda, Botswana, and the US',
+    label: 'Countries reached with our paper workbooks and picture books',
     icon: Globe,
   },
   {
