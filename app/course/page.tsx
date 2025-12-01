@@ -173,7 +173,7 @@ export default function CoursePage() {
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-accent-300 fill-current" />
                 ))}
-                <span className="text-white/90 ml-2">Loved by 3,100+ students</span>
+                <span className="text-white/90 ml-2">Loved by 310+ students</span>
               </div>
             </motion.div>
 

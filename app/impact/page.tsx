@@ -411,7 +411,7 @@ export default function ImpactPage() {
               { value: 300, label: 'Students in Workshops', suffix: '+' },
               { value: 250, label: 'Webinar Participants', suffix: '+' },
               { value: 6159, label: 'Raised at Events', prefix: '$' },
-              { value: 16000, label: 'Resource Downloads', suffix: '+' },
+              { value: 11300, label: 'Resource Downloads', suffix: '+' },
             ].map((stat, idx) => (
               <motion.div
                 key={stat.label}
