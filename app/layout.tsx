@@ -85,10 +85,12 @@ export const metadata: Metadata = {
   category: 'Education',
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
       { url: '/favicon-192.png', type: 'image/png', sizes: '192x192' },
     ],
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: [{ url: '/favicon.ico' }],
   },
 }
 
@@ -132,6 +134,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
