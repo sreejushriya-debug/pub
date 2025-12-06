@@ -414,7 +414,9 @@ function Module1Content() {
         id="1.1" 
         title="Important Financial Terms"
         activities={[
-          'Write down vocabulary words covered in Worksheet 1.1 and have a class discussion about the definitions before and after watching the video.'
+          'Have students predict definitions from Worksheet 1.1 before watching, then revisit and revise them in a different color after the video.',
+          'In pairs, ask students to come up with real-life examples for 3–5 key vocabulary words and share with the class.',
+          'Let students illustrate one vocabulary word on an index card and add it to a class "Money Word Wall."'
         ]}
       />
       <WorksheetSection 
@@ -444,9 +446,10 @@ function Module1Content() {
         id="1.3" 
         title="Making Change"
         activities={[
-          'Lay out a variety of different coins and ask students to sort them into groups.',
-          'Teach students the coin song and have a class sing-along.',
-          'Give students values and ask them to provide coins that total the given value.'
+          'Give students a pile of mixed coins and have them sort, name, and count each type as a warm-up.',
+          'After the video, call out an amount under $1.00 and have students build it with real or paper coins on their desks.',
+          'Set up a simple "mini store" where one student is the cashier and one is the customer, and have them practice paying and making change.',
+          'Ask students to write one sentence in their math journal explaining a strategy they use to figure out change quickly.'
         ]}
       />
       <WorksheetSection 
@@ -465,8 +468,10 @@ function Module2Content() {
         id="2.1" 
         title="Healthy Saving and Spending Habits"
         activities={[
-          'Write down the vocabulary from Worksheet 2.2 and have a class discussion about the definitions before and after watching the video.',
-          'Ask students what items they would want to save up for.'
+          'Have students list three things they want, estimate the cost of each, and star the one they\'d most realistically save for first.',
+          'Create a quick T-chart of "needs" and "wants" and ask students to sort example items or pictures into each side.',
+          'Ask students to set a one-week savings goal (real or pretend) and write one sentence about how they will try to reach it.',
+          'Have partners share one "healthy" spending or saving choice they plan to make this week.'
         ]}
       />
       <WorksheetSection 
@@ -500,8 +505,10 @@ function Module3Content() {
         id="3.1" 
         title="Credit and Debit"
         activities={[
-          'Write down vocabulary from Worksheet 3.1 and have a class discussion about the definitions before and after watching the video.',
-          'Encourage students to explore reasons why someone would choose credit instead of debit and vice versa.'
+          'Before watching, write "credit" and "debit" on the board and ask students what they already think each word means.',
+          'After the video, have students complete a simple T-chart of credit vs. debit with at least one benefit and one drawback for each.',
+          'Read short purchase scenarios and have students hold up cards to show whether they\'d use credit, debit, or cash.',
+          'In pairs, ask students to come up with one "rule of thumb" for when to use credit and share it with the class.'
         ]}
       />
       <WorksheetSection 
@@ -523,7 +530,10 @@ function Module3Content() {
         id="3.4" 
         title="Investing"
         activities={[
-          'List the different kinds of investing on a board and ask students to help come up with characteristics.'
+          'List a few investing options (savings account, bonds, stocks, starting a business) and ask students to sort them into "lower risk" and "higher risk."',
+          'Have students draw a simple graph or picture showing how $100 might change over time in a piggy bank versus in an investment.',
+          'Ask students to choose one type of investment and write one reason it could be helpful and one risk to remember.',
+          'Invite a few students to give a one- or two-sentence "pitch" explaining the investment they chose and who it might be good for.'
         ]}
       />
       <WorksheetSection 
@@ -531,7 +541,16 @@ function Module3Content() {
         title="Identifying Stock Trends"
         howToUse="Have students analyze the graph shown in the worksheet and identify the trend. For students newer to this concept, draw sample graphs on the board and lead a discussion about understanding trends on graphs."
       />
-      <VideoSection id="3.5" title="Deposits" />
+      <VideoSection 
+        id="3.5" 
+        title="Deposits"
+        activities={[
+          'After modeling a sample check or deposit on the board, have students label those same parts on a blank check in their notebooks.',
+          'Give a short list of deposits and withdrawals and ask students to update a running balance on a simple account register.',
+          'Have students role-play a customer and bank teller making a deposit using play money and a pretend deposit slip or check.',
+          'Ask students to draw or write about one time someone in their family might make a deposit and why it\'s important.'
+        ]}
+      />
       <WorksheetSection 
         id="3.5" 
         title="Writing a Check"
@@ -548,7 +567,10 @@ function Module4Content() {
         id="4.1" 
         title="Creating Your Own Business"
         activities={[
-          'Help students brainstorm ideas for potential businesses. Go over terms like revenue and expenses.'
+          'Lead a quick brainstorm of kid-friendly business ideas and have each student choose one they\'re excited about.',
+          'On the board, model how to list revenue and expenses for a simple business like a lemonade or juice stand.',
+          'Ask students to use their chosen idea to fill in a basic plan (what they sell, what it costs to make, and what they might charge).',
+          'Invite a few students to share a short "business pitch" explaining what they sell and how they plan to make a profit.'
         ]}
       />
       <WorksheetSection 
@@ -592,8 +614,10 @@ function Module5Content() {
         id="5.1" 
         title="Taxes"
         activities={[
-          'Answer the multiple choice questions from Worksheet 5.2 and check your answers with a partner.',
-          'The second worksheet is calculating taxes, have your teacher explain the process to you.'
+          'Before the video, ask students to name things in the community that might be paid for with tax money and list ideas on the board.',
+          'After watching, have students complete the multiple-choice questions in Worksheet 5.2 and compare answers with a partner.',
+          'Give a few short shopping examples from Worksheet 5.3 and have students calculate the tax and total, using a calculator if needed.',
+          'Have students create a small poster titled "Taxes Help Pay For…" with pictures of at least three services they think are important.'
         ]}
       />
       <WorksheetSection 
