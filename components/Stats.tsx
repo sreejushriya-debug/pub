@@ -6,7 +6,7 @@ import { DollarSign, Users, Globe, FileText } from 'lucide-react'
 
 const stats = [
   {
-    value: 11500,
+    value: 21500,
     prefix: '$',
     suffix: '+',
     label: 'Raised to advance children\'s financial literacy globally',

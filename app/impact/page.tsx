@@ -410,7 +410,7 @@ export default function ImpactPage() {
               { value: 925, label: 'Workbooks Distributed', suffix: '+' },
               { value: 300, label: 'Students in Workshops', suffix: '+' },
               { value: 250, label: 'Webinar Participants', suffix: '+' },
-              { value: 6159, label: 'Raised at Events', prefix: '$' },
+              { value: 21500, label: 'Raised at Events', prefix: '$', suffix: '+' },
               { value: 11300, label: 'Resource Downloads', suffix: '+' },
             ].map((stat, idx) => (
               <motion.div
