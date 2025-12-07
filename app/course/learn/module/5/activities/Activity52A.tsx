@@ -76,7 +76,7 @@ export default function Activity52A({ onComplete }: Props) {
               return (
                 <motion.button key={item.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                   onClick={() => addToCart(item.id)}
-                  disabled={inCart?.quantity >= 3 || cart.length >= 5}
+                  disabled={(inCart && inCart.quantity >= 3) || cart.length >= 5}
                   className={`p-4 rounded-xl border-2 text-center transition-all ${
                     inCart ? 'border-forest-400 bg-forest-50' :
                     cart.length >= 5 ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed' :
