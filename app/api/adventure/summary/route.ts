@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       .filter(h => h.bonusQuestion && !h.bonusQuestion.isCorrect)
       .flatMap(h => h.bonusQuestion?.conceptTags || [])
     
-    const uniqueMissedConcepts = [...new Set(missedConcepts)]
+    const uniqueMissedConcepts = Array.from(new Set(missedConcepts))
 
     const systemPrompt = `You are Bright, a friendly AI money tutor. Write a short, encouraging end-of-game summary for a student who just finished Money Adventure.
 
