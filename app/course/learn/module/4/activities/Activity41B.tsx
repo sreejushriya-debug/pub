@@ -21,7 +21,12 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
   const expenses = totalCost
   const profit = revenue - expenses
   const isLoss = profit < 0
-  const challengeAnswer = Math.ceil((profit + 10) / price)
+  // To make $10 more profit: new profit = current profit + 10
+  // new profit = new revenue - expenses
+  // So: current profit + 10 = new revenue - expenses
+  // new revenue = current profit + 10 + expenses = revenue + 10
+  // new cups = (revenue + 10) / price
+  const challengeAnswer = Math.ceil((revenue + 10) / price)
 
   const correctAnswers = {
     revenue: revenue.toFixed(2),
@@ -61,6 +66,28 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
           <h2 className="text-xl font-bold text-gray-900">Activity 4.1B – Revenue, Expenses & Profit</h2>
         </div>
         <p className="text-gray-600">Calculate your juice stand&apos;s financial results!</p>
+      </div>
+
+      {/* Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+        <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+          <Lightbulb className="w-5 h-5" />
+          How to Complete This Activity:
+        </h3>
+        <ol className="space-y-2 text-blue-800 text-sm list-decimal list-inside">
+          <li><strong>Set your price and sales:</strong> Enter how much you&apos;ll charge per cup and how many cups you sold.</li>
+          <li><strong>Review the summary:</strong> The Financial Summary box shows your revenue, expenses, and profit automatically.</li>
+          <li><strong>Answer the questions:</strong> Fill in revenue, expenses, profit, and whether you made a loss.</li>
+          <li><strong>Solve the challenge:</strong> Calculate how many total cups you&apos;d need to sell to make $10 more profit.</li>
+        </ol>
+        <div className="mt-4 p-3 bg-white rounded-lg border border-blue-300">
+          <p className="text-blue-900 text-sm font-medium mb-1">💡 Key Formulas:</p>
+          <ul className="text-blue-800 text-xs space-y-1">
+            <li>• <strong>Revenue</strong> = Price per cup × Number of cups sold</li>
+            <li>• <strong>Profit</strong> = Revenue - Expenses</li>
+            <li>• <strong>For the challenge:</strong> New revenue needed = Current revenue + $10, then divide by price per cup</li>
+          </ul>
+        </div>
       </div>
 
       {/* Reminder of expenses */}
@@ -121,7 +148,10 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
       {/* Questions */}
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block font-medium text-gray-900 mb-2">1. What is your revenue?</label>
+          <label className="block font-medium text-gray-900 mb-2">
+            1. What is your revenue?
+            <span className="text-xs text-gray-500 font-normal ml-2">(Total money you made from selling cups)</span>
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-gray-500">$</span>
             <input type="text" value={answers.revenue} onChange={(e) => setAnswers({ ...answers, revenue: e.target.value })}
@@ -140,7 +170,10 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
         </div>
 
         <div>
-          <label className="block font-medium text-gray-900 mb-2">2. What are your expenses?</label>
+          <label className="block font-medium text-gray-900 mb-2">
+            2. What are your expenses?
+            <span className="text-xs text-gray-500 font-normal ml-2">(Total cost of your supplies from Activity 4.1A)</span>
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-gray-500">$</span>
             <input type="text" value={answers.expenses} onChange={(e) => setAnswers({ ...answers, expenses: e.target.value })}
@@ -156,7 +189,10 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
         </div>
 
         <div>
-          <label className="block font-medium text-gray-900 mb-2">3. What is your profit?</label>
+          <label className="block font-medium text-gray-900 mb-2">
+            3. What is your profit?
+            <span className="text-xs text-gray-500 font-normal ml-2">(Revenue minus expenses)</span>
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-gray-500">$</span>
             <input type="text" value={answers.profit} onChange={(e) => setAnswers({ ...answers, profit: e.target.value })}
@@ -195,7 +231,8 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
 
         <div>
           <label className="block font-medium text-gray-900 mb-2">
-            5. CHALLENGE: To make $10 more profit, how many cups would you need to sell?
+            5. CHALLENGE: To make $10 more profit, how many total cups would you need to sell?
+            <span className="text-xs text-gray-500 font-normal ml-2 block mt-1">(Remember: expenses stay the same, so you need $10 more revenue. Divide the new revenue by price per cup.)</span>
           </label>
           <input type="text" value={answers.challenge} onChange={(e) => setAnswers({ ...answers, challenge: e.target.value })}
             disabled={revealed}
@@ -206,7 +243,12 @@ export default function Activity41B({ supplies, totalCost, onComplete }: Props) 
             }`}
           />
           {getResult('challenge') === 'incorrect' && !revealed && (
-            <p className="text-sm text-amber-600 mt-1">💡 First find how much profit you need, then divide by price per cup</p>
+            <div className="text-sm text-amber-600 mt-2 space-y-1">
+              <p className="font-medium">💡 Hint:</p>
+              <p>To make $10 more profit, you need $10 more revenue (since expenses stay the same).</p>
+              <p>Step 1: Add $10 to your current revenue → ${(revenue + 10).toFixed(2)}</p>
+              <p>Step 2: Divide by price per cup → ${(revenue + 10).toFixed(2)} ÷ ${price.toFixed(2)} = {challengeAnswer} cups</p>
+            </div>
           )}
         </div>
       </div>
