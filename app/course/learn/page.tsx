@@ -176,7 +176,7 @@ export default function CourseDashboard() {
           className="mb-12"
         >
           <Link href="/course/learn/adventure">
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white 
+            <div className="bg-gradient-to-r from-accent-500 to-orange-500 rounded-2xl p-6 text-white 
                           hover:shadow-lg transition-all cursor-pointer group">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
@@ -194,7 +194,7 @@ export default function CourseDashboard() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 bg-white text-purple-700 px-5 py-2.5 rounded-xl 
+                <div className="flex items-center gap-2 bg-white text-orange-700 px-5 py-2.5 rounded-xl 
                               font-semibold group-hover:bg-gray-100 transition-colors">
                   Play Now
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

@@ -61,7 +61,7 @@ export default function MoneyAdventurePage() {
   if (!isLoaded || !loaded) {
     return (
       <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center">
-        <div className="animate-pulse text-purple-600">Loading...</div>
+        <div className="animate-pulse text-orange-600">Loading...</div>
       </div>
     )
   }
@@ -99,7 +99,7 @@ export default function MoneyAdventurePage() {
         <div className="mb-8">
           <Link 
             href="/course/learn" 
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium mb-4"
+            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Course
@@ -110,7 +110,7 @@ export default function MoneyAdventurePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white mb-8 relative overflow-hidden"
+          className="bg-gradient-to-r from-accent-500 to-orange-500 rounded-3xl p-8 md:p-12 text-white mb-8 relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
@@ -138,7 +138,7 @@ export default function MoneyAdventurePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={continueGame}
-                    className="flex items-center gap-2 bg-white text-purple-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 bg-white text-orange-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors"
                   >
                     <Play className="w-5 h-5" />
                     Continue Adventure
@@ -161,7 +161,7 @@ export default function MoneyAdventurePage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={startNewGame}
-                  className="flex items-center gap-2 bg-white text-purple-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 bg-white text-orange-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors"
                 >
                   <Sparkles className="w-6 h-6" />
                   Start Money Adventure
@@ -183,7 +183,7 @@ export default function MoneyAdventurePage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="text-center p-3 bg-gray-50 rounded-xl">
                 <p className="text-sm text-gray-500">Turn</p>
-                <p className="text-xl font-bold text-purple-600">
+                <p className="text-xl font-bold text-orange-600">
                   {gameState.turnNumber} / {gameState.maxTurns}
                 </p>
               </div>
@@ -220,9 +220,9 @@ export default function MoneyAdventurePage() {
           
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex flex-col items-center text-center p-4">
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
-                <Coins className="w-8 h-8 text-purple-600" />
-              </div>
+<div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-4">
+              <Coins className="w-8 h-8 text-orange-600" />
+            </div>
               <h4 className="font-bold text-gray-900 mb-2">Face Life Events</h4>
               <p className="text-gray-600 text-sm">
                 Each turn, you&apos;ll see a money scenario - from birthday gifts to emergencies to sales!
