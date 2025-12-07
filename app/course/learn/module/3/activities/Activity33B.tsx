@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle2, XCircle, ThumbsUp, ThumbsDown } from 'lucide-react'
+import { ArrowRight, CheckCircle2, XCircle, ThumbsUp, ThumbsDown, RotateCcw, X } from 'lucide-react'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
@@ -26,6 +26,27 @@ export default function Activity33B({ onComplete }: Props) {
     setChecked(false)
   }
 
+  const handleRemove = (text: string) => {
+    if (checked && allCorrect) return
+    const newPlacements = { ...placements }
+    delete newPlacements[text]
+    setPlacements(newPlacements)
+    setChecked(false)
+  }
+
+  const handleTryAgain = () => {
+    // Remove only incorrect placements
+    const correct: Record<string, string> = {}
+    Object.entries(placements).forEach(([text, type]) => {
+      const item = ITEMS.find(i => i.text === text)
+      if (item?.type === type) {
+        correct[text] = type
+      }
+    })
+    setPlacements(correct)
+    setChecked(false)
+  }
+
   const allCorrect = ITEMS.every(item => placements[item.text] === item.type)
   const benefitItems = Object.entries(placements).filter(([_, t]) => t === 'benefit').map(([text]) => text)
   const riskItems = Object.entries(placements).filter(([_, t]) => t === 'risk').map(([text]) => text)
@@ -41,7 +62,7 @@ export default function Activity33B({ onComplete }: Props) {
       {/* Unplaced items */}
       {unplaced.length > 0 && (
         <div className="bg-gray-100 rounded-xl p-4 mb-6">
-          <p className="text-sm font-medium text-gray-700 mb-3">Drag or click to sort:</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">Click the thumbs up or down to sort (or click placed items to move them):</p>
           <div className="space-y-2">
             {unplaced.map(item => (
               <div key={item.text} className="flex gap-2">
@@ -72,12 +93,18 @@ export default function Activity33B({ onComplete }: Props) {
               const item = ITEMS.find(i => i.text === text)
               const isCorrect = item?.type === 'benefit'
               return (
-                <div key={text} className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
-                  checked ? (isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') : 'bg-green-100 text-green-700'
-                }`}>
+                <button
+                  key={text}
+                  onClick={() => !checked || !allCorrect ? handleRemove(text) : undefined}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-all ${
+                    checked ? (isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  } ${checked && allCorrect ? 'cursor-default' : 'cursor-pointer'}`}
+                  title={checked && allCorrect ? '' : 'Click to remove and try again'}
+                >
                   {checked && (isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />)}
                   {text}
-                </div>
+                  {!checked && <X className="w-3 h-3 ml-auto opacity-50" />}
+                </button>
               )
             })}
           </div>
@@ -94,12 +121,18 @@ export default function Activity33B({ onComplete }: Props) {
               const item = ITEMS.find(i => i.text === text)
               const isCorrect = item?.type === 'risk'
               return (
-                <div key={text} className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
-                  checked ? (isCorrect ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800') : 'bg-red-100 text-red-700'
-                }`}>
+                <button
+                  key={text}
+                  onClick={() => !checked || !allCorrect ? handleRemove(text) : undefined}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-all ${
+                    checked ? (isCorrect ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800') : 'bg-red-100 text-red-700 hover:bg-red-200'
+                  } ${checked && allCorrect ? 'cursor-default' : 'cursor-pointer'}`}
+                  title={checked && allCorrect ? '' : 'Click to remove and try again'}
+                >
                   {checked && (isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />)}
                   {text}
-                </div>
+                  {!checked && <X className="w-3 h-3 ml-auto opacity-50" />}
+                </button>
               )
             })}
           </div>
@@ -112,13 +145,28 @@ export default function Activity33B({ onComplete }: Props) {
         </div>
       )}
 
-      <div className="flex justify-center">
+      {checked && !allCorrect && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <p className="text-amber-800 mb-2"><strong>Almost!</strong> Some items are in the wrong column. Look at the red/amber ones.</p>
+          <p className="text-amber-700 text-sm">💡 Click on any item in a column to remove it and place it in the correct one!</p>
+        </div>
+      )}
+
+      <div className="flex justify-center gap-4">
         {!(allCorrect && checked) && (
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            onClick={() => setChecked(true)} disabled={unplaced.length > 0}
-            className={`btn-primary px-6 py-3 ${unplaced.length > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-            {unplaced.length > 0 ? `Sort ${unplaced.length} more` : 'Check Answers'}
-          </motion.button>
+          <>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={() => setChecked(true)} disabled={unplaced.length > 0}
+              className={`btn-primary px-6 py-3 ${unplaced.length > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              {unplaced.length > 0 ? `Sort ${unplaced.length} more` : 'Check Answers'}
+            </motion.button>
+            {checked && !allCorrect && (
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                onClick={handleTryAgain} className="btn-outline px-6 py-3 flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" /> Try Again
+              </motion.button>
+            )}
+          </>
         )}
         {allCorrect && checked && (
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
