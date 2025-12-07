@@ -48,23 +48,31 @@ export default function Activity54B({ onComplete }: Props) {
         </div>
 
         <div className="space-y-4 mb-8">
-          {storePrices.map(store => (
-            <div key={store.id} className={`p-4 rounded-xl border-2 ${
-              store.id === bestStore.id ? 'border-green-400 bg-green-50' :
-              store.id === selectedStore ? 'border-forest-400 bg-forest-50' : 'border-gray-200 bg-white'
-            }`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{store.name}</h3>
-                  <p className="text-sm text-gray-600">Original: ${store.price} | Discount: {store.discount}%</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-forest-600">${store.final.toFixed(2)}</p>
-                  {store.id === bestStore.id && <p className="text-xs text-green-600">Best Deal!</p>}
+          {storePrices.map(store => {
+            const isBest = store.id === bestStore.id
+            const isUserChoice = store.id === selectedStore
+            const isWrong = isUserChoice && !isBest
+            
+            return (
+              <div key={store.id} className={`p-4 rounded-xl border-2 ${
+                isBest ? 'border-green-400 bg-green-50' :
+                isWrong ? 'border-red-400 bg-red-50' :
+                'border-gray-200 bg-white'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{store.name}</h3>
+                    <p className="text-sm text-gray-600">Original: ${store.price} | Discount: {store.discount}%</p>
+                    {isUserChoice && !isBest && <p className="text-xs text-red-600 mt-1">Your choice (not the best deal)</p>}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-forest-600">${store.final.toFixed(2)}</p>
+                    {isBest && <p className="text-xs text-green-600">Best Deal! ✓</p>}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {explanation && (
