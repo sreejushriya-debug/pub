@@ -186,6 +186,7 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
           userAnswer: r.submittedAnswer,
           questionText: question ? `What does "${question.term}" mean?` : '',
           correctAnswer: question?.correct || '',
+          term: question?.term || '',
         }
       })
   }
@@ -206,9 +207,13 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
         },
         body: JSON.stringify({
           activityKey: 'activity-1.1b',
+          // Send full question data so the API doesn't need a database
           missedQuestions: missedQuestions.map(q => ({
             questionId: q.questionId,
             userAnswer: q.userAnswer,
+            questionText: q.questionText,
+            correctAnswer: q.correctAnswer,
+            term: q.term,
           })),
         }),
       })

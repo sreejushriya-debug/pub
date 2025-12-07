@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { prisma } from '@/lib/prisma'
 
 interface MissedQuestion {
   questionId: string
   userAnswer: string
+  questionText: string
+  correctAnswer: string
+  term?: string
 }
 
 interface TutorRequest {
@@ -34,39 +36,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Look up QuizQuestion records from database
-    const questionKeys = missedQuestions.map(q => q.questionId)
-    const questions = await prisma.quizQuestion.findMany({
-      where: {
-        activityKey,
-        questionKey: {
-          in: questionKeys,
-        },
-      },
-    })
-
-    if (questions.length === 0) {
-      console.error(`No questions found for activityKey: ${activityKey}, questionKeys: ${questionKeys.join(', ')}`)
-      return NextResponse.json(
-        { error: `Questions not found in database. Make sure you've run: npm run db:seed` },
-        { status: 404 }
-      )
-    }
-
-    if (questions.length !== missedQuestions.length) {
-      console.warn(`Found ${questions.length} questions but expected ${missedQuestions.length}`)
-    }
-
-    // Create a map for quick lookup
-    const questionMap = new Map(questions.map(q => [q.questionKey, q]))
-    const userAnswerMap = new Map(missedQuestions.map(q => [q.questionId, q.userAnswer]))
-
-    // Construct the prompt
-    const missedQuestionsSummary = questions.map((q, idx) => {
-      const userAnswer = userAnswerMap.get(q.questionKey) || 'No answer provided'
-      return `${idx + 1}) Concept tags: [${q.conceptTags.join(', ')}]
+    // Construct the prompt from the data sent by the frontend
+    // No database lookup needed!
+    const missedQuestionsSummary = missedQuestions.map((q, idx) => {
+      return `${idx + 1}) Term: "${q.term || 'Unknown'}"
    Question: "${q.questionText}"
-   Student answer: "${userAnswer}"
+   Student answer: "${q.userAnswer}"
    Correct answer: "${q.correctAnswer}"`
     }).join('\n\n')
 
@@ -87,7 +62,7 @@ Speak directly to the student. Keep it encouraging and friendly.`
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY
     if (!OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
+        { error: 'OpenAI API key not configured. Please add OPENAI_API_KEY to your environment variables.' },
         { status: 500 }
       )
     }
@@ -141,4 +116,3 @@ Speak directly to the student. Keep it encouraging and friendly.`
     )
   }
 }
-
