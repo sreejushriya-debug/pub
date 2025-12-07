@@ -41,9 +41,44 @@ const DEFINITIONS = [
 
 export default function Activity46A({ onComplete }: Props) {
   const [matches, setMatches] = useState<Record<string, string>>({})
+  const [selectedType, setSelectedType] = useState<string | null>(null)
   const [checked, setChecked] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const [revealed, setRevealed] = useState(false)
+
+  const handleTypeClick = (typeId: string) => {
+    if (revealed || checked) return
+    // If clicking the same type, deselect it
+    if (selectedType === typeId) {
+      setSelectedType(null)
+    } else {
+      setSelectedType(typeId)
+    }
+  }
+
+  const handleDefinitionClick = (definition: string) => {
+    if (revealed || checked || !selectedType) return
+    
+    // Check if this definition is already matched to another type
+    const existingMatch = Object.entries(matches).find(([_, def]) => def === definition)
+    if (existingMatch) {
+      // Remove it from the old match
+      const newMatches = { ...matches }
+      delete newMatches[existingMatch[0]]
+      setMatches(newMatches)
+    }
+    
+    // Assign to selected type
+    setMatches({ ...matches, [selectedType]: definition })
+    setSelectedType(null)
+  }
+
+  const handleRemoveMatch = (typeId: string) => {
+    if (revealed || checked) return
+    const newMatches = { ...matches }
+    delete newMatches[typeId]
+    setMatches(newMatches)
+  }
 
   const handleCheck = () => {
     setAttempts(prev => prev + 1)
@@ -92,27 +127,49 @@ export default function Activity46A({ onComplete }: Props) {
         </div>
       )}
 
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+        <p className="text-blue-800 text-sm">
+          <strong>How to match:</strong> Click an expense type on the left, then click its definition on the right. 
+          Click a matched definition to remove it and try again.
+        </p>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <div>
-          <h3 className="font-semibold text-gray-900 mb-4">Expense Types</h3>
+          <h3 className="font-semibold text-gray-900 mb-4">Expense Types (click to select)</h3>
           <div className="space-y-3">
             {EXPENSE_TYPES.map(type => {
               const selectedDef = matches[type.id]
               const isCorrect = checked && selectedDef === type.definition
               const isWrong = checked && selectedDef && selectedDef !== type.definition
+              const isSelected = selectedType === type.id
               return (
-                <div key={type.id} className={`p-4 rounded-xl border-2 transition-all ${
-                  isCorrect ? 'border-green-400 bg-green-50' :
-                  isWrong ? 'border-red-400 bg-red-50' :
-                  selectedDef ? 'border-forest-400 bg-forest-50' : 'border-gray-200 bg-white'
-                }`}>
+                <div key={type.id} 
+                  onClick={() => handleTypeClick(type.id)}
+                  className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                    isCorrect ? 'border-green-400 bg-green-50' :
+                    isWrong ? 'border-red-400 bg-red-50' :
+                    isSelected ? 'border-forest-500 bg-forest-100 ring-2 ring-forest-300' :
+                    selectedDef ? 'border-forest-400 bg-forest-50' : 'border-gray-200 bg-white hover:border-forest-300'
+                  }`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-gray-900">{type.name}</span>
-                    {isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                    {isWrong && <XCircle className="w-5 h-5 text-red-500" />}
+                    <div className="flex items-center gap-2">
+                      {isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                      {isWrong && <XCircle className="w-5 h-5 text-red-500" />}
+                      {selectedDef && !checked && (
+                        <button onClick={(e) => { e.stopPropagation(); handleRemoveMatch(type.id) }}
+                          className="text-red-500 hover:text-red-700 text-xs">
+                          Remove
+                        </button>
+                      )}
+                    </div>
                   </div>
                   {selectedDef && (
                     <p className="text-sm text-gray-700 mt-2">{selectedDef}</p>
+                  )}
+                  {isSelected && !selectedDef && (
+                    <p className="text-xs text-forest-600 mt-2 italic">Now click a definition on the right...</p>
                   )}
                 </div>
               )
@@ -126,24 +183,27 @@ export default function Activity46A({ onComplete }: Props) {
             {DEFINITIONS.map((def, idx) => {
               const isUsed = Object.values(matches).includes(def)
               const matchedType = EXPENSE_TYPES.find(type => matches[type.id] === def)
-              const isCorrect = matchedType && def === matchedType.definition
+              const isCorrect = checked && matchedType && def === matchedType.definition
+              const isWrong = checked && isUsed && !isCorrect
               return (
-                <button key={idx} onClick={() => {
-                  if (revealed) return
-                  const currentType = Object.keys(matches).find(key => matches[key] === def)
-                  if (currentType) {
-                    const newMatches = { ...matches }
-                    delete newMatches[currentType]
-                    setMatches(newMatches)
-                  }
-                }}
-                  disabled={revealed}
+                <button key={idx} 
+                  onClick={() => handleDefinitionClick(def)}
+                  disabled={revealed || checked}
                   className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                    isCorrect && checked ? 'border-green-400 bg-green-50' :
-                    isUsed && checked ? 'border-red-400 bg-red-50' :
-                    isUsed ? 'border-forest-400 bg-forest-50' : 'border-gray-200 bg-white hover:border-forest-300'
-                  }`}>
-                  <p className="text-sm text-gray-700">{def}</p>
+                    isCorrect ? 'border-green-400 bg-green-50' :
+                    isWrong ? 'border-red-400 bg-red-50' :
+                    isUsed ? 'border-forest-400 bg-forest-50' : 
+                    selectedType ? 'border-forest-300 bg-forest-50 hover:border-forest-400' :
+                    'border-gray-200 bg-white hover:border-forest-300'
+                  } ${revealed || checked ? 'cursor-default' : 'cursor-pointer'}`}>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-700">{def}</p>
+                    {isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                    {isWrong && <XCircle className="w-5 h-5 text-red-500" />}
+                    {isUsed && !checked && !revealed && (
+                      <span className="text-xs text-forest-600">Matched</span>
+                    )}
+                  </div>
                 </button>
               )
             })}
