@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap } from 'lucide-react'
+import { useQuizTracking } from '@/hooks/useQuizTracking'
 
 interface Activity21BProps {
   onComplete: (data: Record<string, unknown>) => void
@@ -10,36 +12,42 @@ interface Activity21BProps {
 
 const QUIZ_QUESTIONS = [
   {
+    questionKey: 'q1',
     term: 'Budget',
     correct: 'A plan for how you will use your money',
     options: ['A plan for how you will use your money', 'The total amount of money you have', 'Money you give to charity'],
     explanation: 'A budget is a plan for how you\'ll spend and save your money, not the money itself.'
   },
   {
+    questionKey: 'q2',
     term: 'Needs',
     correct: 'Things you must have to survive',
     options: ['Things you must have to survive', 'Things you want but don\'t require', 'Extra money after paying bills'],
     explanation: 'Needs are essentials like food, shelter, and clothing. Without them, you couldn\'t survive!'
   },
   {
+    questionKey: 'q3',
     term: 'Wants',
     correct: 'Things you would like but don\'t need to survive',
     options: ['Money you earn from a job', 'Things you would like but don\'t need to survive', 'The cost of something'],
     explanation: 'Wants are nice-to-haves like video games or fancy clothes. You can live without them!'
   },
   {
+    questionKey: 'q4',
     term: 'Save',
     correct: 'To keep money for later instead of spending it',
     options: ['To spend money on things you want', 'To keep money for later instead of spending it', 'To give money to others'],
     explanation: 'Saving means putting money aside for future use instead of spending it right away.'
   },
   {
+    questionKey: 'q5',
     term: 'Income',
     correct: 'Money you receive from work or allowance',
     options: ['Money you owe to someone', 'Money you receive from work or allowance', 'A plan for spending'],
     explanation: 'Income is money coming IN to you - from a job, allowance, or gifts.'
   },
   {
+    questionKey: 'q6',
     term: 'Charity',
     correct: 'Giving money or help to people in need',
     options: ['Keeping money for yourself', 'Giving money or help to people in need', 'Borrowing money from a bank'],
@@ -48,6 +56,8 @@ const QUIZ_QUESTIONS = [
 ]
 
 export default function Activity21B({ onComplete }: Activity21BProps) {
+  const { user } = useUser()
+  const { recordAnswer, submitResults, isSubmitting } = useQuizTracking('activity-2.1b')
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -62,19 +72,26 @@ export default function Activity21B({ onComplete }: Activity21BProps) {
     if (showFeedback) return
     setSelectedAnswer(answer)
     setShowFeedback(true)
-    if (answer === question.correct) {
+    const correct = answer === question.correct
+    
+    // Track the answer
+    recordAnswer(question.questionKey, answer, correct)
+    
+    if (correct) {
       setScore(prev => prev + 1)
     } else {
       setMissedTerms(prev => [...prev, question.term])
     }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
       setCurrentQuestion(prev => prev + 1)
       setSelectedAnswer(null)
       setShowFeedback(false)
     } else {
+      // Quiz complete - submit results to API
+      await submitResults()
       setIsComplete(true)
     }
   }
@@ -99,8 +116,10 @@ export default function Activity21B({ onComplete }: Activity21BProps) {
 
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={() => onComplete({ activity_21b_score: score, activity_21b_missed: missedTerms })}
-            className="btn-primary px-8 py-3">
-            Continue to Next Activity <ArrowRight className="w-5 h-5 ml-2" />
+            disabled={isSubmitting}
+            className="btn-primary px-8 py-3 disabled:opacity-50">
+            {isSubmitting ? 'Saving results...' : 'Continue to Next Activity'} 
+            {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
       </div>

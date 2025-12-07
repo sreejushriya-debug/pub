@@ -2,25 +2,27 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Clock, CheckCircle2, XCircle, Play, Trophy } from 'lucide-react'
+import { useQuizTracking } from '@/hooks/useQuizTracking'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
 const QUESTIONS = [
-  { id: 1, definition: 'Money you owe that you haven\'t paid back yet', correct: 'debt', options: ['revenue', 'debt', 'budget', 'equity'] },
-  { id: 2, definition: 'Money you earn from selling products or services', correct: 'revenue', options: ['revenue', 'profit', 'expenses', 'income'] },
-  { id: 3, definition: 'A plan for how you\'ll spend and save your money', correct: 'budget', options: ['budget', 'savings', 'expenses', 'income'] },
-  { id: 4, definition: 'Money you make after subtracting expenses from revenue', correct: 'profit', options: ['profit', 'revenue', 'expenses', 'income'] },
-  { id: 5, definition: 'Money you set aside for future use', correct: 'savings', options: ['savings', 'expenses', 'debt', 'revenue'] },
-  { id: 6, definition: 'Things a business owns that have value', correct: 'assets', options: ['assets', 'liability', 'equity', 'debt'] },
-  { id: 7, definition: 'Things a business owes to others', correct: 'liability', options: ['liability', 'assets', 'equity', 'revenue'] },
-  { id: 8, definition: 'The extra money you pay when borrowing', correct: 'interest', options: ['interest', 'principal', 'debt', 'loan'] },
-  { id: 9, definition: 'The original amount of money borrowed', correct: 'principal', options: ['principal', 'interest', 'debt', 'loan'] },
-  { id: 10, definition: 'A tax added to the price of goods you buy', correct: 'sales tax', options: ['sales tax', 'income tax', 'discount', 'profit'] },
-  { id: 11, definition: 'A reduction in the original price', correct: 'discount', options: ['discount', 'tax', 'profit', 'revenue'] },
-  { id: 12, definition: 'Money you receive regularly, like from a job', correct: 'income', options: ['income', 'expenses', 'savings', 'debt'] },
+  { id: 1, questionKey: 'q1', definition: 'Money you owe that you haven\'t paid back yet', correct: 'debt', options: ['revenue', 'debt', 'budget', 'equity'] },
+  { id: 2, questionKey: 'q2', definition: 'Money you earn from selling products or services', correct: 'revenue', options: ['revenue', 'profit', 'expenses', 'income'] },
+  { id: 3, questionKey: 'q3', definition: 'A plan for how you\'ll spend and save your money', correct: 'budget', options: ['budget', 'savings', 'expenses', 'income'] },
+  { id: 4, questionKey: 'q4', definition: 'Money you make after subtracting expenses from revenue', correct: 'profit', options: ['profit', 'revenue', 'expenses', 'income'] },
+  { id: 5, questionKey: 'q5', definition: 'Money you set aside for future use', correct: 'savings', options: ['savings', 'expenses', 'debt', 'revenue'] },
+  { id: 6, questionKey: 'q6', definition: 'Things a business owns that have value', correct: 'assets', options: ['assets', 'liability', 'equity', 'debt'] },
+  { id: 7, questionKey: 'q7', definition: 'Things a business owes to others', correct: 'liability', options: ['liability', 'assets', 'equity', 'revenue'] },
+  { id: 8, questionKey: 'q8', definition: 'The extra money you pay when borrowing', correct: 'interest', options: ['interest', 'principal', 'debt', 'loan'] },
+  { id: 9, questionKey: 'q9', definition: 'The original amount of money borrowed', correct: 'principal', options: ['principal', 'interest', 'debt', 'loan'] },
+  { id: 10, questionKey: 'q10', definition: 'A tax added to the price of goods you buy', correct: 'sales tax', options: ['sales tax', 'income tax', 'discount', 'profit'] },
+  { id: 11, questionKey: 'q11', definition: 'A reduction in the original price', correct: 'discount', options: ['discount', 'tax', 'profit', 'revenue'] },
+  { id: 12, questionKey: 'q12', definition: 'Money you receive regularly, like from a job', correct: 'income', options: ['income', 'expenses', 'savings', 'debt'] },
 ]
 
 export default function Activity61A({ onComplete }: Props) {
+  const { recordAnswer, submitResults, isSubmitting } = useQuizTracking('activity-6.1a')
   const [started, setStarted] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -34,7 +36,7 @@ export default function Activity61A({ onComplete }: Props) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
       return () => clearTimeout(timer)
     } else if (timeLeft === 0 && !finished) {
-      setFinished(true)
+      submitResults().then(() => setFinished(true))
     }
   }, [started, timeLeft, finished])
 
@@ -44,6 +46,9 @@ export default function Activity61A({ onComplete }: Props) {
     const question = QUESTIONS[currentQuestion]
     const isCorrect = answer === question.correct
     setAnswered(new Set([...Array.from(answered), question.id]))
+    
+    // Track the answer
+    recordAnswer(question.questionKey, answer, isCorrect)
     
     if (isCorrect) {
       setScore(score + 1)
@@ -62,7 +67,8 @@ export default function Activity61A({ onComplete }: Props) {
     }, 1000)
   }
 
-  const handleFinishEarly = () => {
+  const handleFinishEarly = async () => {
+    await submitResults()
     setFinished(true)
   }
 
@@ -136,8 +142,10 @@ export default function Activity61A({ onComplete }: Props) {
         <div className="flex justify-center">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={() => onComplete({ score, total: totalAnswered, missedWords })}
-            className="btn-primary px-8 py-4">
-            Continue <ArrowRight className="w-5 h-5 ml-2" />
+            disabled={isSubmitting}
+            className="btn-primary px-8 py-4 disabled:opacity-50">
+            {isSubmitting ? 'Saving results...' : 'Continue'} 
+            {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
       </div>

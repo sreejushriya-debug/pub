@@ -2,30 +2,32 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, ClipboardCheck, CheckCircle2, XCircle } from 'lucide-react'
+import { useQuizTracking } from '@/hooks/useQuizTracking'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
 const QUESTIONS = [
-  { id: 1, type: 'vocab', question: 'What is the extra money you pay when borrowing?', correct: 'interest', options: ['interest', 'principal', 'debt', 'loan'] },
-  { id: 2, type: 'vocab', question: 'Money you make after subtracting expenses from revenue is called?', correct: 'profit', options: ['profit', 'revenue', 'expenses', 'income'] },
-  { id: 3, type: 'vocab', question: 'Things a business owns that have value are called?', correct: 'assets', options: ['assets', 'liability', 'equity', 'debt'] },
-  { id: 4, type: 'coin', question: 'If you have 3 quarters, 2 dimes, and 1 nickel, how much money do you have?', correct: '1.00', options: ['0.90', '0.95', '1.00', '1.05'] },
-  { id: 5, type: 'coin', question: 'How many pennies equal one dollar?', correct: '100', options: ['10', '50', '100', '200'] },
-  { id: 6, type: 'budget', question: 'You have $100. You spend $35 on needs and $20 on wants. How much is left?', correct: '45', options: ['35', '40', '45', '55'] },
-  { id: 7, type: 'budget', question: 'A budget is a plan for how you\'ll:', correct: 'spend and save your money', options: ['spend all your money', 'spend and save your money', 'only save money', 'ignore money'] },
-  { id: 8, type: 'business', question: 'If revenue is $500 and expenses are $300, what is the profit?', correct: '200', options: ['100', '200', '300', '800'] },
-  { id: 9, type: 'business', question: 'If you spent $50 and earned $80, did you make a profit or loss?', correct: 'profit', options: ['profit', 'loss', 'neither', 'both'] },
-  { id: 10, type: 'credit', question: 'Which uses your own money from your bank account?', correct: 'debit', options: ['debit', 'credit', 'both', 'neither'] },
-  { id: 11, type: 'credit', question: 'Credit cards charge interest if you:', correct: 'don\'t pay back the full amount', options: ['pay on time', 'don\'t pay back the full amount', 'use them once', 'never use them'] },
-  { id: 12, type: 'tax', question: 'An item costs $20. Tax is 6.25%. What is the tax amount?', correct: '1.25', options: ['1.00', '1.25', '1.50', '2.00'] },
-  { id: 13, type: 'tax', question: 'An item is $40 with 20% off. What is the sale price?', correct: '32', options: ['30', '32', '35', '38'] },
-  { id: 14, type: 'expense', question: 'Which expense type stays the same each month?', correct: 'Fixed', options: ['Fixed', 'Variable', 'Periodic', 'Discretionary'] },
-  { id: 15, type: 'expense', question: 'Groceries are an example of which expense type?', correct: 'Variable', options: ['Fixed', 'Variable', 'Periodic', 'Discretionary'] },
+  { id: 1, questionKey: 'q1', type: 'vocab', question: 'What is the extra money you pay when borrowing?', correct: 'interest', options: ['interest', 'principal', 'debt', 'loan'] },
+  { id: 2, questionKey: 'q2', type: 'vocab', question: 'Money you make after subtracting expenses from revenue is called?', correct: 'profit', options: ['profit', 'revenue', 'expenses', 'income'] },
+  { id: 3, questionKey: 'q3', type: 'vocab', question: 'Things a business owns that have value are called?', correct: 'assets', options: ['assets', 'liability', 'equity', 'debt'] },
+  { id: 4, questionKey: 'q4', type: 'coin', question: 'If you have 3 quarters, 2 dimes, and 1 nickel, how much money do you have?', correct: '1.00', options: ['0.90', '0.95', '1.00', '1.05'] },
+  { id: 5, questionKey: 'q5', type: 'coin', question: 'How many pennies equal one dollar?', correct: '100', options: ['10', '50', '100', '200'] },
+  { id: 6, questionKey: 'q6', type: 'budget', question: 'You have $100. You spend $35 on needs and $20 on wants. How much is left?', correct: '45', options: ['35', '40', '45', '55'] },
+  { id: 7, questionKey: 'q7', type: 'budget', question: 'A budget is a plan for how you\'ll:', correct: 'spend and save your money', options: ['spend all your money', 'spend and save your money', 'only save money', 'ignore money'] },
+  { id: 8, questionKey: 'q8', type: 'business', question: 'If revenue is $500 and expenses are $300, what is the profit?', correct: '200', options: ['100', '200', '300', '800'] },
+  { id: 9, questionKey: 'q9', type: 'business', question: 'If you spent $50 and earned $80, did you make a profit or loss?', correct: 'profit', options: ['profit', 'loss', 'neither', 'both'] },
+  { id: 10, questionKey: 'q10', type: 'credit', question: 'Which uses your own money from your bank account?', correct: 'debit', options: ['debit', 'credit', 'both', 'neither'] },
+  { id: 11, questionKey: 'q11', type: 'credit', question: 'Credit cards charge interest if you:', correct: 'don\'t pay back the full amount', options: ['pay on time', 'don\'t pay back the full amount', 'use them once', 'never use them'] },
+  { id: 12, questionKey: 'q12', type: 'tax', question: 'An item costs $20. Tax is 6.25%. What is the tax amount?', correct: '1.25', options: ['1.00', '1.25', '1.50', '2.00'] },
+  { id: 13, questionKey: 'q13', type: 'tax', question: 'An item is $40 with 20% off. What is the sale price?', correct: '32', options: ['30', '32', '35', '38'] },
+  { id: 14, questionKey: 'q14', type: 'expense', question: 'Which expense type stays the same each month?', correct: 'Fixed', options: ['Fixed', 'Variable', 'Periodic', 'Discretionary'] },
+  { id: 15, questionKey: 'q15', type: 'expense', question: 'Groceries are an example of which expense type?', correct: 'Variable', options: ['Fixed', 'Variable', 'Periodic', 'Discretionary'] },
 ]
 
 const PASS_THRESHOLD = 0.70 // 70%
 
 export default function Activity65A({ onComplete }: Props) {
+  const { recordAnswer, submitResults, isSubmitting } = useQuizTracking('activity-6.5a')
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [checked, setChecked] = useState(false)
@@ -42,13 +44,18 @@ export default function Activity65A({ onComplete }: Props) {
 
   const handleCheck = () => {
     setChecked(true)
+    if (userAnswer) {
+      const correct = userAnswer === question.correct
+      recordAnswer(question.questionKey, userAnswer, correct)
+    }
   }
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (currentQuestion < QUESTIONS.length - 1) {
       setCurrentQuestion(prev => prev + 1)
       setChecked(false)
     } else {
+      await submitResults()
       setFinished(true)
     }
   }
@@ -97,8 +104,10 @@ export default function Activity65A({ onComplete }: Props) {
         <div className="flex justify-center">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={() => onComplete({ quizScore: { correct, total }, passed })}
-            className="btn-primary px-8 py-3">
-            {passed ? 'View Certificate' : 'Continue Anyway'} <ArrowRight className="w-5 h-5 ml-2" />
+            disabled={isSubmitting}
+            className="btn-primary px-8 py-3 disabled:opacity-50">
+            {isSubmitting ? 'Saving results...' : passed ? 'View Certificate' : 'Continue Anyway'} 
+            {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
       </div>

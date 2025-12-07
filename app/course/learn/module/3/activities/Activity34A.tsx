@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, TrendingUp, CheckCircle2, XCircle } from 'lucide-react'
+import { useQuizTracking } from '@/hooks/useQuizTracking'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
@@ -14,17 +15,18 @@ const STOCK_DATA = [
 ]
 
 const QUESTIONS = [
-  { id: 1, question: 'What does this graph show?', options: ['Temperature over time', 'Stock price over 10 days', 'Number of students'], answer: 'Stock price over 10 days' },
-  { id: 2, question: 'What is the highest price?', options: ['$9', '$11', '$7'], answer: '$11' },
-  { id: 3, question: 'What is the lowest price?', options: ['$2', '$4', '$5'], answer: '$2' },
-  { id: 4, question: 'On which day was the price highest?', options: ['Day 5', 'Day 4', 'Day 6'], answer: 'Day 5' },
-  { id: 5, question: 'Did the price go UP or DOWN from Day 5 to Day 6?', options: ['Up', 'Down', 'Stayed same'], answer: 'Down' },
-  { id: 6, question: 'What was the price on Day 1?', options: ['$5', '$7', '$6'], answer: '$5' },
-  { id: 7, question: 'What was the price on Day 10?', options: ['$4', '$6', '$2'], answer: '$6' },
-  { id: 8, question: 'Overall, is this stock doing well?', options: ['Yes, it ended higher than it started', 'No, it\'s very unpredictable', 'It stayed exactly the same'], answer: 'Yes, it ended higher than it started' },
+  { id: 1, questionKey: 'q1', question: 'What does this graph show?', options: ['Temperature over time', 'Stock price over 10 days', 'Number of students'], answer: 'Stock price over 10 days' },
+  { id: 2, questionKey: 'q2', question: 'What is the highest price?', options: ['$9', '$11', '$7'], answer: '$11' },
+  { id: 3, questionKey: 'q3', question: 'What is the lowest price?', options: ['$2', '$4', '$5'], answer: '$2' },
+  { id: 4, questionKey: 'q4', question: 'On which day was the price highest?', options: ['Day 5', 'Day 4', 'Day 6'], answer: 'Day 5' },
+  { id: 5, questionKey: 'q5', question: 'Did the price go UP or DOWN from Day 5 to Day 6?', options: ['Up', 'Down', 'Stayed same'], answer: 'Down' },
+  { id: 6, questionKey: 'q6', question: 'What was the price on Day 1?', options: ['$5', '$7', '$6'], answer: '$5' },
+  { id: 7, questionKey: 'q7', question: 'What was the price on Day 10?', options: ['$4', '$6', '$2'], answer: '$6' },
+  { id: 8, questionKey: 'q8', question: 'Overall, is this stock doing well?', options: ['Yes, it ended higher than it started', 'No, it\'s very unpredictable', 'It stayed exactly the same'], answer: 'Yes, it ended higher than it started' },
 ]
 
 export default function Activity34A({ onComplete }: Props) {
+  const { recordAnswer, submitResults, isSubmitting } = useQuizTracking('activity-3.4a')
   const [currentQ, setCurrentQ] = useState(0)
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [showFeedback, setShowFeedback] = useState(false)
@@ -38,13 +40,17 @@ export default function Activity34A({ onComplete }: Props) {
     if (showFeedback) return
     setAnswers({ ...answers, [question.id]: answer })
     setShowFeedback(true)
-    if (answer === question.answer) setScore(prev => prev + 1)
+    const correct = answer === question.answer
+    recordAnswer(question.questionKey, answer, correct)
+    if (correct) setScore(prev => prev + 1)
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQ < QUESTIONS.length - 1) {
       setCurrentQ(prev => prev + 1)
       setShowFeedback(false)
+    } else {
+      await submitResults()
     }
   }
 
@@ -65,8 +71,11 @@ export default function Activity34A({ onComplete }: Props) {
           <p className="text-4xl font-bold text-forest-600 mb-2">{score}/{QUESTIONS.length}</p>
           <p className="text-gray-600 mb-8">You can read stock charts!</p>
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            onClick={() => onComplete({ activity_34a_score: score })} className="btn-primary px-8 py-3">
-            Continue <ArrowRight className="w-5 h-5 ml-2" />
+            onClick={() => onComplete({ activity_34a_score: score })}
+            disabled={isSubmitting}
+            className="btn-primary px-8 py-3 disabled:opacity-50">
+            {isSubmitting ? 'Saving results...' : 'Continue'} 
+            {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
       </div>
