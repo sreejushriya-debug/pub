@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap } from 'lucide-react'
+import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap, Sparkles, Loader2 } from 'lucide-react'
 
 interface Activity11BProps {
   onComplete: (data: Record<string, unknown>) => void
@@ -87,6 +87,11 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
   // Track attempts per question
   const [questionAttempts, setQuestionAttempts] = useState<Record<string, number>>({})
   const [questionResults, setQuestionResults] = useState<QuestionAttempt[]>([])
+  
+  // AI Tutor state
+  const [tutorLoading, setTutorLoading] = useState(false)
+  const [tutorResponse, setTutorResponse] = useState<string | null>(null)
+  const [tutorError, setTutorError] = useState<string | null>(null)
 
   const question = QUIZ_QUESTIONS[currentQuestion]
   const isCorrect = selectedAnswer === question.correct
@@ -171,8 +176,62 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
     }
   }
 
+  const getMissedQuestions = () => {
+    return questionResults
+      .filter(r => !r.isCorrect)
+      .map(r => {
+        const question = QUIZ_QUESTIONS.find(q => q.questionKey === r.questionKey)
+        return {
+          questionId: r.questionKey,
+          userAnswer: r.submittedAnswer,
+          questionText: question ? `What does "${question.term}" mean?` : '',
+          correctAnswer: question?.correct || '',
+        }
+      })
+  }
+
+  const handleGetTutorHelp = async () => {
+    const missedQuestions = getMissedQuestions()
+    if (missedQuestions.length === 0) return
+
+    setTutorLoading(true)
+    setTutorError(null)
+    setTutorResponse(null)
+
+    try {
+      const response = await fetch('/api/tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          activityKey: 'activity-1.1b',
+          missedQuestions: missedQuestions.map(q => ({
+            questionId: q.questionId,
+            userAnswer: q.userAnswer,
+          })),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get tutor help')
+      }
+
+      const data = await response.json()
+      setTutorResponse(data.explanation)
+    } catch (error) {
+      console.error('Error getting tutor help:', error)
+      setTutorError('Sorry, I couldn\'t get help right now. Please try again later.')
+    } finally {
+      setTutorLoading(false)
+    }
+  }
+
   if (isComplete) {
     const percentage = Math.round((score / QUIZ_QUESTIONS.length) * 100)
+    const missedQuestions = getMissedQuestions()
+    const hasMissedQuestions = missedQuestions.length > 0
+
     return (
       <div className="p-8">
         <div className="text-center">
@@ -201,6 +260,59 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
             <p className="text-amber-600 font-medium mb-8">
               Keep practicing! These terms will become easier with time.
             </p>
+          )}
+
+          {/* AI Tutor Section */}
+          {hasMissedQuestions && (
+            <div className="mb-8 max-w-2xl mx-auto">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleGetTutorHelp}
+                disabled={tutorLoading}
+                className="btn-outline px-6 py-3 mb-4 flex items-center gap-2 mx-auto disabled:opacity-50"
+              >
+                {tutorLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Thinking...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Get help on what I missed
+                  </>
+                )}
+              </motion.button>
+
+              {tutorError && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+                  <p className="text-red-800 text-sm">{tutorError}</p>
+                </div>
+              )}
+
+              {tutorResponse && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 text-left"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Bright Beginnings Tutor</h3>
+                  </div>
+                  <div className="prose prose-sm max-w-none text-gray-700">
+                    {tutorResponse.split('\n\n').map((paragraph, idx) => (
+                      <p key={idx} className="mb-3 last:mb-0">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
           )}
 
           <motion.button
