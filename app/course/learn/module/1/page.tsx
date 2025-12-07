@@ -217,7 +217,7 @@ export default function Module1Interactive() {
               You have completed Module 1: Financial Basics!
             </p>
             <div className="flex flex-col gap-3 max-w-md mx-auto">
-              <Link href="/course/learn/module/2" className="btn-primary w-full justify-center">
+              <Link href="/course/learn/module/2" className="inline-flex items-center justify-center px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-full transition-all">
                 Start Module 2 <ChevronRight className="w-5 h-5 ml-2" />
               </Link>
               <div className="flex gap-3">
@@ -226,11 +226,11 @@ export default function Module1Interactive() {
                     setCurrentStep('kwl-pre')
                     setShowNav(true)
                   }}
-                  className="btn-outline flex-1 justify-center"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2 border-2 border-gray-300 hover:border-forest-500 text-gray-700 hover:text-forest-600 font-medium rounded-full transition-all"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" /> Practice
                 </button>
-                <Link href="/course/learn" className="btn-outline flex-1 justify-center">
+                <Link href="/course/learn" className="flex-1 inline-flex items-center justify-center px-4 py-2 border-2 border-gray-300 hover:border-forest-500 text-gray-700 hover:text-forest-600 font-medium rounded-full transition-all">
                   Dashboard
                 </Link>
               </div>
