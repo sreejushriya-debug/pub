@@ -143,7 +143,7 @@ export default function Module6Interactive() {
       case 'activity-6.1a': return <Activity61A onComplete={handleStepComplete} />
       case 'activity-6.1b': return <Activity61B onComplete={handleStepComplete} />
       case 'activity-6.2a': return <Activity62A onComplete={handleStepComplete} />
-      case 'activity-6.2b': return <Activity62B shoppingList={moduleData.shoppingList as { name: string; price: number; isNeed: boolean; discount?: number }[] || []} onComplete={handleStepComplete} />
+      case 'activity-6.2b': return <Activity62B shoppingList={moduleData.shoppingList as { name: string; price: number; isNeed: boolean; discount?: number; quantity: number; emoji?: string }[] || []} onComplete={handleStepComplete} />
       case 'activity-6.2c': return <Activity62C onComplete={handleStepComplete} />
       case 'activity-6.3a': return <Activity63A onComplete={handleStepComplete} />
       case 'activity-6.3b': return <Activity63B businessData={moduleData.businessData as { name: string; product: string; audience: string } || { name: '', product: '', audience: '' }} onComplete={handleStepComplete} />
