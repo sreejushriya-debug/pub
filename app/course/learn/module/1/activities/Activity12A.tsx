@@ -51,7 +51,10 @@ export default function Activity12A({ onComplete }: Activity12AProps) {
         missed.push(s.answer)
       }
     })
-    setMissedWords(prev => [...new Set([...prev, ...missed])])
+    setMissedWords(prev => {
+      const combined = new Set([...prev, ...missed])
+      return Array.from(combined)
+    })
   }
 
   const allCorrect = SENTENCES.every(s => 

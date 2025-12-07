@@ -61,7 +61,10 @@ export default function Activity11A({ onComplete }: Activity11AProps) {
         missed.push(term)
       }
     })
-    setMissedTerms(prev => [...new Set([...prev, ...missed])])
+    setMissedTerms(prev => {
+      const combined = new Set([...prev, ...missed])
+      return Array.from(combined)
+    })
   }
 
   const handleReset = () => {
