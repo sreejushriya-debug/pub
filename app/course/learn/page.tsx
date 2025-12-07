@@ -51,10 +51,10 @@ const courseModules = [
   {
     id: 6,
     title: 'Summary & Review',
-    description: 'Review everything you have learned and apply your new financial literacy skills.',
-    activities: 3,
+    description: 'Review everything you have learned and apply your new financial literacy skills through simulations, scenarios, and a final quiz.',
+    activities: 13,
     videos: 0,
-    duration: '20 min',
+    duration: '60 min',
   },
 ]
 
