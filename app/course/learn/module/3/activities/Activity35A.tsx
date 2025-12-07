@@ -65,40 +65,42 @@ export default function Activity35A({ onComplete }: Props) {
       </div>
 
       {/* Check visual */}
-      <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-gray-300 rounded-xl p-4 mb-6 relative" style={{ aspectRatio: '2.5/1', minHeight: '300px' }}>
-        {/* Check background design */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-4 left-4 text-6xl">🏦</div>
-        </div>
-        
-        {CHECK_PARTS.map(part => {
-          const placed = placements[part.id]
-          const isCorrect = checked && placed === part.label
-          const isWrong = checked && placed && placed !== part.label
+      <div className="mb-6 overflow-auto max-h-[500px] border-2 border-gray-200 rounded-xl">
+        <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-gray-300 rounded-xl p-4 relative min-w-[600px] min-h-[300px]" style={{ aspectRatio: '2.5/1' }}>
+          {/* Check background design */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 left-4 text-6xl">🏦</div>
+          </div>
           
-          return (
-            <motion.div
-              key={part.id}
-              onClick={() => handleSpotClick(part.id)}
-              whileHover={selectedLabel && !placed ? { scale: 1.05 } : {}}
-              className={`absolute border-2 border-dashed rounded-lg flex items-center justify-center text-xs p-1 transition-all cursor-pointer ${
-                isCorrect ? 'border-green-500 bg-green-100' :
-                isWrong ? 'border-red-500 bg-red-100' :
-                placed ? 'border-forest-500 bg-forest-50' :
-                selectedLabel ? 'border-forest-400 bg-forest-50/50 hover:bg-forest-100' : 'border-gray-400 bg-white/50'
-              }`}
-              style={{ left: `${part.x}%`, top: `${part.y}%`, width: `${part.w}%`, height: `${part.h}%` }}
-            >
-              {placed && (
-                <span className={`text-center font-medium ${isCorrect ? 'text-green-700' : isWrong ? 'text-red-700' : 'text-forest-700'}`}>
-                  {placed}
-                  {isCorrect && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
-                </span>
-              )}
-              {!placed && <span className="text-gray-400">?</span>}
-            </motion.div>
-          )
-        })}
+          {CHECK_PARTS.map(part => {
+            const placed = placements[part.id]
+            const isCorrect = checked && placed === part.label
+            const isWrong = checked && placed && placed !== part.label
+            
+            return (
+              <motion.div
+                key={part.id}
+                onClick={() => handleSpotClick(part.id)}
+                whileHover={selectedLabel && !placed ? { scale: 1.05 } : {}}
+                className={`absolute border-2 border-dashed rounded-lg flex items-center justify-center text-xs p-1 transition-all cursor-pointer ${
+                  isCorrect ? 'border-green-500 bg-green-100' :
+                  isWrong ? 'border-red-500 bg-red-100' :
+                  placed ? 'border-forest-500 bg-forest-50' :
+                  selectedLabel ? 'border-forest-400 bg-forest-50/50 hover:bg-forest-100' : 'border-gray-400 bg-white/50'
+                }`}
+                style={{ left: `${part.x}%`, top: `${part.y}%`, width: `${part.w}%`, height: `${part.h}%` }}
+              >
+                {placed && (
+                  <span className={`text-center font-medium ${isCorrect ? 'text-green-700' : isWrong ? 'text-red-700' : 'text-forest-700'}`}>
+                    {placed}
+                    {isCorrect && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
+                  </span>
+                )}
+                {!placed && <span className="text-gray-400">?</span>}
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
 
       {checked && allCorrect && (
