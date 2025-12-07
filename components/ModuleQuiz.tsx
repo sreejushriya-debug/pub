@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle2, XCircle, Award, MessageCircle } from 'lucide-react'
 import TutorChat from './TutorChat'
+import { updateConceptScores } from '@/lib/conceptProgress'
 
 // Question types
 interface BaseQuestion {
@@ -121,6 +122,18 @@ export default function ModuleQuiz({
       setCurrentQuestion(prev => prev + 1)
       setShowFeedback(false)
     } else {
+      // Quiz complete - save concept-level results
+      if (user?.id) {
+        const conceptResults = results.flatMap(r => {
+          const q = questions.find(q => q.id === r.questionId)
+          if (!q) return []
+          return q.conceptTags.map(concept => ({
+            concept,
+            correct: r.isCorrect
+          }))
+        })
+        updateConceptScores(user.id, conceptResults)
+      }
       setIsComplete(true)
     }
   }
