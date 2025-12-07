@@ -4,7 +4,7 @@ import { useUser, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
-  BookOpen, Play, Clock, ChevronRight, Trophy, Gamepad2, Brain, Sparkles
+  BookOpen, Play, Clock, ChevronRight, Trophy, Gamepad2, Brain, Sparkles, Coins
 } from 'lucide-react'
 
 const courseModules = [
@@ -161,6 +161,42 @@ export default function CourseDashboard() {
                 <div className="flex items-center gap-2 bg-white text-forest-700 px-5 py-2.5 rounded-xl 
                               font-semibold group-hover:bg-gray-100 transition-colors">
                   Open Hub
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Money Adventure CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.28 }}
+          className="mb-12"
+        >
+          <Link href="/course/learn/adventure">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white 
+                          hover:shadow-lg transition-all cursor-pointer group">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center 
+                                group-hover:scale-110 transition-transform">
+                    <Coins className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xl font-bold">Money Adventure</h3>
+                      <span className="px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">GAME</span>
+                    </div>
+                    <p className="text-white/80">
+                      Play through life scenarios, make money choices, and see how decisions affect your finances!
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-white text-purple-700 px-5 py-2.5 rounded-xl 
+                              font-semibold group-hover:bg-gray-100 transition-colors">
+                  Play Now
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
