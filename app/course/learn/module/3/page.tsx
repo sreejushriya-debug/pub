@@ -24,6 +24,7 @@ import Activity34C from './activities/Activity34C'
 import Activity35A from './activities/Activity35A'
 import Activity35B from './activities/Activity35B'
 import Activity35C from './activities/Activity35C'
+import Module3Quiz from './activities/Module3Quiz'
 
 type Step = 
   | 'kwl-pre'
@@ -43,16 +44,17 @@ type Step =
   | 'activity-3.5b'
   | 'activity-3.5c'
   | 'kwl-post'
+  | 'module-quiz'
   | 'complete'
 
 const STEPS: Step[] = [
   'kwl-pre', 'video-3.1', 'activity-3.1a', 'activity-3.1b', 'activity-3.2b',
   'activity-3.3a', 'activity-3.3b', 'activity-3.3c', 'video-3.4',
   'activity-3.4a', 'activity-3.4b', 'activity-3.4c', 'video-3.5',
-  'activity-3.5a', 'activity-3.5b', 'activity-3.5c', 'kwl-post', 'complete'
+  'activity-3.5a', 'activity-3.5b', 'activity-3.5c', 'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'complete' }> = {
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
   'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
   'video-3.1': { title: 'Video: Credit & Debit', type: 'video' },
   'activity-3.1a': { title: 'Word Scramble', type: 'activity' },
@@ -70,6 +72,7 @@ const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity
   'activity-3.5b': { title: 'Write Check #1 ($325)', type: 'activity' },
   'activity-3.5c': { title: 'Write Check #2 ($16,000)', type: 'activity' },
   'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
+  'module-quiz': { title: '📝 Module 3 Quiz', type: 'quiz' },
   'complete': { title: 'Module Complete!', type: 'complete' }
 }
 
@@ -158,6 +161,7 @@ export default function Module3Interactive() {
       case 'activity-3.5b': return <Activity35B onComplete={handleStepComplete} />
       case 'activity-3.5c': return <Activity35C onComplete={handleStepComplete} />
       case 'kwl-post': return <KWLPostActivity preKnow={moduleData.kwl_pre_know as string || ''} preWant={moduleData.kwl_pre_want as string || ''} onComplete={handleStepComplete} />
+      case 'module-quiz': return <Module3Quiz onComplete={handleStepComplete} />
       case 'complete':
         return (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12 px-6">

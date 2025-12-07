@@ -26,6 +26,7 @@ import Activity45B from './activities/Activity45B'
 import Activity46A from './activities/Activity46A'
 import Activity46B from './activities/Activity46B'
 import Activity46C from './activities/Activity46C'
+import Module4Quiz from './activities/Module4Quiz'
 
 type Step = 
   | 'kwl-pre'
@@ -45,6 +46,7 @@ type Step =
   | 'activity-4.6b'
   | 'activity-4.6c'
   | 'kwl-post'
+  | 'module-quiz'
   | 'complete'
 
 const STEPS: Step[] = [
@@ -52,10 +54,10 @@ const STEPS: Step[] = [
   'activity-4.2a', 'activity-4.2b', 'activity-4.2c',
   'activity-4.3a', 'activity-4.3b', 'activity-4.4b', 'activity-4.4c',
   'activity-4.5a', 'activity-4.5b', 'activity-4.6a', 'activity-4.6b', 'activity-4.6c',
-  'kwl-post', 'complete'
+  'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'complete' }> = {
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
   'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
   'video-4.1': { title: 'Video: Creating Your Own Business', type: 'video' },
   'activity-4.1a': { title: 'Choose Your Supplies', type: 'activity' },
@@ -73,6 +75,7 @@ const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity
   'activity-4.6b': { title: 'Classify Expenses', type: 'activity' },
   'activity-4.6c': { title: 'Write Expense Examples', type: 'activity' },
   'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
+  'module-quiz': { title: '📝 Module 4 Quiz', type: 'quiz' },
   'complete': { title: 'Module Complete!', type: 'complete' }
 }
 
@@ -161,6 +164,7 @@ export default function Module4Interactive() {
       case 'activity-4.6b': return <Activity46B onComplete={handleStepComplete} />
       case 'activity-4.6c': return <Activity46C onComplete={handleStepComplete} />
       case 'kwl-post': return <KWLPostActivity preKnow={moduleData.kwl_pre_know as string || ''} preWant={moduleData.kwl_pre_want as string || ''} onComplete={handleStepComplete} />
+      case 'module-quiz': return <Module4Quiz onComplete={handleStepComplete} />
       case 'complete':
         return (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12 px-6">

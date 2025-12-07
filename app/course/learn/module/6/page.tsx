@@ -24,6 +24,7 @@ import Activity64A from './activities/Activity64A'
 import Activity64B from './activities/Activity64B'
 import Activity65A from './activities/Activity65A'
 import Activity65B from './activities/Activity65B'
+import Module6Quiz from './activities/Module6Quiz'
 
 type Step = 
   | 'kwl-pre'
@@ -38,7 +39,7 @@ type Step =
   | 'activity-6.3d'
   | 'activity-6.4a'
   | 'activity-6.4b'
-  | 'activity-6.5a'
+  | 'module-quiz'
   | 'activity-6.5b'
   | 'kwl-post'
   | 'complete'
@@ -48,11 +49,11 @@ const STEPS: Step[] = [
   'activity-6.2a', 'activity-6.2b', 'activity-6.2c',
   'activity-6.3a', 'activity-6.3b', 'activity-6.3c', 'activity-6.3d',
   'activity-6.4a', 'activity-6.4b',
-  'activity-6.5a', 'activity-6.5b',
+  'module-quiz', 'activity-6.5b',
   'kwl-post', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'activity' | 'complete' }> = {
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'activity' | 'quiz' | 'complete' }> = {
   'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
   'activity-6.1a': { title: 'Timed Matching Rounds', type: 'activity' },
   'activity-6.1b': { title: 'Category Sort', type: 'activity' },
@@ -65,7 +66,7 @@ const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'activity' | 'compl
   'activity-6.3d': { title: 'Investor Pitch Reflection', type: 'activity' },
   'activity-6.4a': { title: 'Save, Spend, or Borrow?', type: 'activity' },
   'activity-6.4b': { title: 'Which Card Should They Use?', type: 'activity' },
-  'activity-6.5a': { title: 'Final Challenge Quiz', type: 'activity' },
+  'module-quiz': { title: '📝 Final Review Quiz', type: 'quiz' },
   'activity-6.5b': { title: 'Money Master Certificate', type: 'activity' },
   'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
   'complete': { title: 'Course Complete!', type: 'complete' }
@@ -151,8 +152,8 @@ export default function Module6Interactive() {
       case 'activity-6.3d': return <Activity63D onComplete={handleStepComplete} />
       case 'activity-6.4a': return <Activity64A onComplete={handleStepComplete} />
       case 'activity-6.4b': return <Activity64B onComplete={handleStepComplete} />
-      case 'activity-6.5a': return <Activity65A onComplete={handleStepComplete} />
-      case 'activity-6.5b': return <Activity65B quizScore={moduleData.quizScore as { correct: number; total: number } || { correct: 0, total: 0 }} onComplete={handleStepComplete} />
+      case 'module-quiz': return <Module6Quiz onComplete={handleStepComplete} />
+      case 'activity-6.5b': return <Activity65B quizScore={moduleData.module6_quiz_score ? { correct: moduleData.module6_quiz_score as number, total: moduleData.module6_quiz_total as number } : { correct: 0, total: 0 }} onComplete={handleStepComplete} />
       case 'kwl-post': return <KWLPostActivity preKnow={moduleData.kwl_pre_know as string || ''} preWant={moduleData.kwl_pre_want as string || ''} onComplete={handleStepComplete} />
       case 'complete':
         return (

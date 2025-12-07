@@ -20,6 +20,7 @@ import Activity12B from './activities/Activity12B'
 import Activity13A from './activities/Activity13A'
 import Activity13B from './activities/Activity13B'
 import VideoLesson from './activities/VideoLesson'
+import Module1Quiz from './activities/Module1Quiz'
 
 type Step = 
   | 'kwl-pre'
@@ -32,6 +33,7 @@ type Step =
   | 'activity-1.3a'
   | 'activity-1.3b'
   | 'kwl-post'
+  | 'module-quiz'
   | 'complete'
 
 const STEPS: Step[] = [
@@ -45,10 +47,11 @@ const STEPS: Step[] = [
   'activity-1.3a',
   'activity-1.3b',
   'kwl-post',
+  'module-quiz',
   'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'complete' }> = {
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
   'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
   'video-1.1': { title: 'Video: Important Financial Terms', type: 'video' },
   'activity-1.1a': { title: 'Term Matching', type: 'activity' },
@@ -59,6 +62,7 @@ const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity
   'activity-1.3a': { title: 'Coin Identification', type: 'activity' },
   'activity-1.3b': { title: 'Count the Coins', type: 'activity' },
   'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
+  'module-quiz': { title: '📝 Module 1 Quiz', type: 'quiz' },
   'complete': { title: 'Module Complete!', type: 'complete' }
 }
 
@@ -200,6 +204,8 @@ export default function Module1Interactive() {
           preWant={moduleData.kwl_pre_want as string || ''}
           onComplete={handleStepComplete}
         />
+      case 'module-quiz':
+        return <Module1Quiz onComplete={handleStepComplete} />
       case 'complete':
         return (
           <motion.div

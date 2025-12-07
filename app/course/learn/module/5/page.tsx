@@ -22,6 +22,7 @@ import Activity53C from './activities/Activity53C'
 import Activity54A from './activities/Activity54A'
 import Activity54B from './activities/Activity54B'
 import Activity54C from './activities/Activity54C'
+import Module5Quiz from './activities/Module5Quiz'
 
 type Step = 
   | 'kwl-pre'
@@ -37,6 +38,7 @@ type Step =
   | 'activity-5.4b'
   | 'activity-5.4c'
   | 'kwl-post'
+  | 'module-quiz'
   | 'complete'
 
 const STEPS: Step[] = [
@@ -44,10 +46,10 @@ const STEPS: Step[] = [
   'activity-5.2a', 'activity-5.2b',
   'activity-5.3a', 'activity-5.3b', 'activity-5.3c',
   'activity-5.4a', 'activity-5.4b', 'activity-5.4c',
-  'kwl-post', 'complete'
+  'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'complete' }> = {
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
   'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
   'video-5.1': { title: 'Video: Understanding Taxes', type: 'video' },
   'activity-5.1a': { title: 'Guided Tax Calculator', type: 'activity' },
@@ -61,6 +63,7 @@ const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity
   'activity-5.4b': { title: 'Choose the Best Deal', type: 'activity' },
   'activity-5.4c': { title: 'Create Your Own Sale', type: 'activity' },
   'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
+  'module-quiz': { title: '📝 Module 5 Quiz', type: 'quiz' },
   'complete': { title: 'Module Complete!', type: 'complete' }
 }
 
@@ -145,6 +148,7 @@ export default function Module5Interactive() {
       case 'activity-5.4b': return <Activity54B onComplete={handleStepComplete} />
       case 'activity-5.4c': return <Activity54C onComplete={handleStepComplete} />
       case 'kwl-post': return <KWLPostActivity preKnow={moduleData.kwl_pre_know as string || ''} preWant={moduleData.kwl_pre_want as string || ''} onComplete={handleStepComplete} />
+      case 'module-quiz': return <Module5Quiz onComplete={handleStepComplete} />
       case 'complete':
         return (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12 px-6">
