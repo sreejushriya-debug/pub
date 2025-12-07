@@ -81,16 +81,16 @@ export default function Activity45A({ onComplete }: Props) {
   }
 
   const handleTryAgain = () => {
-    const newAnswers = { ...answers }
     const p = PROBLEMS[currentProblem]
-    const current = newAnswers[p.id]
-    if (current) {
-      if (current.expenses === correct.expenses) delete current.expenses
-      if (current.revenue === correct.revenue) delete current.revenue
-      if (current.profit === correct.profit) delete current.profit
-      if (current.loss === correct.loss) delete current.loss
+    const current = answers[p.id] || { expenses: '', revenue: '', profit: '', loss: '' }
+    // Keep only correct answers, clear incorrect ones
+    const updatedAnswer = {
+      expenses: current.expenses === correct.expenses ? current.expenses : '',
+      revenue: current.revenue === correct.revenue ? current.revenue : '',
+      profit: current.profit === correct.profit ? current.profit : '',
+      loss: current.loss === correct.loss ? current.loss : ''
     }
-    setAnswers(newAnswers)
+    setAnswers({ ...answers, [p.id]: updatedAnswer })
     setChecked(false)
   }
 
