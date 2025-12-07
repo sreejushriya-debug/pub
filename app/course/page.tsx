@@ -5,8 +5,9 @@ import { motion } from 'framer-motion'
 import { 
   GraduationCap, BookOpen, Gamepad2, CheckCircle2, 
   ArrowRight, Clock, Users, Star, ChevronDown, ChevronUp,
-  FileText, Video, Trophy, Loader2
+  FileText, Video, Trophy, Loader2, UserPlus
 } from 'lucide-react'
+import Link from 'next/link'
 import FloatingParticles from '@/components/FloatingParticles'
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
@@ -187,8 +188,34 @@ export default function CoursePage() {
                   Start Learning Today
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Sign up to get free access to all course materials.
+                  Create a free account to access all course materials.
                 </p>
+
+                {/* Account Creation Buttons */}
+                <div className="space-y-4 mb-6">
+                  <Link 
+                    href="/signup"
+                    className="btn-primary w-full justify-center text-lg py-4"
+                  >
+                    <UserPlus className="w-5 h-5" />
+                    Create Free Account
+                  </Link>
+                  <p className="text-center text-gray-500 text-sm">
+                    Already have an account?{' '}
+                    <Link href="/login" className="text-forest-600 font-semibold hover:underline">
+                      Sign in
+                    </Link>
+                  </p>
+                </div>
+
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-white text-gray-500">or get updates via email</span>
+                  </div>
+                </div>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
