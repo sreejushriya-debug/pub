@@ -7,10 +7,10 @@ import {
   CheckCircle2, XCircle, Sparkles, Loader2, HelpCircle
 } from 'lucide-react'
 import { 
-  GameState, TurnHistory, ChoiceEffects, BonusQuestionResult,
-  getWellbeingEmoji, getWellbeingLabel, getWellbeingColor
+  GameState, TurnHistory, ChoiceEffects, StoryCard, Choice,
+  getWellbeingEmoji, getWellbeingColor
 } from '@/lib/moneyAdventure/types'
-import { getGameStoryCards, StoryCard, Choice } from '@/lib/moneyAdventure/storyCards'
+import { getGameStoryCards } from '@/lib/moneyAdventure/storyCards'
 import { updateConceptScores } from '@/lib/conceptProgress'
 import MoneyAdventureSummary from './MoneyAdventureSummary'
 
