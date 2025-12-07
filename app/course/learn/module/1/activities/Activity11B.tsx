@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap } from 'lucide-react'
 
@@ -10,6 +11,7 @@ interface Activity11BProps {
 
 const QUIZ_QUESTIONS = [
   {
+    questionKey: 'q1', // Matches seed data
     term: 'Inflation',
     correct: 'A general increase in prices over time',
     options: [
@@ -20,6 +22,7 @@ const QUIZ_QUESTIONS = [
     explanation: 'Inflation means prices go up over time, so your money buys less than before.'
   },
   {
+    questionKey: 'q2',
     term: 'Debt',
     correct: 'Money that is owed to someone else',
     options: [
@@ -30,6 +33,7 @@ const QUIZ_QUESTIONS = [
     explanation: 'Debt is when you owe money to someone – like when you borrow and need to pay it back.'
   },
   {
+    questionKey: 'q3',
     term: 'Interest',
     correct: 'Extra money paid for borrowing money',
     options: [
@@ -40,6 +44,7 @@ const QUIZ_QUESTIONS = [
     explanation: 'Interest is like a fee for borrowing money. Banks pay you interest on savings, and you pay interest on loans.'
   },
   {
+    questionKey: 'q4',
     term: 'Profit',
     correct: 'Money left over after paying all expenses',
     options: [
@@ -50,6 +55,7 @@ const QUIZ_QUESTIONS = [
     explanation: 'Profit is what remains after you subtract all costs from what you earned. Revenue - Expenses = Profit!'
   },
   {
+    questionKey: 'q5',
     term: 'Stock',
     correct: 'A share of ownership in a company',
     options: [
@@ -61,36 +67,107 @@ const QUIZ_QUESTIONS = [
   }
 ]
 
+interface QuestionAttempt {
+  questionKey: string
+  attempts: number
+  submittedAnswer: string
+  isCorrect: boolean
+}
+
 export default function Activity11B({ onComplete }: Activity11BProps) {
+  const { user } = useUser()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [score, setScore] = useState(0)
   const [missedTerms, setMissedTerms] = useState<string[]>([])
   const [isComplete, setIsComplete] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Track attempts per question
+  const [questionAttempts, setQuestionAttempts] = useState<Record<string, number>>({})
+  const [questionResults, setQuestionResults] = useState<QuestionAttempt[]>([])
 
   const question = QUIZ_QUESTIONS[currentQuestion]
   const isCorrect = selectedAnswer === question.correct
+  const currentAttempts = questionAttempts[question.questionKey] || 0
 
   const handleAnswer = (answer: string) => {
     if (showFeedback) return
+    
+    // Increment attempts for this question
+    const newAttempts = (questionAttempts[question.questionKey] || 0) + 1
+    setQuestionAttempts(prev => ({
+      ...prev,
+      [question.questionKey]: newAttempts
+    }))
+    
     setSelectedAnswer(answer)
     setShowFeedback(true)
     
-    if (answer === question.correct) {
+    const correct = answer === question.correct
+    
+    if (correct) {
       setScore(prev => prev + 1)
     } else {
       setMissedTerms(prev => [...prev, question.term])
     }
+    
+    // Store result for this question
+    setQuestionResults(prev => {
+      // Remove any existing result for this question (in case they retry)
+      const filtered = prev.filter(r => r.questionKey !== question.questionKey)
+      return [...filtered, {
+        questionKey: question.questionKey,
+        attempts: newAttempts,
+        submittedAnswer: answer,
+        isCorrect: correct,
+      }]
+    })
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
       setCurrentQuestion(prev => prev + 1)
       setSelectedAnswer(null)
       setShowFeedback(false)
     } else {
+      // Quiz complete - submit results to API
+      await submitQuizResults()
       setIsComplete(true)
+    }
+  }
+
+  const submitQuizResults = async () => {
+    if (!user?.id) {
+      console.warn('User not authenticated, skipping API submission')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          activityKey: 'activity-1.1b',
+          answers: questionResults,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit quiz results')
+      }
+
+      const data = await response.json()
+      console.log('Quiz results submitted:', data)
+    } catch (error) {
+      console.error('Error submitting quiz results:', error)
+      // Don't block the user if submission fails - they can still continue
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -134,9 +211,11 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
               activity_11b_total: QUIZ_QUESTIONS.length,
               activity_11b_missed: missedTerms
             })}
-            className="btn-primary px-8 py-3"
+            disabled={isSubmitting}
+            className="btn-primary px-8 py-3 disabled:opacity-50"
           >
-            Continue to Next Lesson <ArrowRight className="w-5 h-5 ml-2" />
+            {isSubmitting ? 'Saving results...' : 'Continue to Next Lesson'} 
+            {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
       </div>
