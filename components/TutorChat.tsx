@@ -4,6 +4,130 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, X, Sparkles, User, Loader2 } from 'lucide-react'
 
+// Helper function to render markdown-like formatting
+function formatMessage(text: string): React.ReactNode[] {
+  const elements: React.ReactNode[] = []
+  
+  // Split by paragraphs (double newlines)
+  const paragraphs = text.split(/\n\n+/)
+  
+  paragraphs.forEach((paragraph, pIdx) => {
+    if (pIdx > 0) {
+      elements.push(<div key={`space-${pIdx}`} className="h-3" />)
+    }
+    
+    // Handle block math \[ ... \]
+    if (paragraph.match(/^\s*\\\[.*\\\]\s*$/)) {
+      const math = paragraph.replace(/^\s*\\\[\s*/, '').replace(/\s*\\\]\s*$/, '')
+      // Convert LaTeX to readable format
+      const readable = math
+        .replace(/\\times/g, '×')
+        .replace(/\\div/g, '÷')
+        .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 ÷ $2)')
+        .replace(/\\cdot/g, '·')
+        .replace(/\\pm/g, '±')
+        .replace(/\\leq/g, '≤')
+        .replace(/\\geq/g, '≥')
+        .replace(/\\neq/g, '≠')
+        .replace(/\$/g, '$')
+      elements.push(
+        <div key={`math-${pIdx}`} className="bg-forest-50 rounded-lg px-4 py-2 my-2 font-mono text-center text-forest-800 font-semibold">
+          {readable}
+        </div>
+      )
+      return
+    }
+    
+    // Process lines within paragraph
+    const lines = paragraph.split('\n')
+    lines.forEach((line, lIdx) => {
+      if (lIdx > 0) {
+        elements.push(<br key={`br-${pIdx}-${lIdx}`} />)
+      }
+      
+      // Format inline elements
+      const formattedLine = formatInline(line, `${pIdx}-${lIdx}`)
+      elements.push(<span key={`line-${pIdx}-${lIdx}`}>{formattedLine}</span>)
+    })
+  })
+  
+  return elements
+}
+
+function formatInline(text: string, keyPrefix: string): React.ReactNode[] {
+  const result: React.ReactNode[] = []
+  let remaining = text
+  let keyIdx = 0
+  
+  while (remaining.length > 0) {
+    // Check for bold **text**
+    const boldMatch = remaining.match(/^\*\*(.+?)\*\*/)
+    if (boldMatch) {
+      result.push(<strong key={`${keyPrefix}-b-${keyIdx++}`} className="font-semibold">{boldMatch[1]}</strong>)
+      remaining = remaining.slice(boldMatch[0].length)
+      continue
+    }
+    
+    // Check for inline math \( ... \)
+    const inlineMathMatch = remaining.match(/^\\\((.+?)\\\)/)
+    if (inlineMathMatch) {
+      const math = inlineMathMatch[1]
+        .replace(/\\times/g, '×')
+        .replace(/\\div/g, '÷')
+        .replace(/\\cdot/g, '·')
+        .replace(/\$/g, '$')
+      result.push(<code key={`${keyPrefix}-m-${keyIdx++}`} className="bg-forest-100 px-1 rounded font-mono text-forest-700">{math}</code>)
+      remaining = remaining.slice(inlineMathMatch[0].length)
+      continue
+    }
+    
+    // Check for block math \[ ... \] inline (shouldn't happen but just in case)
+    const blockMathMatch = remaining.match(/^\\\[(.+?)\\\]/)
+    if (blockMathMatch) {
+      const math = blockMathMatch[1]
+        .replace(/\\times/g, '×')
+        .replace(/\\div/g, '÷')
+        .replace(/\\cdot/g, '·')
+        .replace(/\$/g, '$')
+      result.push(<code key={`${keyPrefix}-bm-${keyIdx++}`} className="bg-forest-100 px-2 py-1 rounded font-mono text-forest-700 font-semibold">{math}</code>)
+      remaining = remaining.slice(blockMathMatch[0].length)
+      continue
+    }
+    
+    // Check for italic *text*
+    const italicMatch = remaining.match(/^\*([^*]+?)\*/)
+    if (italicMatch) {
+      result.push(<em key={`${keyPrefix}-i-${keyIdx++}`}>{italicMatch[1]}</em>)
+      remaining = remaining.slice(italicMatch[0].length)
+      continue
+    }
+    
+    // Check for code `text`
+    const codeMatch = remaining.match(/^`([^`]+?)`/)
+    if (codeMatch) {
+      result.push(<code key={`${keyPrefix}-c-${keyIdx++}`} className="bg-gray-100 px-1 rounded font-mono text-sm">{codeMatch[1]}</code>)
+      remaining = remaining.slice(codeMatch[0].length)
+      continue
+    }
+    
+    // Find next special character or take rest of string
+    const nextSpecial = remaining.search(/\*|\\|\`/)
+    if (nextSpecial === -1) {
+      result.push(remaining)
+      break
+    } else if (nextSpecial === 0) {
+      // If we're at a special char but didn't match a pattern, just take the char
+      result.push(remaining[0])
+      remaining = remaining.slice(1)
+    } else {
+      result.push(remaining.slice(0, nextSpecial))
+      remaining = remaining.slice(nextSpecial)
+    }
+  }
+  
+  return result
+}
+
 interface MissedQuestion {
   questionId: string
   questionText: string
@@ -294,12 +418,8 @@ export default function TutorChat({
                       : 'bg-accent-500 text-white'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {message.content.split('\n').map((line, i) => (
-                      <p key={i} className={i > 0 ? 'mt-2' : ''}>
-                        {line}
-                      </p>
-                    ))}
+                  <div className="text-sm leading-relaxed">
+                    {formatMessage(message.content)}
                   </div>
                 </div>
               </motion.div>
