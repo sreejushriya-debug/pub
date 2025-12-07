@@ -43,10 +43,10 @@ const courseModules = [
   {
     id: 5,
     title: 'Taxes',
-    description: 'Understand what taxes are and learn how to calculate them.',
-    activities: 6,
+    description: 'Understand what taxes are and learn how to calculate them, including discounts and finding the best deals.',
+    activities: 10,
     videos: 1,
-    duration: '25 min',
+    duration: '40 min',
   },
   {
     id: 6,
