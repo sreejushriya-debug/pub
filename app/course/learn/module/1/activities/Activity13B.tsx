@@ -229,7 +229,7 @@ export default function Activity13B({ onComplete }: Activity13BProps) {
 
       {/* Buttons */}
       <div className="flex justify-center gap-4">
-        {!allCorrect && (
+        {!(allCorrect && checked) && (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
