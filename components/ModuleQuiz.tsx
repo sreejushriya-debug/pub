@@ -433,9 +433,6 @@ export default function ModuleQuiz({
           <span className="bg-forest-100 text-forest-700 px-2 py-1 rounded-lg text-sm font-medium">
             Q{currentQuestion + 1}
           </span>
-          <span className="text-xs text-gray-400 mt-1">
-            {question.conceptTags.join(' • ')}
-          </span>
         </div>
         
         <p className="text-lg text-gray-800 mb-6">{question.questionText}</p>
