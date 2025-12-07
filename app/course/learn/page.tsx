@@ -36,9 +36,9 @@ const courseModules = [
     id: 4,
     title: 'Business',
     description: 'Learn about revenue, expenses, profit, and the basics of starting your own business.',
-    activities: 8,
+    activities: 15,
     videos: 1,
-    duration: '35 min',
+    duration: '45 min',
   },
   {
     id: 5,
