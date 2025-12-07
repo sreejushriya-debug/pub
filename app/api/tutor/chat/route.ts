@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
    Correct answer: "${q.correctAnswer}"${tags}`
     }).join('\n\n')
 
-    const conceptList = [...new Set(missedQuestions.flatMap(q => q.conceptTags || [q.term || 'unknown']))].join(', ')
+    const conceptList = Array.from(new Set(missedQuestions.flatMap(q => q.conceptTags || [q.term || 'unknown']))).join(', ')
 
     const systemPrompt = `You are Bright, a friendly, encouraging AI tutor for kids in grades 3-5. You help students learn about money through the "Project Bright Beginnings" financial literacy course.
 
