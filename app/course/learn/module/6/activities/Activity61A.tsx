@@ -51,13 +51,19 @@ export default function Activity61A({ onComplete }: Props) {
       setMissedWords([...missedWords, question.correct])
     }
     
-    // Move to next question
-    if (currentQuestion < QUESTIONS.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-    } else {
-      // Loop back to start if time remains
-      setCurrentQuestion(0)
-    }
+    // Auto-advance to next question after a short delay
+    setTimeout(() => {
+      if (currentQuestion < QUESTIONS.length - 1) {
+        setCurrentQuestion(currentQuestion + 1)
+      } else {
+        // Loop back to start if time remains
+        setCurrentQuestion(0)
+      }
+    }, 1000)
+  }
+
+  const handleFinishEarly = () => {
+    setFinished(true)
   }
 
   const handleStart = () => {
@@ -163,7 +169,7 @@ export default function Activity61A({ onComplete }: Props) {
           <p className="text-xl font-semibold text-gray-900 mb-4">{question.definition}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-6">
           {question.options.map((option) => {
             const wasSelected = isAnswered && option === question.correct
             const wasWrong = isAnswered && option !== question.correct
@@ -183,6 +189,20 @@ export default function Activity61A({ onComplete }: Props) {
             )
           })}
         </div>
+
+        {isAnswered && (
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-3">Moving to next question...</p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-center">
+        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+          onClick={handleFinishEarly}
+          className="btn-outline px-6 py-3">
+          Finish Round Early
+        </motion.button>
       </div>
     </div>
   )
