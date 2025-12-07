@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -83,7 +83,7 @@ const courseModules = [
   },
 ]
 
-export default function CourseDashboard() {
+function CourseDashboardContent() {
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -269,6 +269,14 @@ export default function CourseDashboard() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function CourseDashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-forest-600"></div></div>}>
+      <CourseDashboardContent />
+    </Suspense>
   )
 }
 

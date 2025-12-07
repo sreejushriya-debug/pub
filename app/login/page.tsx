@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from 'lucide-react'
 import FloatingParticles from '@/components/FloatingParticles'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -149,6 +149,14 @@ export default function LoginPage() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-forest-600"></div></div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
 
