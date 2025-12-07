@@ -232,7 +232,7 @@ export default function Activity11A({ onComplete }: Activity11AProps) {
         )}
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          {!allCorrect && (
+          {!(allCorrect && checked) && (
             <>
               <motion.button
                 whileHover={remainingCount === 0 ? { scale: 1.02 } : {}}
@@ -247,7 +247,7 @@ export default function Activity11A({ onComplete }: Activity11AProps) {
                   ? `Match ${remainingCount} more term${remainingCount > 1 ? 's' : ''} first` 
                   : 'Check Answers'}
               </motion.button>
-              {checked && (
+              {checked && !allCorrect && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
