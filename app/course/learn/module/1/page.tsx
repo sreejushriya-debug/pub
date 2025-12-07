@@ -107,9 +107,11 @@ export default function Module1Interactive() {
       setCurrentStep(nextStep)
       
       if (user?.id) {
+        const newCompletedArray = Array.from(completedSteps)
+        newCompletedArray.push(currentStep)
         localStorage.setItem(`module1_progress_${user.id}`, JSON.stringify({
           currentStep: nextStep,
-          completedSteps: Array.from(new Set([...completedSteps, currentStep])),
+          completedSteps: newCompletedArray,
           moduleData: { ...moduleData, ...data }
         }))
       }
