@@ -43,7 +43,7 @@ export default function Activity61A({ onComplete }: Props) {
     
     const question = QUESTIONS[currentQuestion]
     const isCorrect = answer === question.correct
-    setAnswered(new Set([...answered, question.id]))
+    setAnswered(new Set([...Array.from(answered), question.id]))
     
     if (isCorrect) {
       setScore(score + 1)
