@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle2, XCircle, Layers, Eye } from 'lucide-react'
+import { ArrowRight, CheckCircle2, XCircle, Layers, Eye, RotateCcw, X } from 'lucide-react'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
@@ -32,6 +32,26 @@ export default function Activity32B({ onComplete }: Props) {
     if (!selectedTerm || revealed) return
     setPlacements({ ...placements, [selectedTerm]: category })
     setSelectedTerm(null)
+    setChecked(false)
+  }
+
+  const handleRemoveTerm = (term: string) => {
+    if (revealed) return
+    const newPlacements = { ...placements }
+    delete newPlacements[term]
+    setPlacements(newPlacements)
+    setChecked(false)
+  }
+
+  const handleTryAgain = () => {
+    // Remove only incorrect placements
+    const correct: Record<string, string> = {}
+    Object.entries(placements).forEach(([term, cat]) => {
+      if (getCorrectCategory(term) === cat) {
+        correct[term] = cat
+      }
+    })
+    setPlacements(correct)
     setChecked(false)
   }
 
@@ -71,7 +91,7 @@ export default function Activity32B({ onComplete }: Props) {
 
       {/* Terms to place */}
       <div className="bg-gray-100 rounded-xl p-4 mb-6">
-        <p className="text-sm font-medium text-gray-700 mb-3">Click a term, then click a category:</p>
+        <p className="text-sm font-medium text-gray-700 mb-3">Click a term, then click a category (or click placed terms to move them):</p>
         <div className="flex flex-wrap gap-2">
           {ALL_TERMS.map(term => {
             const isPlaced = placedTerms.includes(term)
@@ -106,13 +126,19 @@ export default function Activity32B({ onComplete }: Props) {
                   const isCorrect = checked && getCorrectCategory(term) === category
                   const isWrong = checked && getCorrectCategory(term) !== category
                   return (
-                    <span key={term} className={`px-2 py-1 rounded text-sm font-medium flex items-center gap-1 ${
-                      isCorrect ? 'bg-green-100 text-green-700' : isWrong ? 'bg-red-100 text-red-700' : 'bg-forest-100 text-forest-700'
-                    }`}>
+                    <button
+                      key={term}
+                      onClick={() => !revealed && handleRemoveTerm(term)}
+                      className={`px-2 py-1 rounded text-sm font-medium flex items-center gap-1 transition-all ${
+                        isCorrect ? 'bg-green-100 text-green-700' : isWrong ? 'bg-red-100 text-red-700' : 'bg-forest-100 text-forest-700 hover:bg-forest-200'
+                      } ${revealed ? 'cursor-default' : 'cursor-pointer'}`}
+                      title={revealed ? '' : 'Click to remove and try again'}
+                    >
                       {term}
                       {isCorrect && <CheckCircle2 className="w-3 h-3" />}
                       {isWrong && <XCircle className="w-3 h-3" />}
-                    </span>
+                      {!revealed && !checked && <X className="w-3 h-3 ml-1 opacity-50" />}
+                    </button>
                   )
                 })}
               </div>
@@ -123,7 +149,8 @@ export default function Activity32B({ onComplete }: Props) {
 
       {checked && !allCorrect && !revealed && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-          <p className="text-amber-800"><strong>Almost!</strong> Some terms are in the wrong category. Look at the red ones and try again.</p>
+          <p className="text-amber-800 mb-2"><strong>Almost!</strong> Some terms are in the wrong category. Look at the red ones.</p>
+          <p className="text-amber-700 text-sm">💡 Click on any term in a category to remove it and place it somewhere else!</p>
         </div>
       )}
 
@@ -135,11 +162,19 @@ export default function Activity32B({ onComplete }: Props) {
 
       <div className="flex justify-center gap-4">
         {!((allCorrect && checked) || revealed) && (
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleCheck}
-            disabled={placedTerms.length < ALL_TERMS.length}
-            className={`btn-primary px-6 py-3 ${placedTerms.length < ALL_TERMS.length ? 'opacity-50 cursor-not-allowed' : ''}`}>
-            {placedTerms.length < ALL_TERMS.length ? `Place ${ALL_TERMS.length - placedTerms.length} more` : 'Check Answers'}
-          </motion.button>
+          <>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleCheck}
+              disabled={placedTerms.length < ALL_TERMS.length}
+              className={`btn-primary px-6 py-3 ${placedTerms.length < ALL_TERMS.length ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              {placedTerms.length < ALL_TERMS.length ? `Place ${ALL_TERMS.length - placedTerms.length} more` : 'Check Answers'}
+            </motion.button>
+            {checked && !allCorrect && (
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                onClick={handleTryAgain} className="btn-outline px-6 py-3 flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" /> Try Again
+              </motion.button>
+            )}
+          </>
         )}
         {((allCorrect && checked) || revealed) && (
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
