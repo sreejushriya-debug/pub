@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap, Sparkles, Loader2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, XCircle, Lightbulb, Zap, MessageCircle } from 'lucide-react'
+import TutorChat from '@/components/TutorChat'
 
 interface Activity11BProps {
   onComplete: (data: Record<string, unknown>) => void
@@ -11,7 +12,7 @@ interface Activity11BProps {
 
 const QUIZ_QUESTIONS = [
   {
-    questionKey: 'q1', // Matches seed data
+    questionKey: 'q1',
     term: 'Inflation',
     correct: 'A general increase in prices over time',
     options: [
@@ -19,7 +20,8 @@ const QUIZ_QUESTIONS = [
       'Money you owe to someone',
       'A share of ownership in a company'
     ],
-    explanation: 'Inflation means prices go up over time, so your money buys less than before.'
+    explanation: 'Inflation means prices go up over time, so your money buys less than before.',
+    conceptTags: ['inflation', 'prices', 'economy']
   },
   {
     questionKey: 'q2',
@@ -30,7 +32,8 @@ const QUIZ_QUESTIONS = [
       'Money that is owed to someone else',
       'Money saved in a bank'
     ],
-    explanation: 'Debt is when you owe money to someone – like when you borrow and need to pay it back.'
+    explanation: 'Debt is when you owe money to someone – like when you borrow and need to pay it back.',
+    conceptTags: ['debt', 'borrowing', 'loans']
   },
   {
     questionKey: 'q3',
@@ -41,7 +44,8 @@ const QUIZ_QUESTIONS = [
       'Money from selling things',
       'Extra money paid for borrowing money'
     ],
-    explanation: 'Interest is like a fee for borrowing money. Banks pay you interest on savings, and you pay interest on loans.'
+    explanation: 'Interest is like a fee for borrowing money. Banks pay you interest on savings, and you pay interest on loans.',
+    conceptTags: ['interest', 'borrowing', 'savings']
   },
   {
     questionKey: 'q4',
@@ -52,7 +56,8 @@ const QUIZ_QUESTIONS = [
       'The total money a business receives',
       'Money borrowed from a bank'
     ],
-    explanation: 'Profit is what remains after you subtract all costs from what you earned. Revenue - Expenses = Profit!'
+    explanation: 'Profit is what remains after you subtract all costs from what you earned. Revenue - Expenses = Profit!',
+    conceptTags: ['profit', 'business', 'revenue', 'expenses']
   },
   {
     questionKey: 'q5',
@@ -63,7 +68,8 @@ const QUIZ_QUESTIONS = [
       'A share of ownership in a company',
       'A type of loan from a bank'
     ],
-    explanation: 'When you buy stock, you own a tiny piece of that company!'
+    explanation: 'When you buy stock, you own a tiny piece of that company!',
+    conceptTags: ['stocks', 'investing', 'ownership']
   }
 ]
 
@@ -88,14 +94,11 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
   const [questionAttempts, setQuestionAttempts] = useState<Record<string, number>>({})
   const [questionResults, setQuestionResults] = useState<QuestionAttempt[]>([])
   
-  // AI Tutor state
-  const [tutorLoading, setTutorLoading] = useState(false)
-  const [tutorResponse, setTutorResponse] = useState<string | null>(null)
-  const [tutorError, setTutorError] = useState<string | null>(null)
+  // Chat tutor state
+  const [isChatOpen, setIsChatOpen] = useState(false)
 
   const question = QUIZ_QUESTIONS[currentQuestion]
   const isCorrect = selectedAnswer === question.correct
-  const currentAttempts = questionAttempts[question.questionKey] || 0
 
   const handleAnswer = (answer: string) => {
     if (showFeedback) return
@@ -120,7 +123,6 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
     
     // Store result for this question
     setQuestionResults(prev => {
-      // Remove any existing result for this question (in case they retry)
       const filtered = prev.filter(r => r.questionKey !== question.questionKey)
       return [...filtered, {
         questionKey: question.questionKey,
@@ -137,7 +139,6 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
       setSelectedAnswer(null)
       setShowFeedback(false)
     } else {
-      // Quiz complete - submit results to API
       await submitQuizResults()
       setIsComplete(true)
     }
@@ -170,7 +171,6 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
       console.log('Quiz results submitted:', data)
     } catch (error) {
       console.error('Error submitting quiz results:', error)
-      // Don't block the user if submission fails - they can still continue
     } finally {
       setIsSubmitting(false)
     }
@@ -180,61 +180,16 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
     return questionResults
       .filter(r => !r.isCorrect)
       .map(r => {
-        const question = QUIZ_QUESTIONS.find(q => q.questionKey === r.questionKey)
+        const q = QUIZ_QUESTIONS.find(q => q.questionKey === r.questionKey)
         return {
           questionId: r.questionKey,
           userAnswer: r.submittedAnswer,
-          questionText: question ? `What does "${question.term}" mean?` : '',
-          correctAnswer: question?.correct || '',
-          term: question?.term || '',
+          questionText: q ? `What does "${q.term}" mean?` : '',
+          correctAnswer: q?.correct || '',
+          term: q?.term || '',
+          conceptTags: q?.conceptTags || [],
         }
       })
-  }
-
-  const handleGetTutorHelp = async () => {
-    const missedQuestions = getMissedQuestions()
-    if (missedQuestions.length === 0) return
-
-    setTutorLoading(true)
-    setTutorError(null)
-    setTutorResponse(null)
-
-    try {
-      const response = await fetch('/api/tutor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          activityKey: 'activity-1.1b',
-          // Send full question data so the API doesn't need a database
-          missedQuestions: missedQuestions.map(q => ({
-            questionId: q.questionId,
-            userAnswer: q.userAnswer,
-            questionText: q.questionText,
-            correctAnswer: q.correctAnswer,
-            term: q.term,
-          })),
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to get tutor help')
-      }
-
-      const data = await response.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-      setTutorResponse(data.explanation)
-    } catch (error) {
-      console.error('Error getting tutor help:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Sorry, I couldn\'t get help right now. Please try again later.'
-      setTutorError(errorMessage)
-    } finally {
-      setTutorLoading(false)
-    }
   }
 
   if (isComplete) {
@@ -272,56 +227,21 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
             </p>
           )}
 
-          {/* AI Tutor Section */}
+          {/* Open Tutor Chat Button */}
           {hasMissedQuestions && (
-            <div className="mb-8 max-w-2xl mx-auto">
+            <div className="mb-8">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleGetTutorHelp}
-                disabled={tutorLoading}
-                className="btn-outline px-6 py-3 mb-4 flex items-center gap-2 mx-auto disabled:opacity-50"
+                onClick={() => setIsChatOpen(true)}
+                className="bg-gradient-to-r from-forest-600 to-forest-700 text-white px-6 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto"
               >
-                {tutorLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Thinking...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Get help on what I missed
-                  </>
-                )}
-              </motion.button>
-
-              {tutorError && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
-                  <p className="text-red-800 text-sm">{tutorError}</p>
+                <MessageCircle className="w-6 h-6" />
+                <div className="text-left">
+                  <div>Chat with Bright Tutor</div>
+                  <div className="text-sm font-normal text-white/80">Get help with what you missed</div>
                 </div>
-              )}
-
-              {tutorResponse && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 text-left"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">Bright Beginnings Tutor</h3>
-                  </div>
-                  <div className="prose prose-sm max-w-none text-gray-700">
-                    {tutorResponse.split('\n\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-3 last:mb-0">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              </motion.button>
             </div>
           )}
 
@@ -340,6 +260,18 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
             {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
           </motion.button>
         </div>
+
+        {/* Tutor Chat Modal */}
+        <TutorChat
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          moduleNumber={1}
+          activityKey="activity-1.1b"
+          activityName="Module 1 Lightning Quiz (Financial Vocabulary)"
+          missedQuestions={missedQuestions}
+          correctCount={score}
+          totalCount={QUIZ_QUESTIONS.length}
+        />
       </div>
     )
   }
@@ -461,4 +393,3 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
     </div>
   )
 }
-
