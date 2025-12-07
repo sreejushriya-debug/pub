@@ -25,6 +25,7 @@ import Activity35A from './activities/Activity35A'
 import Activity35B from './activities/Activity35B'
 import Activity35C from './activities/Activity35C'
 import Module3Quiz from './activities/Module3Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -54,26 +55,26 @@ const STEPS: Step[] = [
   'activity-3.5a', 'activity-3.5b', 'activity-3.5c', 'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'video-3.1': { title: 'Video: Credit & Debit', type: 'video' },
-  'activity-3.1a': { title: 'Word Scramble', type: 'activity' },
-  'activity-3.1b': { title: 'Flashcard Definitions', type: 'activity' },
-  'activity-3.2b': { title: 'Categorize Banking Terms', type: 'activity' },
-  'activity-3.3a': { title: 'Credit Terms Matching', type: 'activity' },
-  'activity-3.3b': { title: 'Benefits vs Risks', type: 'activity' },
-  'activity-3.3c': { title: 'Would You Use Credit?', type: 'activity' },
-  'video-3.4': { title: 'Video: Investing', type: 'video' },
-  'activity-3.4a': { title: 'Read the Stock Chart', type: 'activity' },
-  'activity-3.4b': { title: 'Identify Trend Types', type: 'activity' },
-  'activity-3.4c': { title: 'Investment Reflection', type: 'activity' },
-  'video-3.5': { title: 'Video: Deposits & Checks', type: 'video' },
-  'activity-3.5a': { title: 'Label Check Parts', type: 'activity' },
-  'activity-3.5b': { title: 'Write Check #1 ($325)', type: 'activity' },
-  'activity-3.5c': { title: 'Write Check #2 ($16,000)', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'module-quiz': { title: '📝 Module 3 Quiz', type: 'quiz' },
-  'complete': { title: 'Module Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'credit', 'investing'] },
+  'video-3.1': { title: 'Video: Credit & Debit', type: 'video', concepts: ['credit', 'debit', 'interest', 'debt', 'loan'] },
+  'activity-3.1a': { title: 'Word Scramble', type: 'activity', concepts: ['credit', 'deposit', 'interest', 'debt', 'loan'] },
+  'activity-3.1b': { title: 'Flashcard Definitions', type: 'activity', concepts: ['credit_terms', 'definitions'] },
+  'activity-3.2b': { title: 'Categorize Banking Terms', type: 'activity', concepts: ['banking_terms', 'categories'] },
+  'activity-3.3a': { title: 'Credit Terms Matching', type: 'activity', concepts: ['credit', 'borrower', 'lender', 'interest'] },
+  'activity-3.3b': { title: 'Benefits vs Risks', type: 'activity', concepts: ['credit_benefits', 'credit_risks'] },
+  'activity-3.3c': { title: 'Would You Use Credit?', type: 'activity', concepts: ['credit_decisions', 'smart_credit_use'] },
+  'video-3.4': { title: 'Video: Investing', type: 'video', concepts: ['stocks', 'investing', 'stock_trend'] },
+  'activity-3.4a': { title: 'Read the Stock Chart', type: 'activity', concepts: ['stock_trend', 'reading_charts'] },
+  'activity-3.4b': { title: 'Identify Trend Types', type: 'activity', concepts: ['stock_trend', 'up_down_trend'] },
+  'activity-3.4c': { title: 'Investment Reflection', type: 'activity', concepts: ['investing', 'reflection'] },
+  'video-3.5': { title: 'Video: Deposits & Checks', type: 'video', concepts: ['checks', 'deposits', 'banking'] },
+  'activity-3.5a': { title: 'Label Check Parts', type: 'activity', concepts: ['check_basics', 'check_parts'] },
+  'activity-3.5b': { title: 'Write Check #1 ($325)', type: 'activity', concepts: ['check_writing', 'check_basics'] },
+  'activity-3.5c': { title: 'Write Check #2 ($16,000)', type: 'activity', concepts: ['check_writing', 'large_amounts'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'module-quiz': { title: '📝 Module 3 Quiz', type: 'quiz', concepts: ['credit_vs_debit', 'interest', 'stock_trend', 'check_basics'] },
+  'complete': { title: 'Module Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module3Interactive() {
@@ -286,6 +287,17 @@ export default function Module3Interactive() {
           </div>
         </div>
       </div>
+
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 3,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }

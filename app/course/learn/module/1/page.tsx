@@ -21,6 +21,7 @@ import Activity13A from './activities/Activity13A'
 import Activity13B from './activities/Activity13B'
 import VideoLesson from './activities/VideoLesson'
 import Module1Quiz from './activities/Module1Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -51,19 +52,19 @@ const STEPS: Step[] = [
   'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'video-1.1': { title: 'Video: Important Financial Terms', type: 'video' },
-  'activity-1.1a': { title: 'Term Matching', type: 'activity' },
-  'activity-1.1b': { title: 'Lightning Quiz', type: 'activity' },
-  'video-1.3': { title: 'Video: Making Change', type: 'video' },
-  'activity-1.2a': { title: 'Fill in the Blank', type: 'activity' },
-  'activity-1.2b': { title: 'Create Your Own Sentence', type: 'activity' },
-  'activity-1.3a': { title: 'Coin Identification', type: 'activity' },
-  'activity-1.3b': { title: 'Count the Coins', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'module-quiz': { title: '📝 Module 1 Quiz', type: 'quiz' },
-  'complete': { title: 'Module Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'goal_setting'] },
+  'video-1.1': { title: 'Video: Important Financial Terms', type: 'video', concepts: ['basic_vocab', 'income', 'expenses', 'debt', 'interest'] },
+  'activity-1.1a': { title: 'Term Matching', type: 'activity', concepts: ['basic_vocab', 'definitions'] },
+  'activity-1.1b': { title: 'Lightning Quiz', type: 'activity', concepts: ['basic_vocab', 'inflation', 'debt', 'interest', 'profit', 'stock'] },
+  'video-1.3': { title: 'Video: Making Change', type: 'video', concepts: ['coins', 'counting_money'] },
+  'activity-1.2a': { title: 'Fill in the Blank', type: 'activity', concepts: ['basic_vocab', 'definitions'] },
+  'activity-1.2b': { title: 'Create Your Own Sentence', type: 'activity', concepts: ['basic_vocab', 'writing'] },
+  'activity-1.3a': { title: 'Coin Identification', type: 'activity', concepts: ['coins', 'penny', 'nickel', 'dime', 'quarter'] },
+  'activity-1.3b': { title: 'Count the Coins', type: 'activity', concepts: ['coins', 'counting_money', 'addition'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'module-quiz': { title: '📝 Module 1 Quiz', type: 'quiz', concepts: ['needs_vs_wants', 'basic_vocab', 'coins', 'counting_money'] },
+  'complete': { title: 'Module Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module1Interactive() {
@@ -416,6 +417,18 @@ export default function Module1Interactive() {
           </div>
         </div>
       </div>
+
+      {/* Ask Bright Companion */}
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 1,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }

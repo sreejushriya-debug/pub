@@ -25,6 +25,7 @@ import Activity64B from './activities/Activity64B'
 import Activity65A from './activities/Activity65A'
 import Activity65B from './activities/Activity65B'
 import Module6Quiz from './activities/Module6Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -53,23 +54,23 @@ const STEPS: Step[] = [
   'kwl-post', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'activity-6.1a': { title: 'Timed Matching Rounds', type: 'activity' },
-  'activity-6.1b': { title: 'Category Sort', type: 'activity' },
-  'activity-6.2a': { title: 'Build Your Shopping List', type: 'activity' },
-  'activity-6.2b': { title: 'Apply Tax + Discounts', type: 'activity' },
-  'activity-6.2c': { title: 'Shopping Reflection', type: 'activity' },
-  'activity-6.3a': { title: 'Choose a Business', type: 'activity' },
-  'activity-6.3b': { title: 'Set Costs and Prices', type: 'activity' },
-  'activity-6.3c': { title: 'Tag Each Cost Type', type: 'activity' },
-  'activity-6.3d': { title: 'Investor Pitch Reflection', type: 'activity' },
-  'activity-6.4a': { title: 'Save, Spend, or Borrow?', type: 'activity' },
-  'activity-6.4b': { title: 'Which Card Should They Use?', type: 'activity' },
-  'module-quiz': { title: '📝 Final Review Quiz', type: 'quiz' },
-  'activity-6.5b': { title: 'Money Master Certificate', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'complete': { title: 'Course Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'review', 'all_modules'] },
+  'activity-6.1a': { title: 'Timed Matching Rounds', type: 'activity', concepts: ['vocab_review', 'all_modules'] },
+  'activity-6.1b': { title: 'Category Sort', type: 'activity', concepts: ['categories', 'income', 'expenses', 'saving', 'credit'] },
+  'activity-6.2a': { title: 'Build Your Shopping List', type: 'activity', concepts: ['shopping', 'needs_vs_wants', 'budgeting'] },
+  'activity-6.2b': { title: 'Apply Tax + Discounts', type: 'activity', concepts: ['tax_plus_discount', 'shopping_math'] },
+  'activity-6.2c': { title: 'Shopping Reflection', type: 'activity', concepts: ['reflection', 'spending_decisions'] },
+  'activity-6.3a': { title: 'Choose a Business', type: 'activity', concepts: ['business', 'entrepreneurship'] },
+  'activity-6.3b': { title: 'Set Costs and Prices', type: 'activity', concepts: ['revenue', 'expenses', 'profit'] },
+  'activity-6.3c': { title: 'Tag Each Cost Type', type: 'activity', concepts: ['expense_types', 'fixed', 'variable'] },
+  'activity-6.3d': { title: 'Investor Pitch Reflection', type: 'activity', concepts: ['business_plan', 'reflection'] },
+  'activity-6.4a': { title: 'Save, Spend, or Borrow?', type: 'activity', concepts: ['saving_vs_spending', 'credit_decisions'] },
+  'activity-6.4b': { title: 'Which Card Should They Use?', type: 'activity', concepts: ['credit_vs_debit', 'smart_choices'] },
+  'module-quiz': { title: '📝 Final Review Quiz', type: 'quiz', concepts: ['all_modules', 'comprehensive_review'] },
+  'activity-6.5b': { title: 'Money Master Certificate', type: 'activity', concepts: ['completion', 'celebration'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'complete': { title: 'Course Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module6Interactive() {
@@ -274,6 +275,17 @@ export default function Module6Interactive() {
           </div>
         </div>
       </div>
+
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 6,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }

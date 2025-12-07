@@ -25,6 +25,7 @@ import Activity24B from './activities/Activity24B'
 import Activity24C from './activities/Activity24C'
 import Activity24D from './activities/Activity24D'
 import Module2Quiz from './activities/Module2Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -63,23 +64,23 @@ const STEPS: Step[] = [
   'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'video-2.1': { title: 'Video: Spending & Saving Vocab', type: 'video' },
-  'activity-2.1a': { title: 'Term Matching', type: 'activity' },
-  'activity-2.1b': { title: 'Lightning Quiz', type: 'activity' },
-  'activity-2.2a': { title: 'Save or Spend?', type: 'activity' },
-  'activity-2.2b': { title: 'Written Justifications', type: 'activity' },
-  'activity-2.3a': { title: 'Build Your Budget', type: 'activity' },
-  'activity-2.3b': { title: 'Budget Pie Chart', type: 'activity' },
-  'activity-2.3c': { title: 'Evaluate Your Budget', type: 'activity' },
-  'activity-2.4a': { title: 'Pick Your Income', type: 'activity' },
-  'activity-2.4b': { title: 'Choose Your Plans', type: 'activity' },
-  'activity-2.4c': { title: 'Calculate Your Budget', type: 'activity' },
-  'activity-2.4d': { title: 'Budget Reflection', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'module-quiz': { title: '📝 Module 2 Quiz', type: 'quiz' },
-  'complete': { title: 'Module Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'saving', 'spending'] },
+  'video-2.1': { title: 'Video: Spending & Saving Vocab', type: 'video', concepts: ['saving', 'spending', 'budget', 'income', 'needs_vs_wants'] },
+  'activity-2.1a': { title: 'Term Matching', type: 'activity', concepts: ['saving', 'spending', 'budget', 'charity', 'income'] },
+  'activity-2.1b': { title: 'Lightning Quiz', type: 'activity', concepts: ['saving', 'spending', 'budget', 'definitions'] },
+  'activity-2.2a': { title: 'Save or Spend?', type: 'activity', concepts: ['saving_vs_spending', 'decisions', 'goals'] },
+  'activity-2.2b': { title: 'Written Justifications', type: 'activity', concepts: ['saving_vs_spending', 'reasoning'] },
+  'activity-2.3a': { title: 'Build Your Budget', type: 'activity', concepts: ['budgeting', 'income', 'categories'] },
+  'activity-2.3b': { title: 'Budget Pie Chart', type: 'activity', concepts: ['budgeting', 'pie_charts', 'percentages'] },
+  'activity-2.3c': { title: 'Evaluate Your Budget', type: 'activity', concepts: ['budgeting', 'realistic_budget', 'evaluation'] },
+  'activity-2.4a': { title: 'Pick Your Income', type: 'activity', concepts: ['income', 'budget_simulation'] },
+  'activity-2.4b': { title: 'Choose Your Plans', type: 'activity', concepts: ['needs', 'wants', 'savings', 'tradeoffs'] },
+  'activity-2.4c': { title: 'Calculate Your Budget', type: 'activity', concepts: ['budget_math', 'leftover_money'] },
+  'activity-2.4d': { title: 'Budget Reflection', type: 'activity', concepts: ['reflection', 'budget_decisions'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'module-quiz': { title: '📝 Module 2 Quiz', type: 'quiz', concepts: ['saving_vs_spending', 'budgeting', 'pie_charts'] },
+  'complete': { title: 'Module Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module2Interactive() {
@@ -356,6 +357,17 @@ export default function Module2Interactive() {
           </div>
         </div>
       </div>
+
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 2,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }

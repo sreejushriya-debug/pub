@@ -27,6 +27,7 @@ import Activity46A from './activities/Activity46A'
 import Activity46B from './activities/Activity46B'
 import Activity46C from './activities/Activity46C'
 import Module4Quiz from './activities/Module4Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -57,26 +58,26 @@ const STEPS: Step[] = [
   'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'video-4.1': { title: 'Video: Creating Your Own Business', type: 'video' },
-  'activity-4.1a': { title: 'Choose Your Supplies', type: 'activity' },
-  'activity-4.1b': { title: 'Revenue, Expenses & Profit', type: 'activity' },
-  'activity-4.2a': { title: 'Name Your Business', type: 'activity' },
-  'activity-4.2b': { title: 'Materials & Startup Cost', type: 'activity' },
-  'activity-4.2c': { title: 'Business Plan', type: 'activity' },
-  'activity-4.3a': { title: 'Scarcity & Cost Impacts', type: 'activity' },
-  'activity-4.3b': { title: 'Create Scarcity Scenario', type: 'activity' },
-  'activity-4.4b': { title: 'Group Business Terms', type: 'activity' },
-  'activity-4.4c': { title: 'Explain a Term', type: 'activity' },
-  'activity-4.5a': { title: 'Profit Word Problems', type: 'activity' },
-  'activity-4.5b': { title: 'Build Your Own Problem', type: 'activity' },
-  'activity-4.6a': { title: 'Match Expense Definitions', type: 'activity' },
-  'activity-4.6b': { title: 'Classify Expenses', type: 'activity' },
-  'activity-4.6c': { title: 'Write Expense Examples', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'module-quiz': { title: '📝 Module 4 Quiz', type: 'quiz' },
-  'complete': { title: 'Module Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'business', 'expenses'] },
+  'video-4.1': { title: 'Video: Creating Your Own Business', type: 'video', concepts: ['business', 'revenue', 'expenses', 'profit'] },
+  'activity-4.1a': { title: 'Choose Your Supplies', type: 'activity', concepts: ['budget', 'supplies', 'costs'] },
+  'activity-4.1b': { title: 'Revenue, Expenses & Profit', type: 'activity', concepts: ['revenue', 'expenses', 'profit_loss'] },
+  'activity-4.2a': { title: 'Name Your Business', type: 'activity', concepts: ['business_planning', 'entrepreneurship'] },
+  'activity-4.2b': { title: 'Materials & Startup Cost', type: 'activity', concepts: ['startup_costs', 'materials', 'expenses'] },
+  'activity-4.2c': { title: 'Business Plan', type: 'activity', concepts: ['business_plan', 'target_audience', 'pricing'] },
+  'activity-4.3a': { title: 'Scarcity & Cost Impacts', type: 'activity', concepts: ['scarcity', 'supply_demand', 'costs'] },
+  'activity-4.3b': { title: 'Create Scarcity Scenario', type: 'activity', concepts: ['scarcity', 'creative_thinking'] },
+  'activity-4.4b': { title: 'Group Business Terms', type: 'activity', concepts: ['business_vocab', 'categories'] },
+  'activity-4.4c': { title: 'Explain a Term', type: 'activity', concepts: ['business_vocab', 'definitions'] },
+  'activity-4.5a': { title: 'Profit Word Problems', type: 'activity', concepts: ['profit_loss', 'revenue', 'expenses', 'math'] },
+  'activity-4.5b': { title: 'Build Your Own Problem', type: 'activity', concepts: ['profit_loss', 'creative_thinking'] },
+  'activity-4.6a': { title: 'Match Expense Definitions', type: 'activity', concepts: ['expense_types', 'fixed', 'variable'] },
+  'activity-4.6b': { title: 'Classify Expenses', type: 'activity', concepts: ['expense_types', 'fixed_expenses', 'variable_expenses'] },
+  'activity-4.6c': { title: 'Write Expense Examples', type: 'activity', concepts: ['expense_types', 'creative_thinking'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'module-quiz': { title: '📝 Module 4 Quiz', type: 'quiz', concepts: ['profit_loss', 'scarcity', 'expense_types'] },
+  'complete': { title: 'Module Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module4Interactive() {
@@ -289,6 +290,17 @@ export default function Module4Interactive() {
           </div>
         </div>
       </div>
+
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 4,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }

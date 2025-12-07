@@ -23,6 +23,7 @@ import Activity54A from './activities/Activity54A'
 import Activity54B from './activities/Activity54B'
 import Activity54C from './activities/Activity54C'
 import Module5Quiz from './activities/Module5Quiz'
+import AskBright from '@/components/AskBright'
 
 type Step = 
   | 'kwl-pre'
@@ -49,22 +50,22 @@ const STEPS: Step[] = [
   'kwl-post', 'module-quiz', 'complete'
 ]
 
-const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete' }> = {
-  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl' },
-  'video-5.1': { title: 'Video: Understanding Taxes', type: 'video' },
-  'activity-5.1a': { title: 'Guided Tax Calculator', type: 'activity' },
-  'activity-5.1b': { title: 'What\'s My Total?', type: 'activity' },
-  'activity-5.2a': { title: 'Build Your Cart', type: 'activity' },
-  'activity-5.2b': { title: 'Auto-Tax Receipt', type: 'activity' },
-  'activity-5.3a': { title: 'Sale Sign Calculator', type: 'activity' },
-  'activity-5.3b': { title: 'Match the Correct Tag', type: 'activity' },
-  'activity-5.3c': { title: 'Better Deal?', type: 'activity' },
-  'activity-5.4a': { title: 'Final Price Calculator', type: 'activity' },
-  'activity-5.4b': { title: 'Choose the Best Deal', type: 'activity' },
-  'activity-5.4c': { title: 'Create Your Own Sale', type: 'activity' },
-  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl' },
-  'module-quiz': { title: '📝 Module 5 Quiz', type: 'quiz' },
-  'complete': { title: 'Module Complete!', type: 'complete' }
+const STEP_INFO: Record<Step, { title: string; type: 'kwl' | 'video' | 'activity' | 'quiz' | 'complete'; concepts: string[] }> = {
+  'kwl-pre': { title: 'KWL Chart - Before You Start', type: 'kwl', concepts: ['reflection', 'tax', 'discounts'] },
+  'video-5.1': { title: 'Video: Understanding Taxes', type: 'video', concepts: ['sales_tax', 'tax_calculation'] },
+  'activity-5.1a': { title: 'Guided Tax Calculator', type: 'activity', concepts: ['sales_tax', 'percentages', 'tax_calculation'] },
+  'activity-5.1b': { title: 'What\'s My Total?', type: 'activity', concepts: ['sales_tax', 'total_with_tax'] },
+  'activity-5.2a': { title: 'Build Your Cart', type: 'activity', concepts: ['shopping', 'multiple_items', 'subtotal'] },
+  'activity-5.2b': { title: 'Auto-Tax Receipt', type: 'activity', concepts: ['sales_tax', 'receipts', 'tax_math'] },
+  'activity-5.3a': { title: 'Sale Sign Calculator', type: 'activity', concepts: ['discounts', 'percent_off', 'sale_price'] },
+  'activity-5.3b': { title: 'Match the Correct Tag', type: 'activity', concepts: ['discounts', 'sale_tags'] },
+  'activity-5.3c': { title: 'Better Deal?', type: 'activity', concepts: ['comparison_shopping', 'discounts'] },
+  'activity-5.4a': { title: 'Final Price Calculator', type: 'activity', concepts: ['tax_plus_discount', 'order_of_operations'] },
+  'activity-5.4b': { title: 'Choose the Best Deal', type: 'activity', concepts: ['comparison_shopping', 'tax_plus_discount'] },
+  'activity-5.4c': { title: 'Create Your Own Sale', type: 'activity', concepts: ['discounts', 'creative_thinking'] },
+  'kwl-post': { title: 'KWL Chart - Reflection', type: 'kwl', concepts: ['reflection', 'learning'] },
+  'module-quiz': { title: '📝 Module 5 Quiz', type: 'quiz', concepts: ['sales_tax', 'discounts', 'tax_plus_discount'] },
+  'complete': { title: 'Module Complete!', type: 'complete', concepts: [] }
 }
 
 export default function Module5Interactive() {
@@ -273,6 +274,17 @@ export default function Module5Interactive() {
           </div>
         </div>
       </div>
+
+      {currentStep !== 'complete' && (
+        <AskBright
+          context={{
+            moduleNumber: 5,
+            activityKey: currentStep,
+            activityName: STEP_INFO[currentStep].title,
+            conceptTags: STEP_INFO[currentStep].concepts,
+          }}
+        />
+      )}
     </div>
   )
 }
