@@ -205,7 +205,7 @@ export default function Module1Interactive() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-12"
+            className="text-center py-12 px-6"
           >
             <div className="w-24 h-24 bg-gradient-to-br from-accent-400 to-accent-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-12 h-12 text-white" />
@@ -216,19 +216,24 @@ export default function Module1Interactive() {
             <p className="text-lg text-gray-600 mb-8">
               You have completed Module 1: Financial Basics!
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button 
-                onClick={() => setShowNav(true)}
-                className="btn-outline"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" /> Practice Activities
-              </button>
-              <Link href="/course/learn" className="btn-outline">
-                Back to Dashboard
+            <div className="flex flex-col gap-3 max-w-md mx-auto">
+              <Link href="/course/learn/module/2" className="btn-primary w-full justify-center">
+                Start Module 2 <ChevronRight className="w-5 h-5 ml-2" />
               </Link>
-              <Link href="/course/learn/module/2" className="btn-primary">
-                Start Module 2 <ChevronRight className="w-5 h-5" />
-              </Link>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setCurrentStep('kwl-pre')
+                    setShowNav(true)
+                  }}
+                  className="btn-outline flex-1 justify-center"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" /> Practice
+                </button>
+                <Link href="/course/learn" className="btn-outline flex-1 justify-center">
+                  Dashboard
+                </Link>
+              </div>
             </div>
           </motion.div>
         )
