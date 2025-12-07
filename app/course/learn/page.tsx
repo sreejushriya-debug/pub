@@ -87,10 +87,11 @@ function CourseDashboardContent() {
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     const getUser = async () => {
+      const supabase = createClient()
+      if (!supabase) return
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser({
@@ -101,9 +102,11 @@ function CourseDashboardContent() {
       setLoading(false)
     }
     getUser()
-  }, [supabase.auth])
+  }, [])
 
   const handleLogout = async () => {
+    const supabase = createClient()
+    if (!supabase) return
     await supabase.auth.signOut()
     router.push('/')
     router.refresh()

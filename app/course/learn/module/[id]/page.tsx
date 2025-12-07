@@ -133,10 +133,11 @@ export default function ModulePage() {
   const currentModule = moduleData[moduleId]
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     const checkAuth = async () => {
+      const supabase = createClient()
+      if (!supabase) return
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login?redirect=/course/learn')
@@ -145,7 +146,7 @@ export default function ModulePage() {
       }
     }
     checkAuth()
-  }, [supabase.auth, router])
+  }, [router])
 
   if (loading) {
     return (
