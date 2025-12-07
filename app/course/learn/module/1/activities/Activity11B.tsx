@@ -214,14 +214,19 @@ export default function Activity11B({ onComplete }: Activity11BProps) {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to get tutor help')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to get tutor help')
       }
 
       const data = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
       setTutorResponse(data.explanation)
     } catch (error) {
       console.error('Error getting tutor help:', error)
-      setTutorError('Sorry, I couldn\'t get help right now. Please try again later.')
+      const errorMessage = error instanceof Error ? error.message : 'Sorry, I couldn\'t get help right now. Please try again later.'
+      setTutorError(errorMessage)
     } finally {
       setTutorLoading(false)
     }

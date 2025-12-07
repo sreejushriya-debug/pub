@@ -46,10 +46,15 @@ export async function POST(request: NextRequest) {
     })
 
     if (questions.length === 0) {
+      console.error(`No questions found for activityKey: ${activityKey}, questionKeys: ${questionKeys.join(', ')}`)
       return NextResponse.json(
-        { error: 'Questions not found in database' },
+        { error: `Questions not found in database. Make sure you've run: npm run db:seed` },
         { status: 404 }
       )
+    }
+
+    if (questions.length !== missedQuestions.length) {
+      console.warn(`Found ${questions.length} questions but expected ${missedQuestions.length}`)
     }
 
     // Create a map for quick lookup
@@ -107,8 +112,16 @@ Speak directly to the student. Keep it encouraging and friendly.`
     if (!openaiResponse.ok) {
       const errorData = await openaiResponse.text()
       console.error('OpenAI API error:', errorData)
+      let errorMessage = 'Failed to get tutor response from AI'
+      try {
+        const errorJson = JSON.parse(errorData)
+        errorMessage = errorJson.error?.message || errorMessage
+      } catch {
+        // If parsing fails, use the raw error data
+        errorMessage = errorData || errorMessage
+      }
       return NextResponse.json(
-        { error: 'Failed to get tutor response from AI' },
+        { error: errorMessage },
         { status: 500 }
       )
     }
@@ -121,8 +134,9 @@ Speak directly to the student. Keep it encouraging and friendly.`
     })
   } catch (error) {
     console.error('Error in tutor route:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     )
   }
