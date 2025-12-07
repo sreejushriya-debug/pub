@@ -4,7 +4,7 @@ import { useUser, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { 
-  BookOpen, Play, Clock, ChevronRight, Trophy, LogOut
+  BookOpen, Play, Clock, ChevronRight, Trophy, Gamepad2
 } from 'lucide-react'
 
 const courseModules = [
@@ -12,64 +12,48 @@ const courseModules = [
     id: 1,
     title: 'Financial Basics',
     description: 'Learn about different types of currency, important financial terms, and how to make change.',
-    lessons: [
-      { id: '1.1', title: 'Important Financial Terms', type: 'video' },
-      { id: '1.2', title: 'Matching Terms', type: 'worksheet' },
-      { id: '1.3', title: 'Making Change', type: 'video' },
-    ],
+    activities: 10,
+    videos: 2,
     duration: '30 min',
   },
   {
     id: 2,
     title: 'Saving and Spending',
     description: 'Understand healthy saving and spending habits, and learn how to create and follow a budget.',
-    lessons: [
-      { id: '2.1', title: 'Healthy Saving and Spending Habits', type: 'video' },
-      { id: '2.2', title: 'Spending Simulations', type: 'worksheet' },
-      { id: '2.3', title: 'Creating a Budget', type: 'worksheet' },
-    ],
+    activities: 8,
+    videos: 1,
     duration: '35 min',
   },
   {
     id: 3,
     title: 'All Things Banking',
     description: 'Explore credit vs debit, investing basics, stock trends, and how to write a check.',
-    lessons: [
-      { id: '3.1', title: 'Credit and Debit', type: 'video' },
-      { id: '3.4', title: 'Investing', type: 'video' },
-      { id: '3.5', title: 'Deposits', type: 'video' },
-    ],
+    activities: 10,
+    videos: 3,
     duration: '40 min',
   },
   {
     id: 4,
     title: 'Business',
     description: 'Learn about revenue, expenses, profit, and the basics of starting your own business.',
-    lessons: [
-      { id: '4.1', title: 'Creating Your Own Business', type: 'video' },
-      { id: '4.2', title: 'Business Scenarios', type: 'worksheet' },
-      { id: '4.5', title: 'Revenue, Expenses, and Profit', type: 'worksheet' },
-    ],
+    activities: 8,
+    videos: 1,
     duration: '35 min',
   },
   {
     id: 5,
     title: 'Taxes',
     description: 'Understand what taxes are and learn how to calculate them.',
-    lessons: [
-      { id: '5.1', title: 'Taxes', type: 'video' },
-      { id: '5.2', title: 'What are Taxes?', type: 'worksheet' },
-      { id: '5.3', title: 'Calculating Taxes', type: 'worksheet' },
-    ],
+    activities: 6,
+    videos: 1,
     duration: '25 min',
   },
   {
     id: 6,
     title: 'Summary & Review',
     description: 'Review everything you have learned and apply your new financial literacy skills.',
-    lessons: [
-      { id: '6.1', title: 'Review Packet', type: 'worksheet' },
-    ],
+    activities: 3,
+    videos: 0,
     duration: '20 min',
   },
 ]
@@ -127,11 +111,11 @@ export default function CourseDashboard() {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent-100 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-accent-600" />
+                <Gamepad2 className="w-6 h-6 text-accent-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">~3 hours</p>
-                <p className="text-sm text-gray-500">Total Course Time</p>
+                <p className="text-2xl font-bold text-gray-900">45+</p>
+                <p className="text-sm text-gray-500">Interactive Activities</p>
               </div>
             </div>
           </div>
@@ -181,10 +165,10 @@ export default function CourseDashboard() {
                           <p className="text-gray-600 text-sm mt-1">{module.description}</p>
                           <div className="flex items-center gap-4 mt-3">
                             <span className="flex items-center gap-1 text-xs text-gray-500">
-                              <Play className="w-3 h-3" /> {module.lessons.filter(l => l.type === 'video').length} videos
+                              <Play className="w-3 h-3" /> {module.videos} videos
                             </span>
                             <span className="flex items-center gap-1 text-xs text-gray-500">
-                              <BookOpen className="w-3 h-3" /> {module.lessons.filter(l => l.type === 'worksheet').length} worksheets
+                              <Gamepad2 className="w-3 h-3" /> {module.activities} activities
                             </span>
                             <span className="flex items-center gap-1 text-xs text-gray-500">
                               <Clock className="w-3 h-3" /> {module.duration}
