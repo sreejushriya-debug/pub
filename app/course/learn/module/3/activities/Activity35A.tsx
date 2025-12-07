@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle2, FileText } from 'lucide-react'
+import { ArrowRight, CheckCircle2, FileText, RotateCcw, X } from 'lucide-react'
 
 interface Props { onComplete: (data: Record<string, unknown>) => void }
 
@@ -27,9 +27,36 @@ export default function Activity35A({ onComplete }: Props) {
   const placedLabels = Object.values(placements)
 
   const handleSpotClick = (partId: string) => {
-    if (!selectedLabel || checked) return
-    setPlacements({ ...placements, [partId]: selectedLabel })
-    setSelectedLabel(null)
+    if (checked && allCorrect) return
+    
+    // If clicking on a placed label, remove it
+    if (placements[partId] && !selectedLabel) {
+      const newPlacements = { ...placements }
+      delete newPlacements[partId]
+      setPlacements(newPlacements)
+      setChecked(false)
+      return
+    }
+    
+    // If a label is selected, place it
+    if (selectedLabel) {
+      setPlacements({ ...placements, [partId]: selectedLabel })
+      setSelectedLabel(null)
+      setChecked(false)
+    }
+  }
+
+  const handleTryAgain = () => {
+    // Remove only incorrect placements
+    const correct: Record<string, string> = {}
+    Object.entries(placements).forEach(([partId, label]) => {
+      const part = CHECK_PARTS.find(p => p.id === partId)
+      if (part && label === part.label) {
+        correct[partId] = label
+      }
+    })
+    setPlacements(correct)
+    setChecked(false)
   }
 
   return (
@@ -44,14 +71,14 @@ export default function Activity35A({ onComplete }: Props) {
 
       {/* Labels to place */}
       <div className="bg-gray-100 rounded-xl p-4 mb-6">
-        <p className="text-sm font-medium text-gray-700 mb-3">Click a label to place it:</p>
+        <p className="text-sm font-medium text-gray-700 mb-3">Click a label to place it (or click placed labels on the check to remove them):</p>
         <div className="flex flex-wrap gap-2">
           {CHECK_PARTS.map(part => {
             const isPlaced = placedLabels.includes(part.label)
             const isSelected = selectedLabel === part.label
             return (
-              <button key={part.label} onClick={() => !checked && setSelectedLabel(isSelected ? null : part.label)}
-                disabled={isPlaced || checked}
+              <button key={part.label} onClick={() => !checked || !allCorrect ? setSelectedLabel(isSelected ? null : part.label) : undefined}
+                disabled={checked && allCorrect}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                   isPlaced ? 'bg-gray-300 text-gray-500 line-through' :
                   isSelected ? 'bg-forest-500 text-white shadow-lg' :
@@ -81,19 +108,22 @@ export default function Activity35A({ onComplete }: Props) {
               <motion.div
                 key={part.id}
                 onClick={() => handleSpotClick(part.id)}
-                whileHover={selectedLabel && !placed ? { scale: 1.05 } : {}}
-                className={`absolute border-2 border-dashed rounded-lg flex items-center justify-center text-xs p-1 transition-all cursor-pointer ${
-                  isCorrect ? 'border-green-500 bg-green-100' :
-                  isWrong ? 'border-red-500 bg-red-100' :
-                  placed ? 'border-forest-500 bg-forest-50' :
-                  selectedLabel ? 'border-forest-400 bg-forest-50/50 hover:bg-forest-100' : 'border-gray-400 bg-white/50'
+                whileHover={(selectedLabel && !placed) || (placed && !checked) ? { scale: 1.05 } : {}}
+                className={`absolute border-2 border-dashed rounded-lg flex items-center justify-center text-xs p-1 transition-all ${
+                  isCorrect ? 'border-green-500 bg-green-100 cursor-default' :
+                  isWrong ? 'border-red-500 bg-red-100 cursor-pointer hover:bg-red-200' :
+                  placed ? 'border-forest-500 bg-forest-50 cursor-pointer hover:bg-forest-100' :
+                  selectedLabel ? 'border-forest-400 bg-forest-50/50 hover:bg-forest-100 cursor-pointer' : 'border-gray-400 bg-white/50 cursor-pointer'
                 }`}
                 style={{ left: `${part.x}%`, top: `${part.y}%`, width: `${part.w}%`, height: `${part.h}%` }}
+                title={placed && !checked ? 'Click to remove' : placed && isWrong ? 'Click to remove and try again' : selectedLabel ? 'Click to place label' : 'Click to place a label here'}
               >
                 {placed && (
-                  <span className={`text-center font-medium ${isCorrect ? 'text-green-700' : isWrong ? 'text-red-700' : 'text-forest-700'}`}>
+                  <span className={`text-center font-medium flex items-center gap-1 ${isCorrect ? 'text-green-700' : isWrong ? 'text-red-700' : 'text-forest-700'}`}>
                     {placed}
-                    {isCorrect && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
+                    {isCorrect && <CheckCircle2 className="w-3 h-3" />}
+                    {isWrong && <X className="w-3 h-3" />}
+                    {!checked && <X className="w-3 h-3 opacity-50" />}
                   </span>
                 )}
                 {!placed && <span className="text-gray-400">?</span>}
@@ -109,13 +139,28 @@ export default function Activity35A({ onComplete }: Props) {
         </div>
       )}
 
-      <div className="flex justify-center">
+      {checked && !allCorrect && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <p className="text-amber-800 mb-2"><strong>Almost!</strong> Some labels are in the wrong place. Look at the red ones.</p>
+          <p className="text-amber-700 text-sm">💡 Click on any label on the check to remove it, then place it in the correct spot!</p>
+        </div>
+      )}
+
+      <div className="flex justify-center gap-4">
         {!(allCorrect && checked) && (
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            onClick={() => setChecked(true)} disabled={Object.keys(placements).length < CHECK_PARTS.length}
-            className={`btn-primary px-6 py-3 ${Object.keys(placements).length < CHECK_PARTS.length ? 'opacity-50 cursor-not-allowed' : ''}`}>
-            {Object.keys(placements).length < CHECK_PARTS.length ? `Label ${CHECK_PARTS.length - Object.keys(placements).length} more` : 'Check Answers'}
-          </motion.button>
+          <>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={() => setChecked(true)} disabled={Object.keys(placements).length < CHECK_PARTS.length}
+              className={`btn-primary px-6 py-3 ${Object.keys(placements).length < CHECK_PARTS.length ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              {Object.keys(placements).length < CHECK_PARTS.length ? `Label ${CHECK_PARTS.length - Object.keys(placements).length} more` : 'Check Answers'}
+            </motion.button>
+            {checked && !allCorrect && (
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                onClick={handleTryAgain} className="btn-outline px-6 py-3 flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" /> Try Again
+              </motion.button>
+            )}
+          </>
         )}
         {allCorrect && checked && (
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
