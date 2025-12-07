@@ -36,9 +36,13 @@ export default function Activity61A({ onComplete }: Props) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
       return () => clearTimeout(timer)
     } else if (timeLeft === 0 && !finished) {
-      submitResults().then(() => setFinished(true))
+      const submit = async () => {
+        await submitResults()
+        setFinished(true)
+      }
+      submit()
     }
-  }, [started, timeLeft, finished])
+  }, [started, timeLeft, finished, submitResults])
 
   const handleAnswer = (answer: string) => {
     if (finished || answered.has(QUESTIONS[currentQuestion].id)) return
