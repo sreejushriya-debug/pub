@@ -130,7 +130,7 @@ const moduleData: Record<number, {
 export default function ModulePage() {
   const params = useParams()
   const moduleId = parseInt(params.id as string)
-  const module = moduleData[moduleId]
+  const currentModule = moduleData[moduleId]
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
@@ -155,7 +155,7 @@ export default function ModulePage() {
     )
   }
 
-  if (!module) {
+  if (!currentModule) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
@@ -202,12 +202,12 @@ export default function ModulePage() {
             </div>
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Module {moduleId}: {module.title}
+                Module {moduleId}: {currentModule.title}
               </h1>
-              <p className="text-gray-600 mb-4">{module.description}</p>
+              <p className="text-gray-600 mb-4">{currentModule.description}</p>
               <div className="bg-forest-50 rounded-xl p-4 border border-forest-100">
                 <p className="text-sm font-semibold text-forest-800">
-                  🎯 Learning Target: <span className="font-normal">{module.learningTarget}</span>
+                  🎯 Learning Target: <span className="font-normal">{currentModule.learningTarget}</span>
                 </p>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function ModulePage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Lessons</h2>
           
           <div className="space-y-4">
-            {module.lessons.map((lesson, idx) => (
+            {currentModule.lessons.map((lesson, idx) => (
               <motion.div
                 key={`${lesson.id}-${lesson.type}-${idx}`}
                 initial={{ opacity: 0, y: 20 }}
