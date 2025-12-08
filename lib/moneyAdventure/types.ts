@@ -138,8 +138,7 @@ export interface Scene {
 
 export interface SceneChoice {
   id: string
-  label: string
-  getLabel?: (state: GameState) => string
+  label: string | ((state: GameState) => string)
   effects: ChoiceEffects
   requiresCash?: number
   requiresSavings?: number
