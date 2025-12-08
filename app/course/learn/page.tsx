@@ -62,7 +62,7 @@ export default function CourseDashboard() {
   const { user } = useUser()
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-forest-50 via-white to-sage-50">
+    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-forest-50 via-white to-sage-50">
       <div className="container-custom">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-12">
