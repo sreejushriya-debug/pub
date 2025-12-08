@@ -139,10 +139,16 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
     }
   }, [messages, mode, storageKey])
 
-  // Scroll to bottom
+  // Scroll to bottom only when new messages are added
+  const prevMessageCount = useRef(0)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    if (messages.length > prevMessageCount.current) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    }
+    prevMessageCount.current = messages.length
+  }, [messages.length])
 
   // Focus input
   useEffect(() => {

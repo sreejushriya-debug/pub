@@ -53,11 +53,20 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
   })
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const prevMessageCount = useRef(0)
 
+  // Only scroll to bottom when a NEW message is added, not on every render
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    if (messages.length > prevMessageCount.current) {
+      // Small delay to let the message render
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    }
+    prevMessageCount.current = messages.length
+  }, [messages.length])
 
   useEffect(() => {
     if (!waitingForAnswer) {
