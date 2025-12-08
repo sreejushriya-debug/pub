@@ -646,7 +646,7 @@ export default function MoneyAdventureGame({
                     <h4 className="font-semibold text-gray-900 mb-3">What do you do?</h4>
                     <div className="space-y-2">
                       {choices.map(choice => {
-                        const label = typeof choice.label === 'function' ? choice.label(gameState) : choice.label
+                        const label = choice.getLabel ? choice.getLabel(gameState) : choice.label
                         const disabledReason = choice.disabledReason?.(gameState)
                         
                         return (
@@ -680,11 +680,11 @@ export default function MoneyAdventureGame({
                   <h3 className="font-bold text-gray-900 mb-4">Your Choice:</h3>
                   <div className="bg-orange-50 rounded-xl p-4 mb-4">
                     <p className="text-orange-800 font-medium">
-                      {typeof selectedChoice.label === 'function' ? selectedChoice.label(gameState) : selectedChoice.label}
+                      {selectedChoice.getLabel ? selectedChoice.getLabel(gameState) : selectedChoice.label}
                     </p>
                   </div>
                   <p className="text-gray-700 mb-6">
-                    {typeof selectedChoice.outcomeText === 'function' ? selectedChoice.outcomeText(gameState) : selectedChoice.outcomeText}
+                    {typeof selectedChoice.outcomeText === 'function' ? (selectedChoice.outcomeText as (state: GameState) => string)(gameState) : selectedChoice.outcomeText}
                   </p>
                   
                   <motion.button
