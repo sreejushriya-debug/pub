@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Coins, PiggyBank, TrendingDown, Heart, X, ArrowRight,
   CheckCircle2, XCircle, Sparkles, Loader2, HelpCircle, Target,
-  User, Palette, Trophy, ChevronRight
+  User, Palette, Trophy, ChevronRight, ArrowLeft
 } from 'lucide-react'
+import Link from 'next/link'
 import { 
   GameState, ChoiceEffects, SceneChoice,
   getWellbeingEmoji, getWellbeingColor, getTraitLevel,
@@ -329,6 +330,15 @@ export default function MoneyAdventureGame({
     return (
       <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-orange-50 via-white to-amber-50">
         <div className="container-custom max-w-2xl">
+          {/* Back Button */}
+          <Link 
+            href="/course/learn"
+            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Course
+          </Link>
+          
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Create Your Character</h1>
@@ -427,6 +437,15 @@ export default function MoneyAdventureGame({
     return (
       <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-orange-50 via-white to-amber-50">
         <div className="container-custom max-w-3xl">
+          {/* Back Button */}
+          <Link 
+            href="/course/learn"
+            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Course
+          </Link>
+          
           {/* Badge & Title */}
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-8">
             <div className="text-8xl mb-4">{ending.badge}</div>
@@ -519,6 +538,15 @@ export default function MoneyAdventureGame({
   return (
     <div className="min-h-screen pt-16 pb-8 bg-gradient-to-br from-orange-50 via-white to-amber-50">
       <div className="container-custom max-w-6xl">
+        {/* Back Button */}
+        <Link 
+          href="/course/learn"
+          className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-4 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Course
+        </Link>
+        
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-4">
           <div>
