@@ -146,7 +146,7 @@ export default function RootLayout({
         </head>
         <body className="font-sans">
           <Navbar />
-          <main className="min-h-screen pt-28 md:pt-32">
+          <main className="min-h-screen pt-20">
             {children}
           </main>
           <Footer />
