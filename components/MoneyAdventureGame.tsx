@@ -14,7 +14,8 @@ import {
   getProgressPercentage, determineEndingType, ENDING_INFO,
   saveGameState
 } from '@/lib/moneyAdventure/types'
-import { getScene, getChapterTitle, Scene, SceneChallenge } from '@/lib/moneyAdventure/scenes'
+import { getScene, getChapterTitle } from '@/lib/moneyAdventure/scenes'
+import { Scene, SceneChallenge } from '@/lib/moneyAdventure/types'
 import { updateConceptScores } from '@/lib/conceptProgress'
 
 interface MoneyAdventureGameProps {
