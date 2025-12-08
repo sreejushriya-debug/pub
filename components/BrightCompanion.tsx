@@ -167,7 +167,10 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to start chat')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
 
       const data = await response.json()
       
@@ -222,7 +225,10 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to get response')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
 
       const data = await response.json()
       
@@ -234,10 +240,11 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
       }])
     } catch (error) {
       console.error('Error sending message:', error)
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
       setMessages(prev => [...prev, {
         id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: "Oops! I had a little trouble thinking about that. Can you try asking again?",
+        content: `Oops! I had a little trouble. (${errorMsg}) Can you try again?`,
         timestamp: new Date(),
       }])
     } finally {

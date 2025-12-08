@@ -85,7 +85,10 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to start session')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
 
       const data = await response.json()
       
@@ -147,7 +150,10 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to get response')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
 
       const data = await response.json()
       
@@ -195,10 +201,11 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
       }
     } catch (error) {
       console.error('Error sending message:', error)
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
       setMessages(prev => [...prev, {
         id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: "Oops! I had a little trouble there. Can you try again?",
+        content: `Oops! I had a little trouble there. (Error: ${errorMsg}) Can you try again?`,
       }])
     } finally {
       setIsLoading(false)
