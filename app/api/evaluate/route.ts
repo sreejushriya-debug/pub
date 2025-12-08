@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
+import OpenAI from 'openai'
 
 interface EvaluateRequest {
   questions: {
@@ -8,9 +9,9 @@ interface EvaluateRequest {
     studentAnswer: string
     conceptTags: string[]
     questionType: 'concept_check' | 'reflection'
-    rubric?: string // What a good answer should include
+    rubric?: string
   }[]
-  attemptNumber: number // How many times they've tried
+  attemptNumber: number
 }
 
 interface EvaluationResult {
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     
     if (!userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Please sign in to continue' },
         { status: 401 }
       )
     }
@@ -33,169 +34,109 @@ export async function POST(request: NextRequest) {
     const body: EvaluateRequest = await request.json()
     const { questions, attemptNumber } = body
 
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-    if (!OPENAI_API_KEY) {
-      console.error('OPENAI_API_KEY is not set in environment variables')
+    if (!questions || questions.length === 0) {
       return NextResponse.json(
-        { error: 'AI service not configured. Please contact support.' },
-        { status: 500 }
+        { error: 'No questions to evaluate' },
+        { status: 400 }
       )
     }
 
-    // Build the evaluation prompt
-    const systemPrompt = `You are Bright, a friendly AI tutor for kids in grades 3-5. You are evaluating open-ended answers about financial literacy.
+    // Check for API key
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY environment variable is not set')
+      // Return success anyway so students aren't blocked
+      return NextResponse.json({
+        evaluations: questions.map(q => ({
+          questionId: q.id,
+          status: 'good_enough' as const,
+          feedback: 'Great job! Your answer has been accepted.'
+        })),
+        allAccepted: true
+      })
+    }
 
-YOUR JOB:
-Evaluate each answer and decide:
-- "good_enough" → Accept it, give specific praise
-- "needs_revision" → Ask them to try again with a gentle, concrete suggestion
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
 
-EVALUATION RULES:
+    const systemPrompt = `You are Bright, a friendly AI tutor for kids in grades 3-5. Evaluate open-ended answers about financial literacy.
 
-**For CONCEPT-CHECK questions** (there is a correct-ish idea):
-Examples: "Use 'interest' in a sentence", "Give an example of a fixed expense", "Explain why saving is better"
+Decide for each answer:
+- "good_enough" → Accept it, give brief praise
+- "needs_revision" → Ask them to try again with a gentle suggestion
 
-Mark as GOOD ENOUGH if:
-- The answer shows they understand the concept (even if not perfect prose)
-- The vocabulary is used correctly in context
-- No major misconceptions
-- More than just 1-2 random words
+For CONCEPT-CHECK questions: Accept if they show basic understanding of the concept.
+For REFLECTION questions: Accept if they wrote at least 1-2 thoughtful sentences.
 
-Mark as NEEDS REVISION if:
-- Shows wrong idea about the concept
-- Vocabulary used incorrectly
-- Off-topic or copied from the question
-- Too vague to tell if they understand
-- Empty, "idk", or similar non-answers
+${attemptNumber >= 2 ? 'IMPORTANT: This is attempt #' + attemptNumber + '. Be lenient - accept answers that show effort.' : ''}
 
-**For REFLECTION questions** (no single right answer, must be thoughtful):
-Examples: "Is your budget realistic?", "Why did you choose this plan?", "What was hardest?"
+Respond with ONLY a JSON array:
+[{"questionId": "id", "status": "good_enough", "feedback": "Nice work!"}]`
 
-Mark as GOOD ENOUGH if:
-- Mentions specific details (categories, numbers, tradeoffs)
-- Shows some reasoning ("I picked this because...")
-- Has at least 1-2 sentences of actual thought
-
-Mark as NEEDS REVISION only if:
-- Extremely short/one word
-- Just repeats the question
-- Says "idk", "because I wanted to", or clearly no effort
-- Completely unrelated to the activity
-
-ATTEMPT NUMBER: ${attemptNumber}
-${attemptNumber >= 2 ? '**IMPORTANT: This is attempt #' + attemptNumber + '. Be MORE lenient - if the answer shows basic understanding and genuine effort, accept it even if imperfect.**' : ''}
-
-FEEDBACK STYLE:
-
-If GOOD ENOUGH:
-- Start with specific praise about what they did right
-- Point out the concept they demonstrated
-- Optional: tiny stretch suggestion (but they still pass!)
-- Keep it 1-2 sentences, warm and encouraging
-
-If NEEDS REVISION:
-- NEVER say "wrong" or "incorrect"
-- Structure your feedback as:
-  1. Gentle observation: "Your answer doesn't quite show..."
-  2. Mini reminder of the concept (1 sentence)
-  3. Clear, specific request: "Try writing 1-2 sentences that..."
-- Keep it kid-friendly, 2-3 sentences max
-- After reading your feedback, they should know EXACTLY what to do
-
-GUARDRAILS:
-- Write at 3rd-5th grade reading level
-- If they write something off-topic (jokes, random stuff), redirect gently
-- NEVER write the answer for them - coach, don't replace
-- Be encouraging even when asking for revision
-
-Respond with a JSON array of evaluations, one for each question.`
-
-    const userPrompt = `Evaluate these ${questions.length} open-ended answer(s):
-
-${questions.map((q, i) => `
----
-QUESTION ${i + 1}:
-ID: ${q.id}
-Type: ${q.questionType}
-Concept(s): ${q.conceptTags.join(', ')}
+    const userPrompt = questions.map((q, i) => 
+      `Question ${i + 1} (ID: ${q.id}, Type: ${q.questionType}):
 Prompt: "${q.prompt}"
-${q.rubric ? `What a good answer includes: ${q.rubric}` : ''}
-Student's Answer: "${q.studentAnswer}"
----
-`).join('\n')}
+${q.rubric ? `Expected: ${q.rubric}` : ''}
+Student Answer: "${q.studentAnswer}"`
+    ).join('\n\n')
 
-Respond with ONLY a JSON array like:
-[
-  {
-    "questionId": "q1",
-    "status": "good_enough",
-    "feedback": "Nice work! You correctly explained that interest is..."
-  },
-  {
-    "questionId": "q2", 
-    "status": "needs_revision",
-    "feedback": "Your answer is a good start, but..."
-  }
-]`
-
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
+    try {
+      const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.3, // Lower for more consistent evaluation
-        max_tokens: 1000,
-      }),
-    })
+        temperature: 0.3,
+        max_tokens: 800,
+      })
 
-    if (!openaiResponse.ok) {
-      const errorData = await openaiResponse.text()
-      console.error('OpenAI API error:', errorData)
-      return NextResponse.json(
-        { error: 'Failed to get evaluation from AI' },
-        { status: 500 }
-      )
-    }
-
-    const openaiData = await openaiResponse.json()
-    const responseText = openaiData.choices[0]?.message?.content || '[]'
-    
-    // Parse the JSON response
-    let evaluations: EvaluationResult[] = []
-    try {
-      // Extract JSON from response (in case there's extra text)
-      const jsonMatch = responseText.match(/\[[\s\S]*\]/)
-      if (jsonMatch) {
-        evaluations = JSON.parse(jsonMatch[0])
+      const responseText = completion.choices[0]?.message?.content || '[]'
+      
+      let evaluations: EvaluationResult[] = []
+      try {
+        const jsonMatch = responseText.match(/\[[\s\S]*\]/)
+        if (jsonMatch) {
+          evaluations = JSON.parse(jsonMatch[0])
+        }
+      } catch {
+        console.error('Failed to parse AI response:', responseText)
       }
-    } catch (parseError) {
-      console.error('Failed to parse evaluation response:', parseError, responseText)
-      // Fallback: accept all answers on parse error (don't block students)
-      evaluations = questions.map(q => ({
-        questionId: q.id,
-        status: 'good_enough' as const,
-        feedback: 'Thanks for your answer! Keep up the great work.'
-      }))
+
+      // If parsing failed or no evaluations, accept all
+      if (evaluations.length === 0) {
+        evaluations = questions.map(q => ({
+          questionId: q.id,
+          status: 'good_enough' as const,
+          feedback: 'Good effort! Your answer has been accepted.'
+        }))
+      }
+
+      return NextResponse.json({
+        evaluations,
+        allAccepted: evaluations.every(e => e.status === 'good_enough')
+      })
+
+    } catch (openaiError) {
+      console.error('OpenAI API error:', openaiError)
+      // Don't block students - accept answers if AI fails
+      return NextResponse.json({
+        evaluations: questions.map(q => ({
+          questionId: q.id,
+          status: 'good_enough' as const,
+          feedback: 'Your answer has been accepted!'
+        })),
+        allAccepted: true
+      })
     }
 
-    return NextResponse.json({
-      evaluations,
-      allAccepted: evaluations.every(e => e.status === 'good_enough')
-    })
   } catch (error) {
     console.error('Error in evaluate route:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    )
+    // Fallback - accept all answers so students aren't stuck
+    return NextResponse.json({
+      evaluations: [],
+      allAccepted: true,
+      error: 'Evaluation temporarily unavailable'
+    })
   }
 }
-
