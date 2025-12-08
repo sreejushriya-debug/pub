@@ -119,9 +119,15 @@ export default function OpenEndedActivity({
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('API error response:', errorText)
-        throw new Error(`Failed to get feedback: ${response.status} ${response.statusText}`)
+        let errorMessage = `Server error: ${response.status}`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch {
+          // Response wasn't JSON
+        }
+        console.error('API error:', errorMessage)
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -148,7 +154,8 @@ export default function OpenEndedActivity({
 
     } catch (err) {
       console.error('Evaluation error:', err)
-      setError('Something went wrong. Please try again.')
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      setError(`Something went wrong: ${errorMessage}. Please try again.`)
       
       // Reset to pending status on error
       const resetStates = { ...questionStates }
