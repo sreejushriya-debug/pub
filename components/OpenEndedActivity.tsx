@@ -308,36 +308,63 @@ export default function OpenEndedActivity({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-4 p-3 bg-red-100 border border-red-200 rounded-lg flex items-center gap-2 text-red-700"
+          className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl"
         >
-          <AlertCircle className="w-5 h-5" />
-          <span className="text-sm">{error}</span>
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm text-red-700 mb-3">{error}</p>
+              <p className="text-xs text-red-600 mb-3">
+                You can try again or skip this activity to continue.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleComplete}
+                className="text-sm px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium transition-colors"
+              >
+                Skip & Continue →
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
       )}
 
       {/* Action buttons */}
       <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-end">
         {!allAccepted && (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={submitForFeedback}
-            disabled={!allQuestionsAnswered || isSubmitting}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-forest-600 text-white rounded-xl font-semibold
-                     hover:bg-forest-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Getting Feedback...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5" />
-                {needsRevision ? 'Resubmit for Feedback' : 'Submit for Feedback'}
-              </>
-            )}
-          </motion.button>
+          <>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleComplete}
+              disabled={!allQuestionsAnswered}
+              className="flex items-center justify-center gap-2 px-5 py-3 border-2 border-gray-300 text-gray-600 rounded-xl font-medium
+                       hover:border-gray-400 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              Skip Activity
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={submitForFeedback}
+              disabled={!allQuestionsAnswered || isSubmitting}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-forest-600 text-white rounded-xl font-semibold
+                       hover:bg-forest-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Getting Feedback...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  {needsRevision ? 'Resubmit for Feedback' : 'Submit for Feedback'}
+                </>
+              )}
+            </motion.button>
+          </>
         )}
 
         {allAccepted && (
