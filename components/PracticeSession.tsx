@@ -52,17 +52,18 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
     startTime: new Date()
   })
   
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const prevMessageCount = useRef(0)
 
-  // Only scroll to bottom when a NEW message is added, not on every render
+  // Only scroll the chat container (not the page) when a NEW message is added
   useEffect(() => {
-    if (messages.length > prevMessageCount.current) {
-      // Small delay to let the message render
+    if (messages.length > prevMessageCount.current && messagesContainerRef.current) {
+      // Scroll only the container, not the page
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+        }
       }, 100)
     }
     prevMessageCount.current = messages.length
@@ -385,7 +386,7 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
         {/* Chat Area */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           {/* Messages */}
-          <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+          <div ref={messagesContainerRef} className="h-[400px] overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <motion.div
                 key={message.id}
@@ -440,7 +441,6 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
               </motion.div>
             )}
             
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}

@@ -114,13 +114,14 @@ Keep responses short (2-3 sentences). Ask one question at a time.`
 
       return NextResponse.json({ message: assistantMessage })
 
-    } catch (openaiError) {
-      console.error('OpenAI API error:', openaiError)
-      // Return friendly fallback
+    } catch (openaiError: unknown) {
+      const errorMessage = openaiError instanceof Error ? openaiError.message : String(openaiError)
+      console.error('OpenAI API error:', errorMessage, openaiError)
+      // Return friendly fallback with error info
       return NextResponse.json({
         message: action === 'start'
-          ? `Hi! 👋 I'm Bright! I'm here to help you with ${context.activityName}. What would you like to know about ${conceptList}?`
-          : "Hmm, I had a little hiccup! 🤔 Can you try asking that question again?"
+          ? `Hi! 👋 I'm Bright! I'm here to help you with ${context.activityName}. (Note: ${errorMessage})`
+          : `Hmm, I had a little hiccup! (${errorMessage}) 🤔 Can you try asking that question again?`
       })
     }
 

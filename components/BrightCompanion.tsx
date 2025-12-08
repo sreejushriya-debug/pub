@@ -108,7 +108,6 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [mode, setMode] = useState<'activity' | 'general' | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const storageKey = `bright-companion-${context.activityKey}`
@@ -139,12 +138,15 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
     }
   }, [messages, mode, storageKey])
 
-  // Scroll to bottom only when new messages are added
+  // Scroll to bottom only when new messages are added (scroll container, not page)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const prevMessageCount = useRef(0)
   useEffect(() => {
-    if (messages.length > prevMessageCount.current) {
+    if (messages.length > prevMessageCount.current && messagesContainerRef.current) {
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+        }
       }, 100)
     }
     prevMessageCount.current = messages.length
@@ -365,7 +367,7 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
         ) : (
           <>
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-50">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-50">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -420,7 +422,6 @@ export default function BrightCompanion({ isOpen, onClose, context }: BrightComp
                 </motion.div>
               )}
               
-              <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}

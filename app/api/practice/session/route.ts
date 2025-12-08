@@ -205,10 +205,11 @@ ${(stats?.questionsAttempted || 0) >= 6 ? 'Consider wrapping up.' : ''}`
         sessionComplete,
       })
 
-    } catch (openaiError) {
-      console.error('OpenAI API error:', openaiError)
+    } catch (openaiError: unknown) {
+      const errorMessage = openaiError instanceof Error ? openaiError.message : String(openaiError)
+      console.error('OpenAI API error:', errorMessage, openaiError)
       return NextResponse.json({
-        message: "Hmm, I had a little hiccup! 🤔 Can you try again?",
+        message: `Hmm, I had a little hiccup! (${errorMessage}) 🤔 Can you try again?`,
         isQuestion: false,
         questionData: null,
         wasCorrect: false,
