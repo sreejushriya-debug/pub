@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
+import OpenAI from 'openai'
 
 interface ActivityContext {
   moduleNumber: number
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     
     if (!userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Please sign in to chat with Bright' },
         { status: 401 }
       )
     }
@@ -41,78 +42,43 @@ export async function POST(request: NextRequest) {
     const body: CompanionRequest = await request.json()
     const { action, mode, context, messages, userInput } = body
 
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-    if (!OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
-      )
+    // Fallback responses if API key is missing
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not set')
+      const fallbackMessage = action === 'start'
+        ? mode === 'activity'
+          ? `Hi there! 👋 I'm Bright, your money tutor! I see you're working on ${context.activityName}. I'm here to help you learn about ${context.conceptTags.join(', ')}. What would you like help with?`
+          : "Hi! 👋 I'm Bright, your friendly money tutor! I can help you learn about saving, spending, budgets, and more. What's your question?"
+        : "I'm having a little trouble right now, but I'm still here to help! Try asking your question a different way, or you can move on to the next activity."
+      
+      return NextResponse.json({ message: fallbackMessage })
     }
 
-    // Build context-aware system prompt
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+
     const conceptList = context.conceptTags.join(', ')
     
-    const recentAttemptInfo = context.recentAttempt 
-      ? `\n\nRECENT ATTEMPT:
-- Question: "${context.recentAttempt.questionText}"
-- Student's answer: "${context.recentAttempt.userAnswer}"
-- Correct answer: "${context.recentAttempt.correctAnswer}"
-- Was correct: ${context.recentAttempt.wasCorrect ? 'Yes' : 'No'}`
-      : ''
+    const systemPrompt = `You are Bright, a friendly AI money tutor for kids in grades 3-5.
 
-    const modeInstructions = mode === 'activity'
-      ? `The student needs help with the current activity. Focus on:
-- The specific concepts for this activity: ${conceptList}
-- If they made a recent mistake, help them understand why
-- Give ONE clear explanation with a real-life money example
-- Then ask ONE practice question to check their understanding
-- Work step-by-step, don't overwhelm them`
-      : `The student has a general question about money/finance. You can:
-- Answer questions about saving, spending, budgets, credit, debit, business, tax, discounts
-- Give clear explanations with everyday examples (allowance, snacks, toys, school supplies)
-- If the question relates to ${conceptList}, connect it to what they're learning
-- If they ask about something outside the course (like investing in specific stocks), gently redirect`
+CONTEXT: Module ${context.moduleNumber} - ${context.activityName}
+Key concepts: ${conceptList}
 
-    const systemPrompt = `You are Bright, a friendly AI money tutor for kids in grades 3-5. You're part of the "Project Bright Beginnings" financial literacy course.
-
-CURRENT CONTEXT:
-- Module ${context.moduleNumber}: ${context.activityName}
-- Activity: ${context.activityKey}
-- Key concepts: ${conceptList}${recentAttemptInfo}
-
-YOUR PERSONALITY:
-1. Warm, encouraging, and patient - like a friendly older sibling
-2. Use simple words and short sentences
-3. Give lots of real-life examples: allowance, snacks, toys, school supplies, video games
-4. Use emoji sparingly but warmly 😊
-5. Never scold - mistakes are how we learn!
-6. Celebrate small wins
+PERSONALITY:
+- Warm, encouraging, patient - like a friendly older sibling
+- Use simple words and short sentences
+- Give real-life examples: allowance, snacks, toys, school supplies
+- Use emoji sparingly 😊
+- Never scold - mistakes are how we learn!
 
 MODE: ${mode.toUpperCase()}
-${modeInstructions}
+${mode === 'activity' 
+  ? `Help with the current activity. Focus on ${conceptList}. Give ONE explanation with a real example, then ask ONE practice question.`
+  : `Answer general money questions. Topics: saving, spending, budgets, credit, debit, business, tax, discounts.`
+}
 
-FORMATTING RULES:
-- Use **text** for bold (important terms)
-- Write math simply: 40 × 0.10 = 4 (use × for multiply, ÷ for divide)
-- Keep explanations short (1-2 paragraphs max)
-- Ask one question at a time, wait for their answer
-
-TOPICS YOU CAN HELP WITH:
-- Needs vs wants
-- Saving and spending decisions
-- Budgets and pie charts
-- Credit vs debit cards
-- Interest and loans
-- Stocks and investing basics
-- Checks and bank accounts
-- Business, profit, and expenses
-- Sales tax and discounts
-- Coins and counting money
-
-If they ask about something outside these topics, say:
-"That's a great question, but I'm best at helping with money topics from this course! Ask me about saving, spending, budgets, credit, business, or taxes!"
-
-Be concise but helpful. Don't repeat yourself. Match their energy - if they seem frustrated, be extra encouraging.`
+Keep responses short (2-3 sentences). Ask one question at a time.`
 
     const openaiMessages: { role: 'system' | 'user' | 'assistant', content: string }[] = [
       { role: 'system', content: systemPrompt }
@@ -120,13 +86,8 @@ Be concise but helpful. Don't repeat yourself. Match their energy - if they seem
 
     if (action === 'start') {
       const startPrompt = mode === 'activity'
-        ? `The student just opened the help chat while working on "${context.activityName}" (Module ${context.moduleNumber}). ${
-            context.recentAttempt && !context.recentAttempt.wasCorrect
-              ? `They recently got a question wrong about "${context.recentAttempt.questionText}". `
-              : ''
-          }Greet them warmly (1-2 sentences) and ask what they need help with. Mention you can help with ${conceptList}.`
-        : `The student wants to ask a general question about money. Greet them warmly (1-2 sentences) and invite them to ask their question. Let them know you can help with saving, spending, budgets, credit, business, and taxes.`
-      
+        ? `Greet the student (1-2 sentences). They're working on "${context.activityName}". Ask what they need help with.`
+        : `Greet the student (1-2 sentences). They want to ask a general money question. Invite them to ask.`
       openaiMessages.push({ role: 'user', content: startPrompt })
     } else {
       for (const msg of messages) {
@@ -135,48 +96,38 @@ Be concise but helpful. Don't repeat yourself. Match their energy - if they seem
           content: msg.content
         })
       }
-      
       if (userInput) {
         openaiMessages.push({ role: 'user', content: userInput })
       }
     }
 
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
+    try {
+      const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: openaiMessages,
         temperature: 0.7,
-        max_tokens: 500,
-      }),
-    })
+        max_tokens: 400,
+      })
 
-    if (!openaiResponse.ok) {
-      const errorData = await openaiResponse.text()
-      console.error('OpenAI API error:', errorData)
-      return NextResponse.json(
-        { error: 'Failed to get response from AI' },
-        { status: 500 }
-      )
+      const assistantMessage = completion.choices[0]?.message?.content || 
+        "I'm having trouble thinking right now. Can you try asking again?"
+
+      return NextResponse.json({ message: assistantMessage })
+
+    } catch (openaiError) {
+      console.error('OpenAI API error:', openaiError)
+      // Return friendly fallback
+      return NextResponse.json({
+        message: action === 'start'
+          ? `Hi! 👋 I'm Bright! I'm here to help you with ${context.activityName}. What would you like to know about ${conceptList}?`
+          : "Hmm, I had a little hiccup! 🤔 Can you try asking that question again?"
+      })
     }
 
-    const openaiData = await openaiResponse.json()
-    const assistantMessage = openaiData.choices[0]?.message?.content || "I'm having trouble thinking right now. Can you try again?"
-
-    return NextResponse.json({
-      message: assistantMessage,
-    })
   } catch (error) {
     console.error('Error in companion route:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    )
+    return NextResponse.json({
+      message: "Oops! Something went wrong. Try asking your question again!"
+    })
   }
 }
-
