@@ -66,9 +66,9 @@ export default function MoneyAdventureSummary({
 
   // Calculate badge
   const getBadge = () => {
-    const savings = gameState.savingsBalance
-    const debt = gameState.debtBalance
-    const wellbeing = gameState.wellbeingScore
+    const savings = gameState.savings
+    const debt = gameState.debt
+    const wellbeing = gameState.wellbeing
     
     if (savings >= 100 && debt === 0 && wellbeing >= 70) {
       return { name: '🏆 Money Master', color: 'from-yellow-400 to-amber-500' }
@@ -124,22 +124,22 @@ export default function MoneyAdventureSummary({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-green-50 rounded-xl">
               <Coins className="w-6 h-6 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-600">${gameState.cashBalance}</p>
+              <p className="text-2xl font-bold text-green-600">${gameState.cash}</p>
               <p className="text-sm text-gray-500">Cash</p>
             </div>
             <div className="text-center p-4 bg-blue-50 rounded-xl">
               <PiggyBank className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-blue-600">${gameState.savingsBalance}</p>
+              <p className="text-2xl font-bold text-blue-600">${gameState.savings}</p>
               <p className="text-sm text-gray-500">Savings</p>
             </div>
             <div className="text-center p-4 bg-red-50 rounded-xl">
               <TrendingDown className="w-6 h-6 text-red-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-red-600">${gameState.debtBalance}</p>
+              <p className="text-2xl font-bold text-red-600">${gameState.debt}</p>
               <p className="text-sm text-gray-500">Debt</p>
             </div>
             <div className="text-center p-4 bg-yellow-50 rounded-xl">
               <Heart className="w-6 h-6 text-yellow-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold">{getWellbeingEmoji(gameState.wellbeingScore)}</p>
+              <p className="text-2xl font-bold">{getWellbeingEmoji(gameState.wellbeing)}</p>
               <p className="text-sm text-gray-500">Wellbeing</p>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function MoneyAdventureSummary({
             </div>
           ) : (
             <p className="text-gray-600">
-              Great job completing Money Adventure! You finished with ${gameState.savingsBalance} in savings.
+              Great job completing Money Adventure! You finished with ${gameState.savings} in savings.
             </p>
           )}
         </motion.div>
