@@ -1,110 +1,101 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useUser } from '@clerk/nextjs'
 import { 
-  ArrowLeft, Play, RotateCcw, Coins, PiggyBank, 
-  TrendingUp, Heart, Sparkles, Trophy
+  Gamepad2, ArrowLeft, Sparkles, Play, RotateCcw, 
+  Coins, PiggyBank, Trophy, Target
 } from 'lucide-react'
+import Link from 'next/link'
 import { 
-  GameState, loadGameState, clearGameState, createNewGameState, saveGameState,
-  getWellbeingEmoji
+  GameState, 
+  createNewGameState, 
+  saveGameState, 
+  loadGameState, 
+  clearGameState 
 } from '@/lib/moneyAdventure/types'
 import MoneyAdventureGame from '@/components/MoneyAdventureGame'
 
-export default function MoneyAdventurePage() {
+export default function AdventurePage() {
   const { user, isLoaded } = useUser()
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (user?.id) {
+    if (isLoaded && user) {
       const saved = loadGameState(user.id)
       setGameState(saved)
-      setLoaded(true)
+      setLoading(false)
+    } else if (isLoaded) {
+      setLoading(false)
     }
-  }, [user?.id])
+  }, [isLoaded, user])
 
-  const startNewGame = () => {
-    if (!user?.id) return
-    const newState = createNewGameState(user.id)
-    newState.stage = 'playing'
-    newState.turnNumber = 1
-    saveGameState(user.id, newState)
+  const handleStartNew = () => {
+    if (!user) return
+    const newState = createNewGameState(user.id, user.firstName || 'Player')
     setGameState(newState)
+    saveGameState(user.id, newState)
     setIsPlaying(true)
   }
 
-  const continueGame = () => {
+  const handleContinue = () => {
     setIsPlaying(true)
-  }
-
-  const resetGame = () => {
-    if (!user?.id) return
-    clearGameState(user.id)
-    setGameState(null)
   }
 
   const handleGameUpdate = (newState: GameState) => {
-    if (!user?.id) return
-    saveGameState(user.id, newState)
+    if (!user) return
     setGameState(newState)
+    saveGameState(user.id, newState)
   }
 
-  const handleGameEnd = () => {
+  const handleExit = () => {
     setIsPlaying(false)
   }
 
-  if (!isLoaded || !loaded) {
+  const handleRestart = () => {
+    if (!user) return
+    clearGameState(user.id)
+    setGameState(null)
+    setIsPlaying(false)
+  }
+
+  if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="animate-pulse text-orange-600">Loading...</div>
       </div>
     )
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-purple-50 via-white to-pink-50">
-        <div className="container-custom max-w-4xl text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Sign in to play Money Adventure</h1>
-          <Link href="/sign-in" className="btn-primary">Sign In</Link>
-        </div>
-      </div>
-    )
-  }
-
-  // Show the game if playing
+  // Show game if playing
   if (isPlaying && gameState) {
     return (
       <MoneyAdventureGame
         gameState={gameState}
-        userName={user.firstName || 'Student'}
+        userName={user?.firstName || 'Player'}
         onUpdate={handleGameUpdate}
-        onExit={handleGameEnd}
+        onExit={handleExit}
       />
     )
   }
 
   // Home screen
-  const hasExistingGame = gameState && gameState.stage === 'playing' && gameState.turnNumber > 0
+  const hasActiveGame = gameState && gameState.stage !== 'ended'
+  const hasCompletedGame = gameState && gameState.stage === 'ended'
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-orange-50 via-white to-amber-50">
       <div className="container-custom max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <Link 
-            href="/course/learn" 
-            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Course
-          </Link>
-        </div>
+        {/* Back link */}
+        <Link 
+          href="/course/learn" 
+          className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Course
+        </Link>
 
         {/* Hero Section */}
         <motion.div
@@ -112,100 +103,122 @@ export default function MoneyAdventurePage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-r from-accent-500 to-orange-500 rounded-3xl p-8 md:p-12 text-white mb-8 relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          {/* Decorative elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-2xl" />
+          </div>
           
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
-                <Coins className="w-8 h-8" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold">Money Adventure</h1>
-                <p className="text-white/80">A Life Simulation Game</p>
-              </div>
+              <Gamepad2 className="w-10 h-10" />
+              <Sparkles className="w-6 h-6" />
             </div>
-            
-            <p className="text-lg text-white/90 mb-6 max-w-2xl">
-              Make money choices, survive surprises, and see how your decisions affect your 
-              cash, savings, and happiness! Play through life scenarios and learn smart money habits.
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Money Adventure</h1>
+            <p className="text-lg text-white/90 max-w-xl mb-6">
+              Play through a year of money choices! Save for a big goal, handle surprises, 
+              start a business, and see how your decisions shape your story.
             </p>
-
-            <div className="flex flex-wrap gap-4">
-              {hasExistingGame ? (
-                <>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={continueGame}
-                    className="flex items-center gap-2 bg-white text-orange-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors"
-                  >
-                    <Play className="w-5 h-5" />
-                    Continue Adventure
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      resetGame()
-                      startNewGame()
-                    }}
-                    className="flex items-center gap-2 bg-white/20 text-white px-6 py-3 rounded-xl font-medium hover:bg-white/30 transition-colors"
-                  >
-                    <RotateCcw className="w-5 h-5" />
-                    Start New Adventure
-                  </motion.button>
-                </>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={startNewGame}
-                  className="flex items-center gap-2 bg-white text-orange-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors"
-                >
-                  <Sparkles className="w-6 h-6" />
-                  Start Money Adventure
-                </motion.button>
-              )}
-            </div>
+            
+            {!hasActiveGame && !hasCompletedGame && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleStartNew}
+                className="flex items-center gap-2 bg-white text-orange-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors"
+              >
+                <Play className="w-6 h-6" /> Start Your Adventure
+              </motion.button>
+            )}
           </div>
         </motion.div>
 
-        {/* Current Game Status (if exists) */}
-        {hasExistingGame && (
+        {/* Continue / Restart Panel */}
+        {hasActiveGame && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8"
+            className="bg-white rounded-2xl p-6 shadow-sm mb-6"
           >
-            <h3 className="font-bold text-gray-900 mb-4">Your Current Adventure</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Continue Your Adventure</h2>
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                In Progress
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="text-center p-3 bg-gray-50 rounded-xl">
-                <p className="text-sm text-gray-500">Turn</p>
-                <p className="text-xl font-bold text-orange-600">
-                  {gameState.turnNumber} / {gameState.maxTurns}
-                </p>
+                <Target className="w-5 h-5 text-orange-600 mx-auto mb-1" />
+                <p className="text-sm font-medium text-gray-900">{gameState?.bigGoal?.name || 'Goal'}</p>
+                <p className="text-xs text-gray-500">Your Goal</p>
               </div>
-              <div className="text-center p-3 bg-green-50 rounded-xl">
-                <p className="text-sm text-gray-500">Cash</p>
-                <p className="text-xl font-bold text-green-600">${gameState.cashBalance}</p>
+              <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <Coins className="w-5 h-5 text-green-600 mx-auto mb-1" />
+                <p className="text-lg font-bold text-green-600">${gameState?.cash || 0}</p>
+                <p className="text-xs text-gray-500">Cash</p>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-xl">
-                <p className="text-sm text-gray-500">Savings</p>
-                <p className="text-xl font-bold text-blue-600">${gameState.savingsBalance}</p>
+              <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <PiggyBank className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                <p className="text-lg font-bold text-blue-600">${gameState?.savings || 0}</p>
+                <p className="text-xs text-gray-500">Savings</p>
               </div>
-              <div className="text-center p-3 bg-red-50 rounded-xl">
-                <p className="text-sm text-gray-500">Debt</p>
-                <p className="text-xl font-bold text-red-600">${gameState.debtBalance}</p>
-              </div>
-              <div className="text-center p-3 bg-yellow-50 rounded-xl">
-                <p className="text-sm text-gray-500">Wellbeing</p>
-                <p className="text-xl font-bold">
-                  {getWellbeingEmoji(gameState.wellbeingScore)}
-                </p>
+              <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <Trophy className="w-5 h-5 text-purple-600 mx-auto mb-1" />
+                <p className="text-lg font-bold text-gray-900">Ch {gameState?.chapter || 1}</p>
+                <p className="text-xs text-gray-500">Scene {gameState?.scene || 1}</p>
               </div>
             </div>
+            
+            <div className="flex gap-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleContinue}
+                className="flex-1 flex items-center justify-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-700"
+              >
+                <Play className="w-5 h-5" /> Continue
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleRestart}
+                className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50"
+              >
+                <RotateCcw className="w-5 h-5" /> Restart
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Completed Game Panel */}
+        {hasCompletedGame && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 shadow-sm mb-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Adventure Complete!</h2>
+              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
+                Finished
+              </span>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              You completed Money Adventure! Want to try again with different choices?
+            </p>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleStartNew}
+              className="flex items-center justify-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-700 w-full"
+            >
+              <Play className="w-5 h-5" /> Play Again
+            </motion.button>
           </motion.div>
         )}
 
@@ -214,84 +227,53 @@ export default function MoneyAdventurePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8"
+          className="bg-white rounded-2xl p-6 shadow-sm"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-6">How Money Adventure Works</h3>
+          <h2 className="text-xl font-bold text-gray-900 mb-6">How It Works</h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex flex-col items-center text-center p-4">
-<div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-4">
-              <Coins className="w-8 h-8 text-orange-600" />
-            </div>
-              <h4 className="font-bold text-gray-900 mb-2">Face Life Events</h4>
-              <p className="text-gray-600 text-sm">
-                Each turn, you&apos;ll see a money scenario - from birthday gifts to emergencies to sales!
-              </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-xl">🎯</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Choose Your Goal</h3>
+                <p className="text-sm text-gray-600">Pick a big goal to save for: a bike, tablet, summer camp, or business kit!</p>
+              </div>
             </div>
             
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-4">
-                <TrendingUp className="w-8 h-8 text-pink-600" />
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-xl">💰</span>
               </div>
-              <h4 className="font-bold text-gray-900 mb-2">Make Choices</h4>
-              <p className="text-gray-600 text-sm">
-                Save, spend, or borrow? Your choices affect your cash, savings, debt, and happiness!
-              </p>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Make Money Choices</h3>
+                <p className="text-sm text-gray-600">Earn allowance, face temptations, and decide when to save or spend.</p>
+              </div>
             </div>
             
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mb-4">
-                <Trophy className="w-8 h-8 text-yellow-600" />
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-xl">🎲</span>
               </div>
-              <h4 className="font-bold text-gray-900 mb-2">Earn Bonuses</h4>
-              <p className="text-gray-600 text-sm">
-                Answer money questions correctly to earn extra cash! Bright helps if you get stuck.
-              </p>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Handle Surprises</h3>
+                <p className="text-sm text-gray-600">Deal with emergencies, start a business, and manage your budget!</p>
+              </div>
             </div>
-          </div>
-        </motion.div>
-
-        {/* Stats You Track */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid md:grid-cols-4 gap-4"
-        >
-          <div className="bg-green-50 rounded-xl p-4 border border-green-100">
-            <div className="flex items-center gap-3 mb-2">
-              <Coins className="w-6 h-6 text-green-600" />
-              <h4 className="font-bold text-green-800">Cash</h4>
+            
+            <div className="flex gap-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-xl">🏆</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Reach Your Ending</h3>
+                <p className="text-sm text-gray-600">See how your choices shaped your story and get personalized tips!</p>
+              </div>
             </div>
-            <p className="text-green-700 text-sm">Money available to spend right now</p>
-          </div>
-          
-          <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-            <div className="flex items-center gap-3 mb-2">
-              <PiggyBank className="w-6 h-6 text-blue-600" />
-              <h4 className="font-bold text-blue-800">Savings</h4>
-            </div>
-            <p className="text-blue-700 text-sm">Money set aside for the future</p>
-          </div>
-          
-          <div className="bg-red-50 rounded-xl p-4 border border-red-100">
-            <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="w-6 h-6 text-red-600 rotate-180" />
-              <h4 className="font-bold text-red-800">Debt</h4>
-            </div>
-            <p className="text-red-700 text-sm">Money you owe and must pay back</p>
-          </div>
-          
-          <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-            <div className="flex items-center gap-3 mb-2">
-              <Heart className="w-6 h-6 text-yellow-600" />
-              <h4 className="font-bold text-yellow-800">Wellbeing</h4>
-            </div>
-            <p className="text-yellow-700 text-sm">How happy and stress-free you are</p>
           </div>
         </motion.div>
       </div>
     </div>
   )
 }
-
