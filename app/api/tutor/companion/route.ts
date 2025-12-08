@@ -103,7 +103,7 @@ Keep responses short (2-3 sentences). Ask one question at a time.`
 
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-3.5-turbo',
         messages: openaiMessages,
         temperature: 0.7,
         max_tokens: 400,
