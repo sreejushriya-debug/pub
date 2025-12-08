@@ -127,7 +127,7 @@ export interface Scene {
   title: string
   conceptTags: string[]
   getStory: (state: GameState) => string
-  choices: SceneChoice[]
+  choices: SceneChoice[] | ((state: GameState) => SceneChoice[])
   challenge?: SceneChallenge
   openEndedPrompt?: {
     prompt: string
