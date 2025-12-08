@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
 
     // Analyze the game data
     const wiseChoices = gameState.history.filter(h => {
-      // We'd need wisdom tags in history - for now, use heuristics
       return (h.effects.savings && h.effects.savings > 0) || 
              (h.effects.debt === undefined || h.effects.debt === 0)
     }).length
@@ -35,18 +34,19 @@ export async function POST(request: NextRequest) {
              (h.effects.wellbeing && h.effects.wellbeing < 0)
     }).length
 
-    const bonusQuestionsCorrect = gameState.history.filter(h => 
-      h.bonusQuestion?.isCorrect
+    // Count challenges from history
+    const challengesCorrect = gameState.history.filter(h => 
+      h.challenge?.isCorrect
     ).length
 
-    const bonusQuestionsTotal = gameState.history.filter(h => 
-      h.bonusQuestion
+    const challengesTotal = gameState.history.filter(h => 
+      h.challenge
     ).length
 
-    // Get missed concepts
+    // Get missed concepts from challenges
     const missedConcepts = gameState.history
-      .filter(h => h.bonusQuestion && !h.bonusQuestion.isCorrect)
-      .flatMap(h => h.bonusQuestion?.conceptTags || [])
+      .filter(h => h.challenge && !h.challenge.isCorrect)
+      .flatMap(h => h.challenge?.conceptTags || [])
     
     const uniqueMissedConcepts = Array.from(new Set(missedConcepts))
 
@@ -71,18 +71,25 @@ Respond with JSON:
     const userPrompt = `Student: ${userName}
 
 FINAL STATS:
-- Cash: $${gameState.cashBalance}
-- Savings: $${gameState.savingsBalance}
-- Debt: $${gameState.debtBalance}
-- Wellbeing: ${gameState.wellbeingScore}/100
-- Turns played: ${gameState.history.length}
+- Cash: $${gameState.cash}
+- Savings: $${gameState.savings}
+- Debt: $${gameState.debt}
+- Wellbeing: ${gameState.wellbeing}/100
+- Scenes played: ${gameState.history.length}
+- Goal: ${gameState.bigGoal?.name || 'Unknown'} ($${gameState.bigGoal?.cost || 0})
+- Bought Goal: ${gameState.boughtGoal ? 'Yes' : 'No'}
 
 CHOICES:
 - Wise/balanced choices: ~${wiseChoices}
 - Risky choices: ~${riskyChoices}
 
-BONUS QUESTIONS:
-- Got ${bonusQuestionsCorrect}/${bonusQuestionsTotal} correct
+TRAIT SCORES:
+- Saver Score: ${gameState.saverScore}
+- Risk Score: ${gameState.riskScore}
+- Planner Score: ${gameState.plannerScore}
+
+CHALLENGES:
+- Got ${challengesCorrect}/${challengesTotal} correct
 - Missed concepts: ${uniqueMissedConcepts.length > 0 ? uniqueMissedConcepts.join(', ') : 'None!'}
 
 Write an encouraging, personalized summary!`
@@ -120,8 +127,8 @@ Write an encouraging, personalized summary!`
           stats: {
             wiseChoices,
             riskyChoices,
-            bonusQuestionsCorrect,
-            bonusQuestionsTotal,
+            challengesCorrect,
+            challengesTotal,
             missedConcepts: uniqueMissedConcepts
           }
         })
@@ -131,15 +138,14 @@ Write an encouraging, personalized summary!`
     }
 
     return NextResponse.json({
-      summary: `Great job completing Money Adventure, ${userName}! You finished with $${gameState.savingsBalance} in savings. Keep practicing your money skills!`,
+      summary: `Great job completing Money Adventure, ${userName}! You finished with $${gameState.savings} in savings. Keep practicing your money skills!`,
       strengths: ['Completed the adventure'],
       areasToImprove: [],
       nextSteps: ['Play again to try different choices'],
-      stats: { wiseChoices, riskyChoices, bonusQuestionsCorrect, bonusQuestionsTotal, missedConcepts: uniqueMissedConcepts }
+      stats: { wiseChoices, riskyChoices, challengesCorrect, challengesTotal, missedConcepts: uniqueMissedConcepts }
     })
   } catch (error) {
     console.error('Error in adventure summary:', error)
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }
-
