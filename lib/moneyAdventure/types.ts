@@ -116,6 +116,8 @@ export interface ChoiceEffects {
   totalEarned?: number
   totalSpentNeeds?: number
   totalSpentWants?: number
+  totalSaved?: number
+  totalBorrowed?: number
 }
 
 export interface Scene {
