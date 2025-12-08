@@ -68,6 +68,7 @@ export default function PracticeSession({ userId, topics, onComplete, onExit }: 
   // Start the session
   useEffect(() => {
     startSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const startSession = async () => {

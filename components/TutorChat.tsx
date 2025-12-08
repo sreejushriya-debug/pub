@@ -218,6 +218,7 @@ export default function TutorChat({
     if (isOpen && !hasStarted && missedQuestions.length > 0) {
       startConversation()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, hasStarted, missedQuestions])
 
   const startConversation = async () => {

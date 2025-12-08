@@ -70,6 +70,7 @@ export default function MoneyAdventureGame({
       setShowEnding(true)
       loadEpilogue()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.stage])
 
   const loadEpilogue = async () => {
