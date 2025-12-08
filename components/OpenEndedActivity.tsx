@@ -81,6 +81,12 @@ export default function OpenEndedActivity({
       questionStates[q.id].status !== 'good_enough'
     )
 
+    // If all questions are already good enough, just complete
+    if (questionsToEvaluate.length === 0) {
+      handleComplete()
+      return
+    }
+
     // Set evaluating status
     const updatedStates = { ...questionStates }
     questionsToEvaluate.forEach(q => {
@@ -92,6 +98,10 @@ export default function OpenEndedActivity({
     setQuestionStates(updatedStates)
 
     try {
+      const maxAttempt = questionsToEvaluate.length > 0
+        ? Math.max(...questionsToEvaluate.map(q => questionStates[q.id].attemptCount)) + 1
+        : 1
+
       const response = await fetch('/api/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,24 +114,34 @@ export default function OpenEndedActivity({
             questionType: q.questionType,
             rubric: q.rubric
           })),
-          attemptNumber: Math.max(...questionsToEvaluate.map(q => questionStates[q.id].attemptCount)) + 1
+          attemptNumber: maxAttempt
         })
       })
 
       if (!response.ok) {
-        throw new Error('Failed to get feedback')
+        const errorText = await response.text()
+        console.error('API error response:', errorText)
+        throw new Error(`Failed to get feedback: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
 
+      // Check if evaluations exist and is an array
+      if (!data.evaluations || !Array.isArray(data.evaluations)) {
+        console.error('Invalid response format:', data)
+        throw new Error('Invalid response from server')
+      }
+
       // Update states with evaluations
       const newStates = { ...questionStates }
       data.evaluations.forEach((evaluation: { questionId: string; status: 'good_enough' | 'needs_revision'; feedback: string }) => {
-        newStates[evaluation.questionId] = {
-          ...newStates[evaluation.questionId],
-          status: evaluation.status,
-          feedback: evaluation.feedback,
-          attemptCount: newStates[evaluation.questionId].attemptCount + 1
+        if (newStates[evaluation.questionId]) {
+          newStates[evaluation.questionId] = {
+            ...newStates[evaluation.questionId],
+            status: evaluation.status,
+            feedback: evaluation.feedback,
+            attemptCount: newStates[evaluation.questionId].attemptCount + 1
+          }
         }
       })
       setQuestionStates(newStates)
