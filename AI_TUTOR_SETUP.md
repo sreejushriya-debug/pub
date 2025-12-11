@@ -57,3 +57,4 @@ OpenAI charges per API call. The `gpt-4o-mini` model is very affordable:
 
 Each tutor response is typically a few hundred tokens, so it's very cheap (fractions of a cent per response).
 
+

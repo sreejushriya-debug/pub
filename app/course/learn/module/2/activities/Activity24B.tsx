@@ -140,3 +140,4 @@ export default function Activity24B({ income, onComplete }: Activity24BProps) {
   )
 }
 
+

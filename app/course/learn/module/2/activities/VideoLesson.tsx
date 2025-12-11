@@ -47,3 +47,4 @@ export default function VideoLesson({ videoId, title, onComplete }: VideoLessonP
   )
 }
 
+
