@@ -16,17 +16,47 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // For now, we acknowledge the save request
-    // Progress is stored in localStorage on the client
-    // Clerk metadata updates require the Backend API with a secret key
-    // which should be configured separately
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Progress saved locally. Clerk sync available in admin dashboard.',
-      moduleNumber,
-      progressData
-    })
+    // Get current user metadata
+    const user = await currentUser()
+    const currentProgress = (user?.publicMetadata?.courseProgress as Record<string, unknown>) || {}
+
+    // Update the specific module's progress
+    const updatedProgress = {
+      ...currentProgress,
+      [`module${moduleNumber}`]: {
+        ...progressData,
+        lastUpdated: new Date().toISOString()
+      }
+    }
+
+    // Use Clerk Backend API to update user metadata
+    const clerkSecretKey = process.env.CLERK_SECRET_KEY
+    if (clerkSecretKey) {
+      try {
+        const response = await fetch(`https://api.clerk.com/v1/users/${userId}/metadata`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${clerkSecretKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            public_metadata: {
+              ...user?.publicMetadata,
+              courseProgress: updatedProgress
+            }
+          })
+        })
+        
+        if (!response.ok) {
+          console.error('Clerk API error:', await response.text())
+        }
+      } catch (clerkError) {
+        console.error('Failed to sync to Clerk:', clerkError)
+        // Continue anyway - progress is saved locally
+      }
+    }
+
+    return NextResponse.json({ success: true, progress: updatedProgress })
   } catch (error) {
     console.error('Error saving progress:', error)
     return NextResponse.json({ error: 'Failed to save progress' }, { status: 500 })
@@ -41,7 +71,6 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get current user's public metadata
     const user = await currentUser()
     const progress = user?.publicMetadata?.courseProgress || {}
 
