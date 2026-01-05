@@ -75,9 +75,10 @@ export default function Module1Interactive() {
   const [showNav, setShowNav] = useState(false)
   const [highestReached, setHighestReached] = useState<number>(0)
 
-  // Load progress from localStorage
+  // Load progress from localStorage and Clerk
   useEffect(() => {
     if (user?.id) {
+      // First load from localStorage (fast)
       const saved = localStorage.getItem(`module1_progress_${user.id}`)
       if (saved) {
         const data = JSON.parse(saved)
@@ -86,10 +87,24 @@ export default function Module1Interactive() {
         setModuleData(data.moduleData || {})
         setHighestReached(data.highestReached || 0)
       }
+      
+      // Then check Clerk for more recent data
+      const clerkProgress = (user.publicMetadata?.courseProgress as Record<string, unknown>)?.module1 as {
+        currentStep?: string; completedSteps?: string[]; highestReached?: number
+      } | undefined
+      
+      if (clerkProgress?.completedSteps && clerkProgress.completedSteps.length > 0) {
+        const localCompleted = saved ? JSON.parse(saved).completedSteps?.length || 0 : 0
+        if (clerkProgress.completedSteps.length >= localCompleted) {
+          setCurrentStep((clerkProgress.currentStep as Step) || 'kwl-pre')
+          setCompletedSteps(new Set(clerkProgress.completedSteps as Step[]))
+          setHighestReached(clerkProgress.highestReached || 0)
+        }
+      }
     }
-  }, [user?.id])
+  }, [user?.id, user?.publicMetadata])
 
-  // Save progress to localStorage
+  // Save progress to localStorage and Clerk
   const saveProgress = (step: Step, data?: Record<string, unknown>) => {
     const newCompleted = new Set(completedSteps)
     newCompleted.add(step)
@@ -102,13 +117,23 @@ export default function Module1Interactive() {
     const newHighest = Math.max(highestReached, stepIndex)
     setHighestReached(newHighest)
     
+    const progressData = {
+      currentStep: step,
+      completedSteps: Array.from(newCompleted),
+      moduleData: newModuleData,
+      highestReached: newHighest
+    }
+    
     if (user?.id) {
-      localStorage.setItem(`module1_progress_${user.id}`, JSON.stringify({
-        currentStep: step,
-        completedSteps: Array.from(newCompleted),
-        moduleData: newModuleData,
-        highestReached: newHighest
-      }))
+      // Save to localStorage (fast, offline support)
+      localStorage.setItem(`module1_progress_${user.id}`, JSON.stringify(progressData))
+      
+      // Save to Clerk (persistent, admin visible)
+      fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ moduleNumber: 1, progressData })
+      }).catch(err => console.error('Failed to sync progress to Clerk:', err))
     }
   }
 
@@ -123,15 +148,25 @@ export default function Module1Interactive() {
       const newHighest = Math.max(highestReached, currentIndex + 1)
       setHighestReached(newHighest)
       
+      const newCompletedArray = Array.from(completedSteps)
+      newCompletedArray.push(currentStep)
+      const progressData = {
+        currentStep: nextStep,
+        completedSteps: newCompletedArray,
+        moduleData: { ...moduleData, ...data },
+        highestReached: newHighest
+      }
+      
       if (user?.id) {
-        const newCompletedArray = Array.from(completedSteps)
-        newCompletedArray.push(currentStep)
-        localStorage.setItem(`module1_progress_${user.id}`, JSON.stringify({
-          currentStep: nextStep,
-          completedSteps: newCompletedArray,
-          moduleData: { ...moduleData, ...data },
-          highestReached: newHighest
-        }))
+        // Save to localStorage
+        localStorage.setItem(`module1_progress_${user.id}`, JSON.stringify(progressData))
+        
+        // Save to Clerk
+        fetch('/api/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ moduleNumber: 1, progressData })
+        }).catch(err => console.error('Failed to sync progress to Clerk:', err))
       }
     }
   }

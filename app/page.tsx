@@ -10,10 +10,10 @@ export default function Home() {
     <>
       <Hero />
       <Stats />
+      <CoursePromo />
       <Offerings />
       <CourseSignup />
       <NumbersDontLie />
-      <CoursePromo />
     </>
   )
 }

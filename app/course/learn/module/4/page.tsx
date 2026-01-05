@@ -98,8 +98,19 @@ export default function Module4Interactive() {
         setModuleData(data.moduleData || {})
         setHighestReached(data.highestReached || 0)
       }
+      const clerkProgress = (user.publicMetadata?.courseProgress as Record<string, unknown>)?.module4 as {
+        currentStep?: string; completedSteps?: string[]; highestReached?: number
+      } | undefined
+      if (clerkProgress?.completedSteps && clerkProgress.completedSteps.length > 0) {
+        const localCompleted = saved ? JSON.parse(saved).completedSteps?.length || 0 : 0
+        if (clerkProgress.completedSteps.length >= localCompleted) {
+          setCurrentStep((clerkProgress.currentStep as Step) || 'kwl-pre')
+          setCompletedSteps(new Set(clerkProgress.completedSteps as Step[]))
+          setHighestReached(clerkProgress.highestReached || 0)
+        }
+      }
     }
-  }, [user?.id])
+  }, [user?.id, user?.publicMetadata])
 
   const saveProgress = (step: Step, data?: Record<string, unknown>) => {
     const newCompleted = new Set(completedSteps)
@@ -110,10 +121,10 @@ export default function Module4Interactive() {
     const stepIndex = STEPS.indexOf(step)
     const newHighest = Math.max(highestReached, stepIndex)
     setHighestReached(newHighest)
+    const progressData = { currentStep: step, completedSteps: Array.from(newCompleted), moduleData: newModuleData, highestReached: newHighest }
     if (user?.id) {
-      localStorage.setItem(`module4_progress_${user.id}`, JSON.stringify({
-        currentStep: step, completedSteps: Array.from(newCompleted), moduleData: newModuleData, highestReached: newHighest
-      }))
+      localStorage.setItem(`module4_progress_${user.id}`, JSON.stringify(progressData))
+      fetch('/api/progress', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ moduleNumber: 4, progressData }) }).catch(err => console.error('Failed to sync:', err))
     }
   }
 
@@ -125,12 +136,12 @@ export default function Module4Interactive() {
       setCurrentStep(nextStep)
       const newHighest = Math.max(highestReached, currentIndex + 1)
       setHighestReached(newHighest)
+      const newCompletedArray = Array.from(completedSteps)
+      newCompletedArray.push(currentStep)
+      const progressData = { currentStep: nextStep, completedSteps: newCompletedArray, moduleData: { ...moduleData, ...data }, highestReached: newHighest }
       if (user?.id) {
-        const newCompletedArray = Array.from(completedSteps)
-        newCompletedArray.push(currentStep)
-        localStorage.setItem(`module4_progress_${user.id}`, JSON.stringify({
-          currentStep: nextStep, completedSteps: newCompletedArray, moduleData: { ...moduleData, ...data }, highestReached: newHighest
-        }))
+        localStorage.setItem(`module4_progress_${user.id}`, JSON.stringify(progressData))
+        fetch('/api/progress', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ moduleNumber: 4, progressData }) }).catch(err => console.error('Failed to sync:', err))
       }
     }
   }
