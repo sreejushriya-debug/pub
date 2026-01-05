@@ -39,9 +39,9 @@ export function calculateOverallProgress(progress: CourseProgress): number {
   let totalCompleted = 0
   let totalSteps = 0
   
-  for (const module of modules) {
-    const moduleProgress = progress[module]
-    totalSteps += moduleTotalSteps[module]
+  for (const mod of modules) {
+    const moduleProgress = progress[mod]
+    totalSteps += moduleTotalSteps[mod]
     if (moduleProgress?.completedSteps) {
       totalCompleted += moduleProgress.completedSteps.length
     }
