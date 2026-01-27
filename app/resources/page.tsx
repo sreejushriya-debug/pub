@@ -1256,7 +1256,7 @@ export default function ResourcesPage() {
                     : 'text-gray-600 hover:text-gray-800'}`}
               >
                 <DollarSign className="w-5 h-5" />
-                <span>Financial Literacy</span>
+                <span>Financial Foundations</span>
               </button>
               <button
                 onClick={() => {
