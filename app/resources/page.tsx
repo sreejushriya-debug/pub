@@ -778,8 +778,8 @@ function CareerVideoSection({ id, title, activities }: { id: string; title: stri
   return (
     <div className="p-6 md:p-8 border-b border-gray-100">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-          <Play className="w-6 h-6 text-sky-600" />
+        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+          <Play className="w-6 h-6 text-blue-700" />
         </div>
         <h4 className="text-lg font-bold text-gray-900">Video {id}: {title}</h4>
       </div>
@@ -792,12 +792,12 @@ function CareerVideoSection({ id, title, activities }: { id: string; title: stri
         />
       </div>
       {activities && activities.length > 0 && (
-        <div className="bg-sky-50 rounded-xl p-4">
-          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+        <div className="bg-blue-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-blue-800 mb-2">Class Activities:</p>
           <ul className="space-y-2">
             {activities.map((activity, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
                 {activity}
               </li>
             ))}
@@ -813,8 +813,8 @@ function CareerWorksheetSection({ id, title, howToUse, comingSoon }: { id: strin
   return (
     <div className="p-6 md:p-8 border-b border-gray-100 last:border-0">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-          <FileText className="w-6 h-6 text-indigo-600" />
+        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+          <FileText className="w-6 h-6 text-blue-700" />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-3">
@@ -825,8 +825,8 @@ function CareerWorksheetSection({ id, title, howToUse, comingSoon }: { id: strin
           </div>
           {!comingSoon ? (
             <a href={CAREER_WORKSHEET_URLS[worksheetId as keyof typeof CAREER_WORKSHEET_URLS] || `/resources/career/${worksheetId.replace('.', '_')}.pdf`} download 
-               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-indigo-50 text-indigo-700 
-                          rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
+               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-blue-50 text-blue-700 
+                          rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
               <Download className="w-4 h-4" /> Download Worksheet
             </a>
           ) : (
@@ -846,7 +846,7 @@ function CareerModuleSection({ module }: { module: typeof careerModules[0] }) {
   return (
     <div id={`career-module-${module.id}`} className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
       {/* Module Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-sky-500 p-6 md:p-8">
+      <div className="bg-gradient-to-r from-blue-800 to-blue-600 p-6 md:p-8">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
             {module.id}
@@ -864,14 +864,14 @@ function CareerModuleSection({ module }: { module: typeof careerModules[0] }) {
       {/* KWL Section */}
       <div className="p-6 md:p-8 border-b border-gray-100">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-            <FileText className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <FileText className="w-6 h-6 text-blue-700" />
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-bold text-gray-900">Module {module.id} KWL</h4>
             <a href={CAREER_WORKSHEET_URLS[`m${module.id}-kwl` as keyof typeof CAREER_WORKSHEET_URLS]} download 
-               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-indigo-50 text-indigo-700 
-                          rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
+               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-blue-50 text-blue-700 
+                          rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
               <Download className="w-4 h-4" /> Download Worksheet
             </a>
             <div className="mt-4 bg-gray-50 rounded-xl p-4">
@@ -1078,23 +1078,23 @@ function CareerModule5Content() {
       />
       <div className="p-6 md:p-8 border-b border-gray-100">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-            <Play className="w-6 h-6 text-sky-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-blue-700" />
           </div>
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-bold text-gray-900">Video 5.2: Careers in Hospitality & Tourism</h4>
             <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
           </div>
         </div>
-        <div className="bg-sky-50 rounded-xl p-4">
-          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+        <div className="bg-blue-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-blue-800 mb-2">Class Activities:</p>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Career charades: Students act out a hospitality/tourism job (chef, hotel manager, tour guide).
             </li>
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Why it matters: "How do these careers help people have good experiences?"
             </li>
           </ul>
@@ -1120,23 +1120,23 @@ function CareerModule6Content() {
     <>
       <div className="p-6 md:p-8 border-b border-gray-100">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-            <Play className="w-6 h-6 text-sky-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-blue-700" />
           </div>
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-bold text-gray-900">Video 6.1: Communication & Professional Skills</h4>
             <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
           </div>
         </div>
-        <div className="bg-sky-50 rounded-xl p-4">
-          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+        <div className="bg-blue-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-blue-800 mb-2">Class Activities:</p>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Pair students and give them "question cards" (strengths, teamwork, problem-solving).
             </li>
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Practice handshake/eye contact + "tell me about yourself" in 20 seconds.
             </li>
           </ul>
@@ -1150,23 +1150,23 @@ function CareerModule6Content() {
       />
       <div className="p-6 md:p-8 border-b border-gray-100">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-            <Play className="w-6 h-6 text-sky-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-blue-700" />
           </div>
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-bold text-gray-900">Video 6.2: Collaboration & Problem-Solving</h4>
             <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
           </div>
         </div>
-        <div className="bg-sky-50 rounded-xl p-4">
-          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+        <div className="bg-blue-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-blue-800 mb-2">Class Activities:</p>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Small groups invent a product that solves a classroom problem.
             </li>
             <li className="flex items-start gap-2 text-sm text-gray-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
               Use a checklist: clear problem → solution → who it's for → why it helps.
             </li>
           </ul>
@@ -1180,8 +1180,8 @@ function CareerModule6Content() {
       />
       <div className="p-6 md:p-8 border-b border-gray-100">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-            <Play className="w-6 h-6 text-sky-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-blue-700" />
           </div>
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-bold text-gray-900">Video 6.3: Elevator Pitch Workshopping</h4>
@@ -1265,7 +1265,7 @@ export default function ResourcesPage() {
                 }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all
                   ${activeCurriculum === 'career' 
-                    ? 'bg-gradient-to-r from-indigo-600 to-sky-500 text-white shadow-md' 
+                    ? 'bg-white text-blue-700 shadow-md' 
                     : 'text-gray-600 hover:text-gray-800'}`}
               >
                 <Briefcase className="w-5 h-5" />
@@ -1523,16 +1523,7 @@ export default function ResourcesPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                 >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 
-                                    flex items-center justify-center shadow-lg">
-                      <Briefcase className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="heading-md text-gray-900">Welcome to CareerLit</h2>
-                      <p className="text-indigo-600 font-medium">Career Exploration for Young Learners</p>
-                    </div>
-                  </div>
+                  <h2 className="heading-md text-gray-900 mb-4">Welcome</h2>
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
                     CareerLit is our comprehensive career exploration curriculum designed to introduce students 
                     to the world of business, leadership, and professional skills. Through engaging videos, 
@@ -1546,7 +1537,7 @@ export default function ResourcesPage() {
                   </p>
 
                   {/* Key Topics */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-sky-50 rounded-3xl p-6 md:p-8">
+                  <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-3xl p-6 md:p-8">
                     <h3 className="text-xl font-bold text-gray-900 mb-4">What Students Will Learn</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
@@ -1558,7 +1549,7 @@ export default function ResourcesPage() {
                         { title: 'Professional Skills', desc: 'Communication, pitching, and interviewing' },
                       ].map((item, idx) => (
                         <div key={idx} className="flex items-start gap-3 bg-white rounded-xl p-4">
-                          <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                          <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
                             {idx + 1}
                           </span>
                           <div>
@@ -1585,7 +1576,7 @@ export default function ResourcesPage() {
                 className="text-center mb-12"
               >
                 <h2 className="heading-lg text-gray-900 mb-4">
-                  CareerLit <span className="text-indigo-600">Modules</span>
+                  CareerLit <span className="text-blue-700">Modules</span>
                 </h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                   Click on each module to see a quick overview, or scroll down for the full curriculum.
@@ -1602,7 +1593,7 @@ export default function ResourcesPage() {
                     onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
                     className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
                       ${expandedModule === module.id 
-                        ? 'bg-gradient-to-r from-indigo-600 to-sky-500 text-white shadow-lg' 
+                        ? 'bg-blue-700 text-white shadow-lg' 
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                   >
                     Module {module.id}: {module.title}
@@ -1619,23 +1610,23 @@ export default function ResourcesPage() {
                     exit={{ opacity: 0, height: 0 }}
                     className="max-w-2xl mx-auto mb-8"
                   >
-                    <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100">
-                      <h4 className="font-bold text-indigo-800 mb-2">
+                    <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+                      <h4 className="font-bold text-blue-800 mb-2">
                         Module {expandedModule}: {careerModules.find(m => m.id === expandedModule)?.title}
                       </h4>
-                      <p className="text-sm text-indigo-700 mb-4">
+                      <p className="text-sm text-blue-700 mb-4">
                         <strong>Learning Target:</strong> {careerModules.find(m => m.id === expandedModule)?.learningTarget}
                       </p>
-                      <p className="text-sm font-semibold text-indigo-800 mb-2">Overview:</p>
-                      <ul className="text-sm text-indigo-700 space-y-1">
+                      <p className="text-sm font-semibold text-blue-800 mb-2">Overview:</p>
+                      <ul className="text-sm text-blue-700 space-y-1">
                         {careerModules.find(m => m.id === expandedModule)?.overview.map((item, idx) => (
                           <li key={idx} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
                             {item}
                           </li>
                         ))}
                       </ul>
-                      <a href={`#career-module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-sky-600 font-semibold text-sm hover:underline">
+                      <a href={`#career-module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-blue-600 font-semibold text-sm hover:underline">
                         Jump to full module <ArrowRight className="w-4 h-4" />
                       </a>
                     </div>
@@ -1656,7 +1647,7 @@ export default function ResourcesPage() {
                 className="text-center mb-12"
               >
                 <h2 className="heading-lg text-gray-900 mb-4">
-                  Full <span className="text-sky-500">CareerLit Curriculum</span>
+                  Full <span className="text-blue-700">CareerLit Curriculum</span>
                 </h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                   Explore all modules with complete resources, videos, worksheets, and teaching guides.
