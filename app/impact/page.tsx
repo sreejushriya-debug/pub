@@ -9,6 +9,8 @@ import AnimatedCounter from '@/components/AnimatedCounter'
 import FloatingParticles from '@/components/FloatingParticles'
 import ImageCarousel from '@/components/ImageCarousel'
 
+const SCHEDULE_LINK = 'https://app.apollo.io/#/meet/shriya_sreeju_1c1/15-min'
+
 // Workshop images
 const workshopImages = [
   '/impact/workshop1.png',
@@ -214,15 +216,27 @@ export default function ImpactPage() {
                   </motion.div>
                 </div>
                 <div className="bg-accent-50 rounded-xl p-6 border border-accent-100">
-                  <p className="text-gray-700">
-                    <strong>Want a webinar for your classroom?</strong>
+                  <p className="text-gray-700 font-semibold mb-3">
+                    Want a webinar for your classroom?
                   </p>
-                  <p className="text-gray-600 text-sm mt-2">
-                    Please reach out to{' '}
-                    <a href="mailto:info@projectbrightbeginnings.org" className="text-accent-600 font-semibold hover:underline">
-                      info@projectbrightbeginnings.org
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a 
+                      href={SCHEDULE_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition-colors text-sm font-medium"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Schedule a Call
                     </a>
-                  </p>
+                    <a 
+                      href="mailto:info@projectbrightbeginnings.org" 
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-accent-300 text-accent-700 rounded-lg hover:bg-accent-100 transition-colors text-sm font-medium"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Email Us
+                    </a>
+                  </div>
                 </div>
               </div>
               {/* Webinar Image */}
@@ -467,9 +481,15 @@ export default function ImpactPage() {
                 <Heart className="w-4 h-4" />
                 Donate Now
               </a>
-              <Link href="/contact" className="btn-secondary">
-                Partner With Us
-              </Link>
+              <a 
+                href={SCHEDULE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                Schedule a Call
+              </a>
             </div>
           </motion.div>
         </div>

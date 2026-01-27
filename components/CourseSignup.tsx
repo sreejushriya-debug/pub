@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, ArrowRight, BookOpen, Gamepad2, Award, Loader2 } from 'lucide-react'
+import { CheckCircle2, ArrowRight, BookOpen, Gamepad2, Award, Loader2, Calendar } from 'lucide-react'
 
 // FORMSPREE: Replace with your Formspree form ID after creating an account at https://formspree.io
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
+const SCHEDULE_LINK = 'https://app.apollo.io/#/meet/shriya_sreeju_1c1/15-min'
 
 const features = [
   { icon: BookOpen, text: 'Interactive lessons on budgeting, saving, and investing' },
@@ -220,6 +221,25 @@ export default function CourseSignup() {
                       </>
                     )}
                   </motion.button>
+
+                  <div className="relative flex items-center justify-center my-4">
+                    <div className="border-t border-white/20 flex-grow"></div>
+                    <span className="px-4 text-white/60 text-sm">or</span>
+                    <div className="border-t border-white/20 flex-grow"></div>
+                  </div>
+
+                  <a
+                    href={SCHEDULE_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-6 rounded-xl font-medium text-white 
+                               bg-white/10 border border-white/20
+                               hover:bg-white/20 hover:border-white/30
+                               transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    <span>Schedule a call with us</span>
+                  </a>
                 </form>
               </div>
             </motion.div>

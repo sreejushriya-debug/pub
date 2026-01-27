@@ -4,14 +4,24 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Mail, Phone, MapPin, Send, CheckCircle2, 
-  MessageSquare, Clock, Heart, Loader2
+  MessageSquare, Clock, Heart, Loader2, Calendar
 } from 'lucide-react'
 import FloatingParticles from '@/components/FloatingParticles'
 
 const DONATE_LINK = 'https://hcb.hackclub.com/donations/start/project-bright-beginnings-5ac9c1ad-9a9f-4135-bce7-597e9da85f30'
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkglegpj'
 
+const SCHEDULE_LINK = 'https://app.apollo.io/#/meet/shriya_sreeju_1c1/15-min'
+
 const contactInfo = [
+  {
+    icon: Calendar,
+    title: 'Schedule a Meeting',
+    content: 'Book a 15-min call',
+    href: SCHEDULE_LINK,
+    description: 'Chat with our team directly',
+    highlight: true
+  },
   {
     icon: Mail,
     title: 'Email Us',
@@ -146,29 +156,38 @@ export default function ContactPage() {
       {/* Contact Info Cards */}
       <section className="py-16 bg-white">
         <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {contactInfo.map((info, idx) => (
               <motion.a
                 key={info.title}
                 href={info.href}
-                target={info.icon === MapPin ? '_blank' : undefined}
-                rel={info.icon === MapPin ? 'noopener noreferrer' : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 whileHover={{ y: -6 }}
-                className="card text-center block group"
+                className={`card text-center block group ${
+                  'highlight' in info && info.highlight 
+                    ? 'ring-2 ring-accent-400 bg-gradient-to-br from-accent-50 to-white' 
+                    : ''
+                }`}
               >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
-                                flex items-center justify-center mx-auto mb-4 shadow-lg shadow-forest-200
-                                group-hover:scale-110 transition-transform">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg
+                                group-hover:scale-110 transition-transform ${
+                  'highlight' in info && info.highlight
+                    ? 'bg-gradient-to-br from-accent-500 to-accent-600 shadow-accent-200'
+                    : 'bg-gradient-to-br from-forest-500 to-forest-600 shadow-forest-200'
+                }`}>
                   <info.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-2">
                   {info.title}
                 </h3>
-                <p className="text-forest-600 font-medium mb-1">
+                <p className={`font-medium mb-1 ${
+                  'highlight' in info && info.highlight ? 'text-accent-600' : 'text-forest-600'
+                }`}>
                   {info.content}
                 </p>
                 <p className="text-gray-500 text-sm">
