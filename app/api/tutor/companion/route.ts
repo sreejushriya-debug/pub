@@ -28,6 +28,42 @@ interface CompanionRequest {
   userInput?: string
 }
 
+// Unsafe content detection
+const UNSAFE_PATTERNS = [
+  /\b(sex|sexual|porn|pornograph|nude|naked|xxx)\b/i,
+  /\b(kill|murder|suicide|self.?harm|cut myself|hurt myself)\b/i,
+  /\b(drug|cocaine|heroin|meth|weed|marijuana|alcohol|beer|wine|drunk)\b/i,
+  /\b(gun|weapon|bomb|shoot|stab|knife)\b/i,
+  /\b(fuck|shit|bitch|ass|damn|hell)\b/i,
+  /\b(dating|boyfriend|girlfriend|kiss|romance|love you|marry)\b/i,
+  /\b(hate|racist|nazi|terrorist)\b/i,
+]
+
+function isUnsafeContent(text: string): boolean {
+  return UNSAFE_PATTERNS.some(pattern => pattern.test(text))
+}
+
+// On-topic keywords for Financial Foundations curriculum
+const ON_TOPIC_KEYWORDS = [
+  'money', 'save', 'saving', 'spend', 'spending', 'budget', 'budgeting',
+  'coin', 'penny', 'nickel', 'dime', 'quarter', 'dollar', 'cent', 'change',
+  'credit', 'debit', 'bank', 'account', 'deposit', 'withdraw', 'check',
+  'income', 'expense', 'profit', 'revenue', 'cost', 'price', 'pay',
+  'invest', 'stock', 'bond', 'interest', 'loan', 'debt', 'borrow',
+  'tax', 'discount', 'sale', 'percent', 'calculate',
+  'business', 'company', 'sell', 'buy', 'customer', 'product', 'service',
+  'need', 'want', 'goal', 'plan', 'decision', 'choice',
+  'allowance', 'earn', 'job', 'work', 'career',
+  'module', 'lesson', 'activity', 'worksheet', 'quiz', 'video',
+  'help', 'explain', 'understand', 'learn', 'practice', 'example',
+  'financial', 'finance', 'economics', 'economy',
+]
+
+function isOnTopic(text: string): boolean {
+  const lower = text.toLowerCase()
+  return ON_TOPIC_KEYWORDS.some(keyword => lower.includes(keyword))
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth()
@@ -41,6 +77,13 @@ export async function POST(request: NextRequest) {
 
     const body: CompanionRequest = await request.json()
     const { action, mode, context, messages, userInput } = body
+
+    // Check for unsafe content in user input
+    if (userInput && isUnsafeContent(userInput)) {
+      return NextResponse.json({
+        message: "I can't help with that. Please talk to a trusted adult or teacher. I can help with money topics like saving, budgeting, or how businesses work. What would you like to learn about?"
+      })
+    }
 
     // Fallback responses if API key is missing
     if (!process.env.OPENAI_API_KEY) {
@@ -60,25 +103,50 @@ export async function POST(request: NextRequest) {
 
     const conceptList = context.conceptTags.join(', ')
     
-    const systemPrompt = `You are Bright, a friendly AI money tutor for kids in grades 3-5.
+    const systemPrompt = `You are Bright, an AI tutor for elementary school students (K-6) using the Project Bright Beginnings Financial Foundations curriculum.
 
-CONTEXT: Module ${context.moduleNumber} - ${context.activityName}
+=== ABSOLUTE RULES (NEVER BREAK) ===
+
+1) CURRICULUM-ONLY: You may ONLY teach, explain, or answer using information from the Financial Foundations curriculum. Topics include:
+   - Module 1: Financial Basics (money terms, coins, making change)
+   - Module 2: Saving and Spending (needs vs wants, budgets, saving goals)
+   - Module 3: All Things Banking (credit, debit, investing, deposits, checks)
+   - Module 4: Business (revenue, expenses, profit, starting a business)
+   - Module 5: Taxes (calculating taxes, why taxes exist)
+   - Module 6: Review and Summary
+   
+   If a user asks about ANYTHING not clearly covered in these topics, say: "That's not part of our money lessons. But I can help with [closest topic]! Want to try that?"
+
+2) CHILD-SAFE: NEVER discuss or mention: sexual content, dating/romance, body/anatomy, pornography, self-harm, suicide, drugs/alcohol, violence, weapons, profanity, or any adult topics. If asked, respond ONLY with: "I can't help with that. Please talk to a trusted adult or teacher. I can help with money topics like saving or budgeting!"
+
+3) STAY ON TOPIC: Never introduce new topics outside the curriculum. Do not add "fun facts" or general knowledge not in the lessons.
+
+4) NO PROFANITY. NO MATURE JOKES. NO FLIRTING. Keep everything G-rated.
+
+5) PRIVACY: Do not ask for or store personal info (full name, address, phone, school name, social media). You may ask grade level to adjust difficulty.
+
+=== CURRENT CONTEXT ===
+Module ${context.moduleNumber} - ${context.activityName}
 Key concepts: ${conceptList}
 
-PERSONALITY:
-- Warm, encouraging, patient - like a friendly older sibling
-- Use simple words and short sentences
+=== HOW TO RESPOND ===
+- Keep answers short and friendly (2-4 sentences, max 100 words)
+- Use simple words for young students
 - Give real-life examples: allowance, snacks, toys, school supplies
+- Reference the module/lesson when explaining
+- End with ONE practice question or suggest a worksheet/video
 - Use emoji sparingly 😊
 - Never scold - mistakes are how we learn!
 
-MODE: ${mode.toUpperCase()}
+=== MODE: ${mode.toUpperCase()} ===
 ${mode === 'activity' 
   ? `Help with the current activity. Focus on ${conceptList}. Give ONE explanation with a real example, then ask ONE practice question.`
-  : `Answer general money questions. Topics: saving, spending, budgets, credit, debit, business, tax, discounts.`
+  : `Answer general money questions ONLY if they relate to the Financial Foundations curriculum topics listed above.`
 }
 
-Keep responses short (2-3 sentences). Ask one question at a time.`
+If the user's question seems off-topic but harmless, redirect: "That's not part of our money lessons, but I can help you learn about [relevant topic]! Want to try?"
+
+If the user's question is inappropriate or unsafe, respond ONLY: "I can't help with that. Please talk to a trusted adult or teacher. I can help with money topics like saving or budgeting!"`
 
     const openaiMessages: { role: 'system' | 'user' | 'assistant', content: string }[] = [
       { role: 'system', content: systemPrompt }

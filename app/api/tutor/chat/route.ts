@@ -28,6 +28,21 @@ interface ChatRequest {
   userInput?: string
 }
 
+// Unsafe content detection
+const UNSAFE_PATTERNS = [
+  /\b(sex|sexual|porn|pornograph|nude|naked|xxx)\b/i,
+  /\b(kill|murder|suicide|self.?harm|cut myself|hurt myself)\b/i,
+  /\b(drug|cocaine|heroin|meth|weed|marijuana|alcohol|beer|wine|drunk)\b/i,
+  /\b(gun|weapon|bomb|shoot|stab|knife)\b/i,
+  /\b(fuck|shit|bitch|ass|damn|hell)\b/i,
+  /\b(dating|boyfriend|girlfriend|kiss|romance|love you|marry)\b/i,
+  /\b(hate|racist|nazi|terrorist)\b/i,
+]
+
+function isUnsafeContent(text: string): boolean {
+  return UNSAFE_PATTERNS.some(pattern => pattern.test(text))
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth()
@@ -52,6 +67,13 @@ export async function POST(request: NextRequest) {
       userInput 
     } = body
 
+    // Check for unsafe content
+    if (userInput && isUnsafeContent(userInput)) {
+      return NextResponse.json({
+        message: "I can't help with that. Please talk to a trusted adult or teacher. I can help with money topics like saving, budgeting, or how businesses work. What would you like to learn about?"
+      })
+    }
+
     // Fallback if no API key
     if (!process.env.OPENAI_API_KEY) {
       console.error('OPENAI_API_KEY is not set')
@@ -72,23 +94,30 @@ export async function POST(request: NextRequest) {
 
     const conceptList = Array.from(new Set(missedQuestions.flatMap(q => q.conceptTags || [q.term || 'unknown']))).join(', ')
 
-    const systemPrompt = `You are Bright, a friendly AI tutor for kids in grades 3-5.
+    const systemPrompt = `You are Bright, an AI tutor for elementary school students (K-6) using the Project Bright Beginnings Financial Foundations curriculum.
+
+=== ABSOLUTE RULES (NEVER BREAK) ===
+1) CURRICULUM-ONLY: Only discuss Financial Foundations topics: money terms, coins, saving, spending, budgets, credit, debit, banking, business, revenue, expenses, profit, taxes.
+2) CHILD-SAFE: NEVER discuss sexual content, romance, violence, weapons, drugs/alcohol, self-harm, profanity, or adult topics. If asked, respond ONLY: "I can't help with that. Please talk to a trusted adult or teacher."
+3) Keep language simple for grades 3-5.
+4) Be encouraging - mistakes help us learn!
 
 QUIZ RESULTS: ${correctCount}/${totalCount} on ${activityName} (Module ${moduleNumber})
 
 MISSED QUESTIONS:
 ${missedSummary}
 
-CONCEPTS: ${conceptList}
+CONCEPTS TO REVIEW: ${conceptList}
 
-RULES:
-- Simple words, short sentences (3rd-5th grade level)
+RESPONSE RULES:
+- Simple words, short sentences
 - Use real examples: allowance, snacks, toys
-- Be encouraging - mistakes help us learn!
 - ONE concept at a time, ONE question at a time
 - Use **bold** for terms, write math simply: 40 × 10 = 400
+- Keep responses short (2-3 sentences)
 
-Keep responses short (2-3 sentences). Be warm and helpful! 😊`
+If user asks something off-topic: "That's not part of our money lessons. But I can help with [topic from their quiz]! Want to try?"
+If user asks something inappropriate: "I can't help with that. Please talk to a trusted adult or teacher."`
 
     const openaiMessages: { role: 'system' | 'user' | 'assistant', content: string }[] = [
       { role: 'system', content: systemPrompt }

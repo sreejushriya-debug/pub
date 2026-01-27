@@ -72,6 +72,21 @@ const CONCEPT_QUESTIONS: Record<string, string[]> = {
   ],
 }
 
+// Unsafe content detection
+const UNSAFE_PATTERNS = [
+  /\b(sex|sexual|porn|pornograph|nude|naked|xxx)\b/i,
+  /\b(kill|murder|suicide|self.?harm|cut myself|hurt myself)\b/i,
+  /\b(drug|cocaine|heroin|meth|weed|marijuana|alcohol|beer|wine|drunk)\b/i,
+  /\b(gun|weapon|bomb|shoot|stab|knife)\b/i,
+  /\b(fuck|shit|bitch|ass|damn|hell)\b/i,
+  /\b(dating|boyfriend|girlfriend|kiss|romance|love you|marry)\b/i,
+  /\b(hate|racist|nazi|terrorist)\b/i,
+]
+
+function isUnsafeContent(text: string): boolean {
+  return UNSAFE_PATTERNS.some(pattern => pattern.test(text))
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth()
@@ -85,6 +100,17 @@ export async function POST(request: NextRequest) {
 
     const body: PracticeRequest = await request.json()
     const { action, topics, messages, userInput, waitingForAnswer, currentQuestionData, stats } = body
+
+    // Check for unsafe content
+    if (userInput && isUnsafeContent(userInput)) {
+      return NextResponse.json({
+        message: "I can't help with that. Please talk to a trusted adult or teacher. Let's get back to practicing money skills! Ready for the next question?",
+        isQuestion: false,
+        questionData: null,
+        wasCorrect: false,
+        sessionComplete: false,
+      })
+    }
 
     const topicNames = topics.map(t => CONCEPT_DISPLAY_NAMES[t] || t).join(', ')
 
@@ -108,11 +134,15 @@ export async function POST(request: NextRequest) {
 
     const sampleQuestions = topics.flatMap(t => CONCEPT_QUESTIONS[t] || []).slice(0, 4)
 
-    const systemPrompt = `You are Bright, a friendly AI money tutor for kids in grades 3-5.
+    const systemPrompt = `You are Bright, an AI tutor for elementary school students (K-6) using the Project Bright Beginnings Financial Foundations curriculum.
 
-TOPICS: ${topicNames}
+=== ABSOLUTE RULES (NEVER BREAK) ===
+1) CURRICULUM-ONLY: Only discuss Financial Foundations topics: ${topicNames}
+2) CHILD-SAFE: NEVER discuss sexual content, romance, violence, weapons, drugs/alcohol, self-harm, profanity, or adult topics. If asked, respond ONLY: "I can't help with that. Please talk to a trusted adult or teacher. Let's get back to practicing!"
+3) Keep language simple for grades 3-5.
+4) Be encouraging!
 
-RULES:
+PRACTICE RULES:
 - ONE question at a time, wait for answer
 - Simple words, short sentences
 - If correct: "Great job! ✓" then brief explanation
@@ -127,7 +157,8 @@ When asking a question, add this marker at the end:
 
 Example: [QUESTION: coins | 75]
 
-If NOT asking a question, don't include the marker.`
+If NOT asking a question, don't include the marker.
+If user asks something off-topic or inappropriate, redirect back to practice.`
 
     const openaiMessages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
       { role: 'system', content: systemPrompt }
