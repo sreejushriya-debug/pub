@@ -23,7 +23,7 @@ const footerLinks = {
 }
 
 const contactInfo = [
-  { icon: Mail, text: 'projectbrightbeginnings@gmail.com', href: 'mailto:projectbrightbeginnings@gmail.com' },
+  { icon: Mail, text: 'info@projectbrightbeginnings.org', href: 'mailto:info@projectbrightbeginnings.org' },
   { icon: Phone, text: '945-216-0206', href: 'tel:945-216-0206' },
   { icon: MapPin, text: '5707 Moriss Road, Flower Mound, TX 75028', href: '#' },
 ]

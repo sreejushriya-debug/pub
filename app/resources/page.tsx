@@ -4,12 +4,13 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Library, Download, BookOpen, FileText, Play, ChevronDown, ChevronUp,
-  ExternalLink, Search, Video, ArrowRight, GraduationCap
+  ExternalLink, Search, Video, ArrowRight, GraduationCap, DollarSign, Briefcase
 } from 'lucide-react'
 import Link from 'next/link'
 import FloatingParticles from '@/components/FloatingParticles'
 
-// Video URLs
+// ==================== FINANCIAL LITERACY ====================
+// Video URLs for Financial Literacy
 const VIDEO_URLS = {
   walkthrough: 'https://www.youtube.com/embed/i1qZ7nmBEOo',
   '1.1': 'https://www.youtube.com/embed/h2g8iOKdtnc',
@@ -20,6 +21,42 @@ const VIDEO_URLS = {
   '3.5': 'https://www.youtube.com/embed/TAjNGLzHsh8',
   '4.1': 'https://www.youtube.com/embed/_msOo6m5Vl4',
   '5.1': 'https://www.youtube.com/embed/I_0yZqnvmyQ',
+}
+
+// ==================== CAREERLIT ====================
+// Video URLs for CareerLit
+const CAREER_VIDEO_URLS = {
+  '1.1': 'https://www.youtube.com/embed/FvoZzrQLg4g',
+  '1.2': 'https://www.youtube.com/embed/T-hLZbYBRQw',
+  '2.1': 'https://www.youtube.com/embed/dxvXj4iResY',
+  '2.2': 'https://www.youtube.com/embed/Dy_MlfjR83w',
+  '2.3': 'https://www.youtube.com/embed/o6bZ_3HfszE',
+  '3.1': 'https://www.youtube.com/embed/Weq9bZLSyy8',
+  '3.4': 'https://www.youtube.com/embed/SlpZPrIUYMA',
+  '4.1': 'https://www.youtube.com/embed/iepgaVdzxdE',
+  '4.2': 'https://www.youtube.com/embed/O0T8IhVFbJU',
+  '5.1': 'https://www.youtube.com/embed/N3xR5IcEubE',
+}
+
+// CareerLit Worksheet URLs (in public/resources/career/)
+const CAREER_WORKSHEET_URLS = {
+  'm1-kwl': '/resources/career/m1_kwl.pdf',
+  '1.1': '/resources/career/matching_business_basics_1_1.pdf',
+  '1.2': '/resources/career/types_of_businesses_1_2.pdf',
+  '1.3': '/resources/career/my_dream_business_1_3.pdf',
+  'm2-kwl': '/resources/career/m2_kwl.pdf',
+  '2.1': '/resources/career/2_1.pdf',
+  '2.2': '/resources/career/2_2.pdf',
+  'm3-kwl': '/resources/career/m3_kwl.pdf',
+  '3.1': '/resources/career/3_1_profit_challenge.pdf',
+  '3.2': '/resources/career/matching_terms_3_2.pdf',
+  'm4-kwl': '/resources/career/m4_kwl.pdf',
+  '4.1': '/resources/career/4_1_marketing_careers.pdf',
+  '4.2': '/resources/career/4_2_worksheet.pdf',
+  'm5-kwl': '/resources/career/m5_kwl.pdf',
+  '5.1': '/resources/career/build_an_event_plan_5_1.pdf',
+  '5.2': '/resources/career/fill_in_the_blank_5_2.pdf',
+  'm6-kwl': '/resources/career/m6_kwl.pdf',
 }
 
 // Quiz URLs
@@ -116,6 +153,7 @@ const allResources = [
   { id: 'brian', name: 'Panadería de Brian Picture Book', type: 'worksheet', module: 0 },
 ]
 
+// Financial Literacy Modules
 const modules = [
   {
     id: 1,
@@ -186,6 +224,80 @@ const modules = [
     learningTarget: 'I can confidently apply the skills learned in previous modules.',
     overview: [
       'Worksheet 6.1: Review Packet'
+    ]
+  },
+]
+
+// CareerLit Modules
+const careerModules = [
+  {
+    id: 1,
+    title: 'Business Basics',
+    learningTarget: 'I can explain what a business is, identify different types of businesses, and recognize the roles people have within them.',
+    overview: [
+      'Video 1.1: What is a Business?',
+      'Worksheet 1.1: Matching Terms (Business Basics)',
+      'Video 1.2: Types of Businesses',
+      'Worksheet 1.2: Types of Businesses',
+      'Worksheet 1.3: My Dream Business One-Pager'
+    ]
+  },
+  {
+    id: 2,
+    title: 'Leading & Planning',
+    learningTarget: 'I can create a simple project plan, understand basic leadership roles, and work with a team to complete a task.',
+    overview: [
+      'Video 2.1: Managers & Administrators',
+      'Worksheet 2.1: Leadership in Action Scenario',
+      'Video 2.2: How to Plan a Project',
+      'Worksheet 2.2: Build a Mini Project Plan',
+      'Video 2.3: Managing & Administration Careers'
+    ]
+  },
+  {
+    id: 3,
+    title: 'Money Smarts',
+    learningTarget: 'I can explain income, expenses, and profit, and create a simple budget for a kid-friendly business.',
+    overview: [
+      'Video 3.1: Revenue, Expenses, & Profit',
+      'Worksheet 3.1: Profit Challenge',
+      'Worksheet 3.2: Matching Terms',
+      'Video 3.4: Budgeting & Financial Advising'
+    ]
+  },
+  {
+    id: 4,
+    title: 'Customers & Creativity',
+    learningTarget: 'I can describe what a target audience is and understand basic marketing ideas.',
+    overview: [
+      'Video 4.1: Marketing Basics and Careers',
+      'Worksheet 4.1: Matching Terms (Marketing Vocab)',
+      'Worksheet 4.2: Applying Knowledge',
+      'Video 4.2: Understanding Target Market'
+    ]
+  },
+  {
+    id: 5,
+    title: 'Events & Teamwork',
+    learningTarget: 'I can explain how different roles work together to plan an event and collaborate with others to create an event plan.',
+    overview: [
+      'Video 5.1: How Events Work',
+      'Worksheet 5.1: Build Your Event Plan',
+      'Video 5.2: Careers in Hospitality & Tourism',
+      'Worksheet 5.2: Fill in the Blank'
+    ]
+  },
+  {
+    id: 6,
+    title: 'Future Skills Lab',
+    learningTarget: 'I can communicate professionally, solve simple business problems, and identify careers that match my interests.',
+    overview: [
+      'Video 6.1: Communication & Professional Skills',
+      'Activity 6.1: Mock Interview',
+      'Video 6.2: Collaboration & Problem-Solving',
+      'Activity 6.2: Product Pitch',
+      'Video 6.3: Elevator Pitch Workshopping',
+      'Worksheet 6.1: Elevator Pitch Formula'
     ]
   },
 ]
@@ -660,9 +772,443 @@ function Module6Content() {
   )
 }
 
+// ==================== CAREERLIT CONTENT COMPONENTS ====================
+
+function CareerVideoSection({ id, title, activities }: { id: string; title: string; activities?: string[] }) {
+  return (
+    <div className="p-6 md:p-8 border-b border-gray-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
+          <Play className="w-6 h-6 text-sky-600" />
+        </div>
+        <h4 className="text-lg font-bold text-gray-900">Video {id}: {title}</h4>
+      </div>
+      <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4">
+        <iframe 
+          src={CAREER_VIDEO_URLS[id as keyof typeof CAREER_VIDEO_URLS] || CAREER_VIDEO_URLS['1.1']}
+          className="w-full h-full"
+          allowFullScreen
+          title={title}
+        />
+      </div>
+      {activities && activities.length > 0 && (
+        <div className="bg-sky-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+          <ul className="space-y-2">
+            {activities.map((activity, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+                {activity}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CareerWorksheetSection({ id, title, howToUse, comingSoon }: { id: string; title: string; howToUse: string; comingSoon?: boolean }) {
+  const worksheetId = id.replace('Worksheet ', '')
+  return (
+    <div className="p-6 md:p-8 border-b border-gray-100 last:border-0">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+          <FileText className="w-6 h-6 text-indigo-600" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <h4 className="text-lg font-bold text-gray-900">{id} {title}</h4>
+            {comingSoon && (
+              <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
+            )}
+          </div>
+          {!comingSoon ? (
+            <a href={CAREER_WORKSHEET_URLS[worksheetId as keyof typeof CAREER_WORKSHEET_URLS] || `/resources/career/${worksheetId.replace('.', '_')}.pdf`} download 
+               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-indigo-50 text-indigo-700 
+                          rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
+              <Download className="w-4 h-4" /> Download Worksheet
+            </a>
+          ) : (
+            <p className="text-sm text-gray-500 mt-2">This worksheet will be available soon.</p>
+          )}
+          <div className="mt-4 bg-gray-50 rounded-xl p-4">
+            <p className="text-sm font-semibold text-gray-700 mb-2">How do I use it?</p>
+            <p className="text-sm text-gray-600">{howToUse}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CareerModuleSection({ module }: { module: typeof careerModules[0] }) {
+  return (
+    <div id={`career-module-${module.id}`} className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
+      {/* Module Header */}
+      <div className="bg-gradient-to-r from-indigo-600 to-sky-500 p-6 md:p-8">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
+            {module.id}
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white">Module {module.id}: {module.title}</h3>
+            <p className="text-white/80 mt-1">Learning Target</p>
+          </div>
+        </div>
+        <div className="mt-4 bg-white/10 rounded-xl p-4">
+          <p className="text-white">{module.learningTarget}</p>
+        </div>
+      </div>
+
+      {/* KWL Section */}
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+            <FileText className="w-6 h-6 text-indigo-600" />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-gray-900">Module {module.id} KWL</h4>
+            <a href={CAREER_WORKSHEET_URLS[`m${module.id}-kwl` as keyof typeof CAREER_WORKSHEET_URLS]} download 
+               className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-indigo-50 text-indigo-700 
+                          rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
+              <Download className="w-4 h-4" /> Download Worksheet
+            </a>
+            <div className="mt-4 bg-gray-50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">How do I use it?</p>
+              <p className="text-sm text-gray-600">
+                Students fill out the "Know" and "Want to Know" portions of the chart before starting 
+                the module, and then complete the "Learned" portion after finishing the module.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Module Content based on ID */}
+      {module.id === 1 && <CareerModule1Content />}
+      {module.id === 2 && <CareerModule2Content />}
+      {module.id === 3 && <CareerModule3Content />}
+      {module.id === 4 && <CareerModule4Content />}
+      {module.id === 5 && <CareerModule5Content />}
+      {module.id === 6 && <CareerModule6Content />}
+    </div>
+  )
+}
+
+function CareerModule1Content() {
+  return (
+    <>
+      <CareerVideoSection 
+        id="1.1" 
+        title="What is a Business?"
+        activities={[
+          'Goods vs. services sorting: Put 10 items on the board (haircut, lemonade, shoes, tutoring, etc.) and have students sort into "goods" vs "services."',
+          'Classroom business walk: "Where do we see businesses in our community?" Quick brainstorm + students share 1 example.',
+          'Role-play: One student is a "customer," one is a "worker/owner"—act out a purchase in 30 seconds.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="1.1" 
+        title="Matching Terms (Business Basics)"
+        howToUse="Do it twice—once before the video as a pre-check, then correct after the video. Students match key business vocabulary words to their definitions."
+      />
+      <CareerVideoSection 
+        id="1.2" 
+        title="Types of Businesses"
+        activities={[
+          'Examples gallery: Students list 3 businesses they\'ve visited (restaurant, dentist, grocery store) and label each as goods/services.',
+          'Small vs large debate: "Is McDonald\'s small or large? Why?" 2-minute discussion.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="1.2" 
+        title="Types of Businesses"
+        howToUse="Students read descriptions and label: goods vs services and small vs large business. Includes comparing advantages of small vs large businesses."
+      />
+      <CareerWorksheetSection 
+        id="1.3" 
+        title="My Dream Business One-Pager"
+        howToUse="Students design a simple business: name + logo + what it sells + goods/services/both + how it earns revenue. Extension: Have students present their business in a 30-second 'mini pitch.'"
+      />
+    </>
+  )
+}
+
+function CareerModule2Content() {
+  return (
+    <>
+      <CareerVideoSection 
+        id="2.1" 
+        title="Managers & Administrators"
+        activities={[
+          'Leadership traits checklist: Ask students: "What makes a good leader?" Create a class list.',
+          'Role cards: Give students roles (manager, timekeeper, materials leader, team worker) and have them describe what that person does.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="2.1" 
+        title="Leadership in Action Scenario"
+        howToUse="Students identify what good leaders do, then respond to short team scenarios (e.g., distractions, disagreements, deadlines). Great for discussion and critical thinking."
+      />
+      <CareerVideoSection 
+        id="2.2" 
+        title="How to Plan a Project"
+        activities={[
+          'Plan a class project together: Choose a simple project (class party, book fair, bake sale) and co-create a timeline on the board.',
+          'Milestones game: Students rewrite a big task into 3–5 smaller tasks.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="2.2" 
+        title="Build a Mini Project Plan"
+        howToUse="Students choose a project, write a goal, create a timeline, and match tasks to roles (manager, organizer, timekeeper, etc.)."
+      />
+      <CareerVideoSection 
+        id="2.3" 
+        title="Managing & Administration Careers"
+        activities={[
+          'Career match: "Which role would you like to try—manager, organizer, timekeeper—and why?"',
+          'Career connection: Students name 1 job they think uses planning skills (principal, project manager, event planner, etc.).'
+        ]}
+      />
+    </>
+  )
+}
+
+function CareerModule3Content() {
+  return (
+    <>
+      <CareerVideoSection 
+        id="3.1" 
+        title="Revenue, Expenses, & Profit"
+        activities={[
+          'Revenue vs expenses sort: Give 8 examples (tickets sold, cost of snacks, decorations) and have students sort into revenue/expense.',
+          'Profit chant: "Profit = revenue − expenses" quick repetition + examples.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="3.1" 
+        title="Profit Challenge"
+        howToUse="Students choose between event plans (A/B/C), compute revenue/costs/profit, then reflect on why profit ≠ tickets sold. Reminder: Profit = Revenue - Costs."
+      />
+      <CareerWorksheetSection 
+        id="3.2" 
+        title="Matching Terms"
+        howToUse="Vocabulary match for event, revenue, expense, break even, profit, fundraiser, and ticket price."
+      />
+      <CareerVideoSection 
+        id="3.4" 
+        title="Budgeting & Financial Advising"
+        activities={[
+          'Needs vs wants (quick): Students list 2 needs and 2 wants for a pretend event/business.',
+          'Advisor role-play: One student is a "financial advisor" helping another student adjust a budget.'
+        ]}
+      />
+    </>
+  )
+}
+
+function CareerModule4Content() {
+  return (
+    <>
+      <CareerVideoSection 
+        id="4.1" 
+        title="Marketing Basics and Careers"
+        activities={[
+          'Ad scavenger hunt: Show 2–3 kid-friendly ads (or posters) and ask: "Who is this for?"',
+          'Make a slogan: Students invent a 5-word slogan for a pretend product.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="4.1" 
+        title="Matching Terms (Marketing Vocab)"
+        howToUse="Students match marketing vocabulary (product, customer, advertisement, etc.) to definitions."
+      />
+      <CareerWorksheetSection 
+        id="4.2" 
+        title="Applying Knowledge"
+        howToUse="T/F + multiple choice + matching prompts focused on target audience and ad choices."
+      />
+      <CareerVideoSection 
+        id="4.2" 
+        title="Understanding Target Market"
+        activities={[
+          'Target audience build: Pick a product (toy, shoes, book) and define audience by age/interests.',
+          'Same product, different audience: Students redesign marketing for kids vs adults.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="4.3" 
+        title="Design a Step-By-Step Sales Pitch"
+        howToUse="Students create a structured sales pitch for their product or service."
+        comingSoon
+      />
+      <CareerWorksheetSection 
+        id="4.4" 
+        title="Decide Target Audiences for Word Problems"
+        howToUse="Students analyze scenarios and identify the appropriate target audience."
+        comingSoon
+      />
+      <CareerWorksheetSection 
+        id="4.5" 
+        title="Fill in the Blanks"
+        howToUse="Marketing vocabulary reinforcement through fill-in-the-blank exercises."
+        comingSoon
+      />
+    </>
+  )
+}
+
+function CareerModule5Content() {
+  return (
+    <>
+      <CareerVideoSection 
+        id="5.1" 
+        title="How Events Work"
+        activities={[
+          'Event flow chart: Students draw the event steps as arrows (plan → location → tickets → event → expenses → revenue).',
+          'Team roles: Assign roles (planner, budgeter, marketer) for a pretend event.'
+        ]}
+      />
+      <CareerWorksheetSection 
+        id="5.1" 
+        title="Build Your Event Plan"
+        howToUse="Students order event steps and connect planning to making money smoothly."
+      />
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-sky-600" />
+          </div>
+          <div className="flex items-center gap-3">
+            <h4 className="text-lg font-bold text-gray-900">Video 5.2: Careers in Hospitality & Tourism</h4>
+            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
+          </div>
+        </div>
+        <div className="bg-sky-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Career charades: Students act out a hospitality/tourism job (chef, hotel manager, tour guide).
+            </li>
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Why it matters: "How do these careers help people have good experiences?"
+            </li>
+          </ul>
+        </div>
+      </div>
+      <CareerWorksheetSection 
+        id="5.2" 
+        title="Fill in the Blank"
+        howToUse="Vocabulary fill-in for hospitality, tourism, event, revenue, expense, profit, customers, etc."
+      />
+      <CareerWorksheetSection 
+        id="5.6" 
+        title="Create a Restaurant"
+        howToUse="Students design their own restaurant concept including menu, pricing, and target audience."
+        comingSoon
+      />
+    </>
+  )
+}
+
+function CareerModule6Content() {
+  return (
+    <>
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-sky-600" />
+          </div>
+          <div className="flex items-center gap-3">
+            <h4 className="text-lg font-bold text-gray-900">Video 6.1: Communication & Professional Skills</h4>
+            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
+          </div>
+        </div>
+        <div className="bg-sky-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Pair students and give them "question cards" (strengths, teamwork, problem-solving).
+            </li>
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Practice handshake/eye contact + "tell me about yourself" in 20 seconds.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <CareerWorksheetSection 
+        id="Activity 6.1" 
+        title="Mock Interview (Age Based)"
+        howToUse="Students practice interviewing skills through role-play with age-appropriate questions and scenarios."
+        comingSoon
+      />
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-sky-600" />
+          </div>
+          <div className="flex items-center gap-3">
+            <h4 className="text-lg font-bold text-gray-900">Video 6.2: Collaboration & Problem-Solving</h4>
+            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
+          </div>
+        </div>
+        <div className="bg-sky-50 rounded-xl p-4">
+          <p className="text-sm font-semibold text-sky-800 mb-2">Class Activities:</p>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Small groups invent a product that solves a classroom problem.
+            </li>
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2 flex-shrink-0" />
+              Use a checklist: clear problem → solution → who it's for → why it helps.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <CareerWorksheetSection 
+        id="Activity 6.2" 
+        title="Product Pitch"
+        howToUse="Students create and deliver a product pitch using a structured format."
+        comingSoon
+      />
+      <div className="p-6 md:p-8 border-b border-gray-100">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
+            <Play className="w-6 h-6 text-sky-600" />
+          </div>
+          <div className="flex items-center gap-3">
+            <h4 className="text-lg font-bold text-gray-900">Video 6.3: Elevator Pitch Workshopping</h4>
+            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+      <CareerWorksheetSection 
+        id="6.1" 
+        title="Elevator Pitch Formula Fill in the Blank"
+        howToUse="Students learn and practice the elevator pitch formula through guided fill-in-the-blank exercises."
+        comingSoon
+      />
+      <CareerWorksheetSection 
+        id="Activity 6.3" 
+        title="Deliver Elevator Pitch & Receive Feedback"
+        howToUse="Students present their elevator pitches to classmates and receive constructive feedback."
+        comingSoon
+      />
+    </>
+  )
+}
+
 export default function ResourcesPage() {
   const [expandedModule, setExpandedModule] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeCurriculum, setActiveCurriculum] = useState<'financial' | 'career'>('financial')
 
   return (
     <div className="pt-24">
@@ -688,240 +1234,452 @@ export default function ResourcesPage() {
             </h1>
             
             <p className="text-xl text-white/90 leading-relaxed">
-              We've curated everything you'll need to seamlessly integrate financial literacy into your curriculum.
+              We've curated everything you'll need to seamlessly integrate financial literacy and career education into your curriculum.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Welcome & Video Walkthrough */}
-      <section className="py-16 bg-white">
+      {/* Curriculum Tabs */}
+      <section className="py-8 bg-white border-b border-gray-100 sticky top-20 z-40">
         <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="heading-md text-gray-900 mb-4">Welcome</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                Financial literacy is one of the hardest subjects to teach - and it's because of the lack of 
-                resources available to educators. Content is hard to find and often pricey. We at Project 
-                Bright Beginnings strive to fix this.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                Here we give you the best online videos, worksheets, and quizzes, organized in an incredibly 
-                user-friendly curriculum, complete with modules and learning targets.
-              </p>
-
-              {/* Video Walkthrough */}
-              <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-6 md:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <Video className="w-8 h-8 text-forest-600" />
-                  <h3 className="text-xl font-bold text-gray-900">Website Walkthrough</h3>
-                </div>
-                <p className="text-gray-600 mb-6">
-                  New to our Resource Library? Watch this quick video to learn how to navigate and make the most of our resources.
-                </p>
-                <div className="aspect-video bg-gray-200 rounded-2xl overflow-hidden">
-                  <iframe 
-                    src={VIDEO_URLS.walkthrough}
-                    className="w-full h-full"
-                    allowFullScreen
-                    title="Website Walkthrough"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Workbook & Picture Books */}
-      <section className="py-16 bg-gradient-section">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="card"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
-                              flex items-center justify-center mb-5 shadow-lg">
-                <BookOpen className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Finance Workbook</h3>
-              <p className="text-gray-600 mb-6">
-                Our finance workbook is a comprehensive resource designed for elementary school students. 
-                Filled with age-appropriate activities, colorful illustrations, and interactive exercises.
-              </p>
-              <a href={WORKSHEET_URLS.workbook} download className="btn-primary gap-2">
-                <Download className="w-4 h-4" />
-                Download Workbook
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="card"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 
-                              flex items-center justify-center mb-5 shadow-lg">
-                <BookOpen className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Financial Picture Books</h3>
-              <p className="text-gray-600 mb-6">
-                Educational picture books that introduce financial topics in engaging stories for younger audiences.
-              </p>
-              <div className="flex flex-col gap-3">
-                <a href={WORKSHEET_URLS.sofia} download className="btn-secondary gap-2 text-sm py-3">
-                  <Download className="w-4 h-4" />
-                  Download Sofia's Smart Savings
-                </a>
-                <a href={WORKSHEET_URLS.brian} download className="btn-secondary gap-2 text-sm py-3">
-                  <Download className="w-4 h-4" />
-                  Descarga Panadería de Brian
-                </a>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Resource Search */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-2xl mx-auto text-center mb-8"
-          >
-            <h2 className="heading-md text-gray-900 mb-4">
-              Search <span className="text-forest-600">Resources</span>
-            </h2>
-            <p className="text-gray-600">
-              Looking for a specific worksheet, video, or quiz? Search our entire library.
-            </p>
-          </motion.div>
-
-          <div className="max-w-2xl mx-auto">
-            <ResourceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-          </div>
-        </div>
-      </section>
-
-      {/* Curriculum at a Glance */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="heading-lg text-gray-900 mb-4">
-              Curriculum at a <span className="text-forest-600">Glance</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Here are our units, all in one place! Click on each module to see a quick overview.
-            </p>
-          </motion.div>
-
-          {/* Module Quick Links */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
-            {modules.map((module) => (
-              <motion.button
-                key={module.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
-                  ${expandedModule === module.id 
-                    ? 'bg-forest-600 text-white shadow-lg' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          <div className="flex justify-center">
+            <div className="inline-flex bg-gray-100 rounded-2xl p-1.5 gap-1">
+              <button
+                onClick={() => {
+                  setActiveCurriculum('financial')
+                  setExpandedModule(null)
+                }}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all
+                  ${activeCurriculum === 'financial' 
+                    ? 'bg-white text-forest-700 shadow-md' 
+                    : 'text-gray-600 hover:text-gray-800'}`}
               >
-                Module {module.id}: {module.title}
-              </motion.button>
-            ))}
-          </div>
-
-          {/* Expanded Module Overview */}
-          <AnimatePresence>
-            {expandedModule && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="max-w-2xl mx-auto mb-8"
+                <DollarSign className="w-5 h-5" />
+                <span>Financial Literacy</span>
+              </button>
+              <button
+                onClick={() => {
+                  setActiveCurriculum('career')
+                  setExpandedModule(null)
+                }}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all
+                  ${activeCurriculum === 'career' 
+                    ? 'bg-gradient-to-r from-indigo-600 to-sky-500 text-white shadow-md' 
+                    : 'text-gray-600 hover:text-gray-800'}`}
               >
-                <div className="bg-forest-50 rounded-2xl p-6 border border-forest-100">
-                  <h4 className="font-bold text-forest-800 mb-2">
-                    Module {expandedModule}: {modules.find(m => m.id === expandedModule)?.title}
-                  </h4>
-                  <p className="text-sm text-forest-700 mb-4">
-                    <strong>Learning Target:</strong> {modules.find(m => m.id === expandedModule)?.learningTarget}
+                <Briefcase className="w-5 h-5" />
+                <span>CareerLit</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Financial Literacy Content */}
+      {activeCurriculum === 'financial' && (
+        <>
+          {/* Welcome & Video Walkthrough */}
+          <section className="py-16 bg-white">
+            <div className="container-custom">
+              <div className="max-w-4xl mx-auto">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <h2 className="heading-md text-gray-900 mb-4">Welcome</h2>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    Financial literacy is one of the hardest subjects to teach - and it's because of the lack of 
+                    resources available to educators. Content is hard to find and often pricey. We at Project 
+                    Bright Beginnings strive to fix this.
                   </p>
-                  <p className="text-sm font-semibold text-forest-800 mb-2">Overview:</p>
-                  <ul className="text-sm text-forest-700 space-y-1">
-                    {modules.find(m => m.id === expandedModule)?.overview.map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-forest-500" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <a href={`#module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-accent-600 font-semibold text-sm hover:underline">
-                    Jump to full module <ArrowRight className="w-4 h-4" />
+                  <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                    Here we give you the best online videos, worksheets, and quizzes, organized in an incredibly 
+                    user-friendly curriculum, complete with modules and learning targets.
+                  </p>
+
+                  {/* Video Walkthrough */}
+                  <div className="bg-gradient-to-br from-forest-50 to-sage-50 rounded-3xl p-6 md:p-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Video className="w-8 h-8 text-forest-600" />
+                      <h3 className="text-xl font-bold text-gray-900">Website Walkthrough</h3>
+                    </div>
+                    <p className="text-gray-600 mb-6">
+                      New to our Resource Library? Watch this quick video to learn how to navigate and make the most of our resources.
+                    </p>
+                    <div className="aspect-video bg-gray-200 rounded-2xl overflow-hidden">
+                      <iframe 
+                        src={VIDEO_URLS.walkthrough}
+                        className="w-full h-full"
+                        allowFullScreen
+                        title="Website Walkthrough"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
+          {/* Workbook & Picture Books */}
+          <section className="py-16 bg-gradient-section">
+            <div className="container-custom">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="card"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-forest-500 to-forest-600 
+                                  flex items-center justify-center mb-5 shadow-lg">
+                    <BookOpen className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Finance Workbook</h3>
+                  <p className="text-gray-600 mb-6">
+                    Our finance workbook is a comprehensive resource designed for elementary school students. 
+                    Filled with age-appropriate activities, colorful illustrations, and interactive exercises.
+                  </p>
+                  <a href={WORKSHEET_URLS.workbook} download className="btn-primary gap-2">
+                    <Download className="w-4 h-4" />
+                    Download Workbook
                   </a>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
+                </motion.div>
 
-      {/* Full Curriculum - All Modules Expanded */}
-      <section className="py-16 bg-gradient-section">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="heading-lg text-gray-900 mb-4">
-              Full <span className="text-accent-500">Curriculum</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore all modules with complete resources, videos, worksheets, and teaching guides.
-            </p>
-          </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="card"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 
+                                  flex items-center justify-center mb-5 shadow-lg">
+                    <BookOpen className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Financial Picture Books</h3>
+                  <p className="text-gray-600 mb-6">
+                    Educational picture books that introduce financial topics in engaging stories for younger audiences.
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <a href={WORKSHEET_URLS.sofia} download className="btn-secondary gap-2 text-sm py-3">
+                      <Download className="w-4 h-4" />
+                      Download Sofia's Smart Savings
+                    </a>
+                    <a href={WORKSHEET_URLS.brian} download className="btn-secondary gap-2 text-sm py-3">
+                      <Download className="w-4 h-4" />
+                      Descarga Panadería de Brian
+                    </a>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
 
-          <div className="space-y-8 max-w-4xl mx-auto">
-            {modules.map((module) => (
+          {/* Resource Search */}
+          <section className="py-16 bg-white">
+            <div className="container-custom">
               <motion.div
-                key={module.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
+                className="max-w-2xl mx-auto text-center mb-8"
               >
-                <ModuleSection module={module} />
+                <h2 className="heading-md text-gray-900 mb-4">
+                  Search <span className="text-forest-600">Resources</span>
+                </h2>
+                <p className="text-gray-600">
+                  Looking for a specific worksheet, video, or quiz? Search our entire library.
+                </p>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+
+              <div className="max-w-2xl mx-auto">
+                <ResourceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+              </div>
+            </div>
+          </section>
+
+          {/* Curriculum at a Glance */}
+          <section className="py-16 bg-white">
+            <div className="container-custom">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-12"
+              >
+                <h2 className="heading-lg text-gray-900 mb-4">
+                  Curriculum at a <span className="text-forest-600">Glance</span>
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Here are our units, all in one place! Click on each module to see a quick overview.
+                </p>
+              </motion.div>
+
+              {/* Module Quick Links */}
+              <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
+                {modules.map((module) => (
+                  <motion.button
+                    key={module.id}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
+                      ${expandedModule === module.id 
+                        ? 'bg-forest-600 text-white shadow-lg' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  >
+                    Module {module.id}: {module.title}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Expanded Module Overview */}
+              <AnimatePresence>
+                {expandedModule && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="max-w-2xl mx-auto mb-8"
+                  >
+                    <div className="bg-forest-50 rounded-2xl p-6 border border-forest-100">
+                      <h4 className="font-bold text-forest-800 mb-2">
+                        Module {expandedModule}: {modules.find(m => m.id === expandedModule)?.title}
+                      </h4>
+                      <p className="text-sm text-forest-700 mb-4">
+                        <strong>Learning Target:</strong> {modules.find(m => m.id === expandedModule)?.learningTarget}
+                      </p>
+                      <p className="text-sm font-semibold text-forest-800 mb-2">Overview:</p>
+                      <ul className="text-sm text-forest-700 space-y-1">
+                        {modules.find(m => m.id === expandedModule)?.overview.map((item, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-forest-500" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                      <a href={`#module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-accent-600 font-semibold text-sm hover:underline">
+                        Jump to full module <ArrowRight className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </section>
+
+          {/* Full Curriculum - All Modules Expanded */}
+          <section className="py-16 bg-gradient-section">
+            <div className="container-custom">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-12"
+              >
+                <h2 className="heading-lg text-gray-900 mb-4">
+                  Full <span className="text-accent-500">Curriculum</span>
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Explore all modules with complete resources, videos, worksheets, and teaching guides.
+                </p>
+              </motion.div>
+
+              <div className="space-y-8 max-w-4xl mx-auto">
+                {modules.map((module) => (
+                  <motion.div
+                    key={module.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <ModuleSection module={module} />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* CareerLit Content */}
+      {activeCurriculum === 'career' && (
+        <>
+          {/* Welcome Section for CareerLit */}
+          <section className="py-16 bg-white">
+            <div className="container-custom">
+              <div className="max-w-4xl mx-auto">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 
+                                    flex items-center justify-center shadow-lg">
+                      <Briefcase className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="heading-md text-gray-900">Welcome to CareerLit</h2>
+                      <p className="text-indigo-600 font-medium">Career Exploration for Young Learners</p>
+                    </div>
+                  </div>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    CareerLit is our comprehensive career exploration curriculum designed to introduce students 
+                    to the world of business, leadership, and professional skills. Through engaging videos, 
+                    hands-on activities, and interactive worksheets, students will discover different career 
+                    paths and develop essential workplace skills.
+                  </p>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                    Each module builds on the previous one, taking students from understanding basic business 
+                    concepts to developing their own professional skills like communication, teamwork, and 
+                    problem-solving.
+                  </p>
+
+                  {/* Key Topics */}
+                  <div className="bg-gradient-to-br from-indigo-50 to-sky-50 rounded-3xl p-6 md:p-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">What Students Will Learn</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { title: 'Business Fundamentals', desc: 'What businesses are and how they work' },
+                        { title: 'Leadership Skills', desc: 'How to lead teams and plan projects' },
+                        { title: 'Financial Concepts', desc: 'Revenue, expenses, profit, and budgeting' },
+                        { title: 'Marketing Basics', desc: 'Target audiences and advertising' },
+                        { title: 'Event Planning', desc: 'Organizing and executing events' },
+                        { title: 'Professional Skills', desc: 'Communication, pitching, and interviewing' },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3 bg-white rounded-xl p-4">
+                          <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                            {idx + 1}
+                          </span>
+                          <div>
+                            <p className="font-semibold text-gray-900">{item.title}</p>
+                            <p className="text-sm text-gray-600">{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
+          {/* CareerLit Curriculum at a Glance */}
+          <section className="py-16 bg-gradient-section">
+            <div className="container-custom">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-12"
+              >
+                <h2 className="heading-lg text-gray-900 mb-4">
+                  CareerLit <span className="text-indigo-600">Modules</span>
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Click on each module to see a quick overview, or scroll down for the full curriculum.
+                </p>
+              </motion.div>
+
+              {/* Module Quick Links */}
+              <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
+                {careerModules.map((module) => (
+                  <motion.button
+                    key={module.id}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setExpandedModule(expandedModule === module.id ? null : module.id)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
+                      ${expandedModule === module.id 
+                        ? 'bg-gradient-to-r from-indigo-600 to-sky-500 text-white shadow-lg' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  >
+                    Module {module.id}: {module.title}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Expanded Module Overview */}
+              <AnimatePresence>
+                {expandedModule && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="max-w-2xl mx-auto mb-8"
+                  >
+                    <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100">
+                      <h4 className="font-bold text-indigo-800 mb-2">
+                        Module {expandedModule}: {careerModules.find(m => m.id === expandedModule)?.title}
+                      </h4>
+                      <p className="text-sm text-indigo-700 mb-4">
+                        <strong>Learning Target:</strong> {careerModules.find(m => m.id === expandedModule)?.learningTarget}
+                      </p>
+                      <p className="text-sm font-semibold text-indigo-800 mb-2">Overview:</p>
+                      <ul className="text-sm text-indigo-700 space-y-1">
+                        {careerModules.find(m => m.id === expandedModule)?.overview.map((item, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                      <a href={`#career-module-${expandedModule}`} className="inline-flex items-center gap-2 mt-4 text-sky-600 font-semibold text-sm hover:underline">
+                        Jump to full module <ArrowRight className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </section>
+
+          {/* Full CareerLit Curriculum */}
+          <section className="py-16 bg-white">
+            <div className="container-custom">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-12"
+              >
+                <h2 className="heading-lg text-gray-900 mb-4">
+                  Full <span className="text-sky-500">CareerLit Curriculum</span>
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Explore all modules with complete resources, videos, worksheets, and teaching guides.
+                </p>
+              </motion.div>
+
+              <div className="space-y-8 max-w-4xl mx-auto">
+                {careerModules.map((module) => (
+                  <motion.div
+                    key={module.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <CareerModuleSection module={module} />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Teachers Love Us */}
       <section className="py-16 bg-gradient-section">

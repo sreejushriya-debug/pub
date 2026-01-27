@@ -103,7 +103,7 @@ const jsonLd = {
   description: 'Free financial literacy education and resources for elementary and middle school students.',
   url: 'https://www.projectbrightbeginnings.org',
   logo: 'https://www.projectbrightbeginnings.org/logo.png',
-  email: 'projectbrightbeginnings@gmail.com',
+  email: 'info@projectbrightbeginnings.org',
   telephone: '945-216-0206',
   address: {
     '@type': 'PostalAddress',

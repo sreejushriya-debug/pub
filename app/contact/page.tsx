@@ -15,8 +15,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    content: 'projectbrightbeginnings@gmail.com',
-    href: 'mailto:projectbrightbeginnings@gmail.com',
+    content: 'info@projectbrightbeginnings.org',
+    href: 'mailto:info@projectbrightbeginnings.org',
     description: 'We\'ll respond within 24-48 hours'
   },
   {

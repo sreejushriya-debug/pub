@@ -219,8 +219,8 @@ export default function ImpactPage() {
                   </p>
                   <p className="text-gray-600 text-sm mt-2">
                     Please reach out to{' '}
-                    <a href="mailto:projectbrightbeginnings@gmail.com" className="text-accent-600 font-semibold hover:underline">
-                      projectbrightbeginnings@gmail.com
+                    <a href="mailto:info@projectbrightbeginnings.org" className="text-accent-600 font-semibold hover:underline">
+                      info@projectbrightbeginnings.org
                     </a>
                   </p>
                 </div>
